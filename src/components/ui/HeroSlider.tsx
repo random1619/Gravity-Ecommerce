@@ -10,7 +10,7 @@ import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 const slides = [
     {
         id: 1,
-        image: '/slider/slide1.png',
+        image: '/slider/slide1_v2.png',
         title: 'NEW ARRIVALS',
         subtitle: 'Fresh styles for campus life.',
         cta: 'Shop Now',
@@ -19,7 +19,7 @@ const slides = [
     },
     {
         id: 2,
-        image: '/slider/slide2.png',
+        image: '/slider/slide2_v2.png',
         title: 'UNDER RS. 999',
         subtitle: 'Budget fits with premium energy.',
         cta: 'Explore Deals',
@@ -28,7 +28,7 @@ const slides = [
     },
     {
         id: 3,
-        image: '/slider/slide3.png',
+        image: '/slider/slide3_v2.png',
         title: 'STUDENT DISCOUNT',
         subtitle: 'Extra 20% off every drop.',
         cta: 'Verify Now',
@@ -37,7 +37,7 @@ const slides = [
     },
     {
         id: 4,
-        image: '/slider/slide4.png',
+        image: '/slider/slide4_v2.png',
         title: 'TRENDING NOW',
         subtitle: 'Street style essentials for the week.',
         cta: 'View Collection',
@@ -46,7 +46,7 @@ const slides = [
     },
     {
         id: 5,
-        image: '/slider/slide5.png',
+        image: '/slider/slide5_v2.png',
         title: 'THE OVERSIZED DROP',
         subtitle: 'Comfort meets statement silhouettes.',
         cta: 'Shop Oversized',
