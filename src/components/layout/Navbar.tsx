@@ -8,7 +8,7 @@ import { useTheme } from '@/lib/ThemeContext';
 import { useCart } from '@/lib/CartContext';
 import { useAuth } from '@/lib/AuthContext';
 import LoginModal from '../ui/LoginModal';
-import { Sun, Moon, ShoppingCart, User, ChevronDown, Package, Heart, Settings, LogOut } from 'lucide-react';
+import { Sun, Moon, ShoppingCart, User, ChevronDown, Package, Heart, Settings, LogOut, Search } from 'lucide-react';
 import type { Product } from '@/lib/data';
 
 const Navbar = () => {
@@ -18,7 +18,7 @@ const Navbar = () => {
     const [search, setSearch] = useState('');
     const [trends, setTrends] = useState<string[]>([]);
     const [allProducts, setAllProducts] = useState<Product[]>([]);
-    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showUserDropdown, setShowUserDropdown] = useState(false);
     const searchRef = useRef<HTMLDivElement>(null);
@@ -46,10 +46,10 @@ const Navbar = () => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
                 e.preventDefault();
-                const searchInput = searchRef.current?.querySelector('input');
-                if (searchInput) {
-                    searchInput.focus();
-                }
+                setIsSearchOpen(prev => !prev);
+            }
+            if (e.key === 'Escape') {
+                setIsSearchOpen(false);
             }
         };
         window.addEventListener('keydown', handleKeyDown);
@@ -58,9 +58,6 @@ const Navbar = () => {
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-                setShowSuggestions(false);
-            }
             // Close user dropdown when clicking outside
             const userMenu = document.querySelector(`.${styles.userMenu}`);
             if (userMenu && !userMenu.contains(event.target as Node)) {
@@ -91,68 +88,13 @@ const Navbar = () => {
                 </div>
 
                 <div className={styles.actions}>
-                    <div className={styles.searchBar} ref={searchRef}>
-                        <input
-                            type="text"
-                            placeholder="Search trends..."
-                            className={styles.searchInput}
-                            value={search}
-                            onChange={(e) => {
-                                setSearch(e.target.value);
-                                setShowSuggestions(true);
-                            }}
-                            onFocus={() => setShowSuggestions(true)}
-                        />
+                    <div className={styles.searchBarTrigger} onClick={() => setIsSearchOpen(true)}>
+                        <Search size={16} className={styles.searchIconInline} />
+                        <span className={styles.searchPlaceholderText}>Search trends...</span>
                         <div className={styles.kbdContainer}>
                             <kbd className={styles.kbd}>Ctrl</kbd>
                             <kbd className={styles.kbd}>K</kbd>
                         </div>
-                        {showSuggestions && search && (
-                            <div className={styles.suggestions}>
-                                {filteredTrends.length > 0 && (
-                                    <div className={styles.suggestionSection}>
-                                        <div className={styles.suggestionHeader}>Categories & Trends</div>
-                                        {filteredTrends.slice(0, 3).map(trend => (
-                                            <div
-                                                key={trend}
-                                                className={styles.suggestion}
-                                                onClick={() => {
-                                                    setSearch(trend);
-                                                    setShowSuggestions(false);
-                                                }}
-                                            >
-                                                {trend}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                                
-                                {matchingProducts.length > 0 && (
-                                    <div className={styles.suggestionSection}>
-                                        <div className={styles.suggestionHeader}>Matching Products</div>
-                                        {matchingProducts.slice(0, 4).map(p => (
-                                            <Link
-                                                href={`/product/${p.id}`}
-                                                key={p.id}
-                                                className={styles.productSuggestion}
-                                                onClick={() => setShowSuggestions(false)}
-                                            >
-                                                <img src={p.imageUrl} alt={p.name} className={styles.productSugImage} />
-                                                <div className={styles.productSugInfo}>
-                                                    <span className={styles.productSugName}>{p.name}</span>
-                                                    <span className={styles.productSugCategory}>{p.category}</span>
-                                                </div>
-                                                <span className={styles.productSugPrice}>₹{p.price}</span>
-                                            </Link>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {filteredTrends.length === 0 && matchingProducts.length === 0 && (
-                                    <div className={styles.noSuggestion}>No results found</div>
-                                )}
-                            </div>
-                        )}
                     </div>
 
                     <button className={styles.themeToggle} onClick={toggleTheme} aria-label="Toggle Theme">
@@ -218,6 +160,116 @@ const Navbar = () => {
             </div>
 
             <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+
+            {isSearchOpen && (
+                <div className={styles.searchOverlay} onClick={() => setIsSearchOpen(false)}>
+                    <div className={styles.searchModal} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.modalHeader}>
+                            <Search size={20} className={styles.modalSearchIcon} />
+                            <input
+                                type="text"
+                                placeholder="Type to search products, trends, or collections..."
+                                className={styles.modalInput}
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                autoFocus
+                            />
+                            <div className={styles.modalCloseHint}>
+                                <kbd className={styles.kbdClose}>ESC</kbd>
+                            </div>
+                        </div>
+                        
+                        <div className={styles.modalContent}>
+                            {search ? (
+                                <div className={styles.modalSectionsContainer}>
+                                    {filteredTrends.length > 0 && (
+                                        <div className={styles.modalSection}>
+                                            <div className={styles.modalSectionHeader}>Categories & Trends</div>
+                                            <div className={styles.trendsGrid}>
+                                                {filteredTrends.map(trend => (
+                                                    <button
+                                                        key={trend}
+                                                        className={styles.trendTag}
+                                                        onClick={() => {
+                                                            setSearch(trend);
+                                                        }}
+                                                    >
+                                                        {trend}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {matchingProducts.length > 0 ? (
+                                        <div className={styles.modalSection}>
+                                            <div className={styles.modalSectionHeader}>Matching Products</div>
+                                            <div className={styles.productsList}>
+                                                {matchingProducts.map(p => (
+                                                    <Link
+                                                        href={`/product/${p.id}`}
+                                                        key={p.id}
+                                                        className={styles.productRow}
+                                                        onClick={() => setIsSearchOpen(false)}
+                                                    >
+                                                        <img src={p.imageUrl} alt={p.name} className={styles.productRowImg} />
+                                                        <div className={styles.productRowInfo}>
+                                                            <span className={styles.productRowName}>{p.name}</span>
+                                                            <span className={styles.productRowMeta}>{p.category} • {p.fabric}</span>
+                                                        </div>
+                                                        <div className={styles.productRowPrice}>₹{p.price}</div>
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        filteredTrends.length === 0 && (
+                                            <div className={styles.modalNoResults}>
+                                                No results found for "{search}"
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+                            ) : (
+                                <div className={styles.searchPlaceholderState}>
+                                    <div className={styles.placeholderSection}>
+                                        <div className={styles.modalSectionHeader}>Quick Navigation</div>
+                                        <div className={styles.quickLinksGrid}>
+                                            <Link href="/shop" className={styles.quickLinkItem} onClick={() => setIsSearchOpen(false)}>
+                                                <span>All Products</span>
+                                            </Link>
+                                            <Link href="/collections" className={styles.quickLinkItem} onClick={() => setIsSearchOpen(false)}>
+                                                <span>New Drops</span>
+                                            </Link>
+                                            <Link href="/lookbook" className={styles.quickLinkItem} onClick={() => setIsSearchOpen(false)}>
+                                                <span>Lookbook</span>
+                                            </Link>
+                                            <Link href="/rewards" className={styles.quickLinkItem} onClick={() => setIsSearchOpen(false)}>
+                                                <span>Loyalty Rewards</span>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className={styles.placeholderSection}>
+                                        <div className={styles.modalSectionHeader}>Popular Searches</div>
+                                        <div className={styles.trendsGrid}>
+                                            {trends.slice(0, 5).map(trend => (
+                                                <button
+                                                    key={trend}
+                                                    className={styles.trendTag}
+                                                    onClick={() => setSearch(trend)}
+                                                >
+                                                    {trend}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </nav>
     );
 };
