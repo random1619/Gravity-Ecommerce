@@ -1,58 +1,58 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 :root {
-  /* === BACKGROUNDS (Curated Warm Luxury) === */
+  /* === BACKGROUNDS (Organic Earth - Light Mode) === */
   --bg-primary: #faf9f5;
-  --bg-secondary: #f3f1eb;
-  --bg-tertiary: #e6e3da;
+  --bg-secondary: #f4f1eb;
+  --bg-tertiary: #e5e2da;
 
-  /* === TEXT (WCAG AAA Compliant & Softer Contrast) === */
-  --text-primary: #121212;
-  --text-secondary: #4a4843;
-  --text-tertiary: #7d7a72;
+  /* === TEXT (Earthy Warm Charcoal) === */
+  --text-primary: #1c1a17;
+  --text-secondary: #5c5952;
+  --text-tertiary: #8f8b80;
 
   /* === ACCENT COLORS === */
-  --accent-primary: #121212;
-  --accent-primary-hover: #333333;
-  --accent-secondary: #c23b22;
-  --accent-secondary-hover: #9e2f1b;
-  --accent-success: #287d3c;
-  --accent-success-hover: #1e5e2d;
-  --accent-gold: #b8860b;
-  --accent-indigo: #3b52c4;
+  --accent-primary: #1c1a17;
+  --accent-primary-hover: #3a3730;
+  --accent-secondary: #c85a3c; /* Terracotta Clay */
+  --accent-secondary-hover: #a64227;
+  --accent-success: #2b5c3d; /* Forest Green */
+  --accent-success-hover: #1e422b;
+  --accent-gold: #b47c3c; /* Ochre Gold */
+  --accent-indigo: #485ea6; /* Soft Navy */
 
   /* === BORDERS & DIVIDERS === */
-  --border-color: rgba(18, 18, 18, 0.07);
-  --border-strong: rgba(18, 18, 18, 0.14);
-  --border-focus: rgba(18, 18, 18, 0.4);
+  --border-color: rgba(28, 26, 23, 0.08);
+  --border-strong: rgba(28, 26, 23, 0.16);
+  --border-focus: rgba(28, 26, 23, 0.4);
 
   /* === SURFACE TREATMENTS === */
   --surface-elevated: #ffffff;
-  --surface-overlay: rgba(18, 18, 18, 0.45);
-  --glass-bg: rgba(250, 249, 245, 0.8);
-  --glass-border: rgba(18, 18, 18, 0.08);
+  --surface-overlay: rgba(28, 26, 23, 0.45);
+  --glass-bg: rgba(250, 249, 245, 0.85);
+  --glass-border: rgba(28, 26, 23, 0.08);
 
   /* === GRADIENTS === */
-  --gradient-hero: linear-gradient(135deg, #121212 0%, #3a3a3a 100%);
-  --gradient-cta: linear-gradient(135deg, #c23b22 0%, #d85f47 100%);
-  --gradient-premium: linear-gradient(135deg, #c5a059 0%, #a88440 100%);
+  --gradient-hero: linear-gradient(135deg, #1c1a17 0%, #4a453f 100%);
+  --gradient-cta: linear-gradient(135deg, #c85a3c 0%, #e07d60 100%);
+  --gradient-premium: linear-gradient(135deg, #b47c3c 0%, #dca260 100%);
   --surface-glow: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6));
-  --page-gradient: radial-gradient(1200px 600px at 10% -10%, rgba(59, 82, 196, 0.04), transparent 60%),
-    radial-gradient(900px 500px at 90% 0%, rgba(194, 59, 34, 0.03), transparent 55%);
+  --page-gradient: radial-gradient(1200px 600px at 10% -10%, rgba(72, 94, 166, 0.05), transparent 60%),
+    radial-gradient(900px 500px at 90% 0%, rgba(200, 90, 60, 0.04), transparent 55%);
 
-  /* === SHADOWS (Soft, diffused shadows) === */
-  --shadow-xs: 0 1px 2px rgba(18, 18, 18, 0.02);
-  --shadow-sm: 0 2px 4px rgba(18, 18, 18, 0.04);
-  --shadow-md: 0 6px 12px rgba(18, 18, 18, 0.05);
-  --shadow-lg: 0 12px 24px rgba(18, 18, 18, 0.08);
-  --shadow-xl: 0 20px 40px rgba(18, 18, 18, 0.12);
-  --shadow-2xl: 0 30px 60px rgba(18, 18, 18, 0.16);
-  --shadow-focus: 0 0 0 4px rgba(18, 18, 18, 0.08);
+  /* === SHADOWS === */
+  --shadow-xs: 0 1px 2px rgba(28, 26, 23, 0.02);
+  --shadow-sm: 0 2px 4px rgba(28, 26, 23, 0.04);
+  --shadow-md: 0 6px 12px rgba(28, 26, 23, 0.05);
+  --shadow-lg: 0 12px 24px rgba(28, 26, 23, 0.08);
+  --shadow-xl: 0 20px 40px rgba(28, 26, 23, 0.12);
+  --shadow-2xl: 0 30px 60px rgba(28, 26, 23, 0.16);
+  --shadow-focus: 0 0 0 4px rgba(28, 26, 23, 0.08);
 
   /* === STATE COLORS === */
   --success-bg: #e8f5e9;
-  --success-text: #2e7d32;
-  --success-border: #287d3c;
+  --success-text: #2b5c3d;
+  --success-border: #2b5c3d;
   --error-bg: #ffebee;
   --error-text: #c62828;
   --error-border: #ef5350;
@@ -123,61 +123,61 @@
 }
 
 [data-theme='dark'] {
-  /* === BACKGROUNDS (Rich Midnight Dark) === */
-  --bg-primary: #080808;
-  --bg-secondary: #111111;
-  --bg-tertiary: #191919;
+  /* === BACKGROUNDS (Nocturnal Cyberpunk - Dark Mode) === */
+  --bg-primary: #050508;
+  --bg-secondary: #0d0d15;
+  --bg-tertiary: #141424;
 
-  /* === TEXT === */
-  --text-primary: #f5f5f7;
-  --text-secondary: #a1a1a6;
-  --text-tertiary: #68686e;
+  /* === TEXT (Cyber Silver & Cool Grays) === */
+  --text-primary: #f0f2ff;
+  --text-secondary: #8c92b2;
+  --text-tertiary: #545975;
 
-  /* === ACCENT COLORS (Brighter for Dark Contrast) === */
-  --accent-primary: #ffffff;
-  --accent-primary-hover: #e5e5e7;
-  --accent-secondary: #ff453a;
-  --accent-secondary-hover: #ff6961;
-  --accent-success: #30d158;
-  --accent-success-hover: #40e070;
-  --accent-gold: #ffd60a;
-  --accent-indigo: #5e5ce6;
+  /* === ACCENT COLORS === */
+  --accent-primary: #00e5ff; /* Electric Cyan */
+  --accent-primary-hover: #00b8d4;
+  --accent-secondary: #ff007f; /* Neon Hot Pink */
+  --accent-secondary-hover: #d5006d;
+  --accent-success: #39ff14; /* Electric Green */
+  --accent-success-hover: #00e676;
+  --accent-gold: #ffd60a; /* Cyber Gold */
+  --accent-indigo: #8b2cff; /* Ultraviolet */
 
   /* === BORDERS === */
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.16);
-  --border-focus: rgba(255, 255, 255, 0.5);
+  --border-color: rgba(0, 229, 255, 0.1);
+  --border-strong: rgba(255, 0, 127, 0.15);
+  --border-focus: rgba(0, 229, 255, 0.5);
 
   /* === SURFACES === */
-  --surface-elevated: #161618;
-  --surface-overlay: rgba(0, 0, 0, 0.75);
-  --glass-bg: rgba(8, 8, 8, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --surface-glow: linear-gradient(145deg, rgba(22, 22, 24, 0.95), rgba(22, 22, 24, 0.6));
-  --page-gradient: radial-gradient(1200px 600px at 10% -10%, rgba(94, 92, 230, 0.06), transparent 60%),
-    radial-gradient(900px 500px at 90% 0%, rgba(255, 69, 58, 0.05), transparent 55%);
+  --surface-elevated: #0f0f1d;
+  --surface-overlay: rgba(5, 5, 8, 0.85);
+  --glass-bg: rgba(13, 13, 21, 0.8);
+  --glass-border: rgba(0, 229, 255, 0.15);
+  --surface-glow: linear-gradient(145deg, rgba(20, 20, 36, 0.95), rgba(13, 13, 21, 0.6));
+  --page-gradient: radial-gradient(1200px 600px at 10% -10%, rgba(139, 44, 255, 0.08), transparent 60%),
+    radial-gradient(900px 500px at 90% 0%, rgba(255, 0, 127, 0.07), transparent 55%);
 
   /* === SHADOWS === */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.7);
-  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.8);
-  --shadow-2xl: 0 30px 60px rgba(0, 0, 0, 0.9);
-  --shadow-focus: 0 0 0 4px rgba(255, 255, 255, 0.15);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.7);
+  --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.8);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.9);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.95);
+  --shadow-2xl: 0 30px 60px rgba(0, 0, 0, 0.98);
+  --shadow-focus: 0 0 0 4px rgba(0, 229, 255, 0.25);
 
   /* === STATE COLORS === */
-  --success-bg: #1b5e20;
-  --success-text: #30d158;
-  --success-border: #287d3c;
+  --success-bg: rgba(57, 255, 20, 0.08);
+  --success-text: #39ff14;
+  --success-border: #39ff14;
 
-  --error-bg: #b71c1c;
-  --error-text: #ff453a;
-  --error-border: #ff6961;
+  --error-bg: rgba(255, 0, 127, 0.08);
+  --error-text: #ff007f;
+  --error-border: #ff007f;
 
-  --warning-bg: #e65100;
+  --warning-bg: rgba(255, 214, 10, 0.08);
   --warning-text: #ffd60a;
-  --warning-border: #ff9f0a;
+  --warning-border: #ffd60a;
 }
 
 * {
