@@ -9,6 +9,7 @@ import { useCart } from '@/lib/CartContext';
 import { useAuth } from '@/lib/AuthContext';
 import LoginModal from '../ui/LoginModal';
 import { Sun, Moon, ShoppingCart, User, ChevronDown, Package, Heart, Settings, LogOut } from 'lucide-react';
+import type { Product } from '@/lib/data';
 
 const Navbar = () => {
     const { theme, toggleTheme } = useTheme();
