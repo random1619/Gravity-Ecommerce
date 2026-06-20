@@ -8,12 +8,13 @@ import { useTheme } from '@/lib/ThemeContext';
 import { useCart } from '@/lib/CartContext';
 import { useAuth } from '@/lib/AuthContext';
 import LoginModal from '../ui/LoginModal';
+import CartDrawer from '../ui/CartDrawer';
 import { Sun, Moon, ShoppingCart, User, ChevronDown, Package, Heart, Settings, LogOut, Search } from 'lucide-react';
 import type { Product } from '@/lib/data';
 
 const Navbar = () => {
     const { theme, toggleTheme } = useTheme();
-    const { cartCount } = useCart();
+    const { cartCount, openCart } = useCart();
     const { user, logout, isAuthenticated } = useAuth();
     const [search, setSearch] = useState('');
     const [trends, setTrends] = useState<string[]>([]);
@@ -101,13 +102,11 @@ const Navbar = () => {
                         {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
                     </button>
 
-                    <button className={styles.iconBtn} aria-label="Cart">
-                        <Link href="/cart">
-                            <div className={styles.cartIcon}>
-                                <ShoppingCart size={20} />
-                                <span className={styles.badge}>{cartCount}</span>
-                            </div>
-                        </Link>
+                    <button className={styles.iconBtn} aria-label="Cart" onClick={openCart}>
+                        <div className={styles.cartIcon}>
+                            <ShoppingCart size={20} />
+                            <span className={styles.badge}>{cartCount}</span>
+                        </div>
                     </button>
 
                     {isAuthenticated ? (
@@ -160,6 +159,7 @@ const Navbar = () => {
             </div>
 
             <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+            <CartDrawer />
 
             {isSearchOpen && (
                 <div className={styles.searchOverlay} onClick={() => setIsSearchOpen(false)}>

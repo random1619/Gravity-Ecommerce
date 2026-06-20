@@ -9,6 +9,7 @@ import ProductSkeleton from '@/components/ui/ProductSkeleton';
 import Button from '@/components/ui/Button';
 import QuickView from '@/components/ui/QuickView';
 import LoginModal from '@/components/ui/LoginModal';
+import Marquee from '@/components/ui/Marquee';
 import type { Product } from '@/lib/data';
 
 export default function Home() {
@@ -53,6 +54,16 @@ export default function Home() {
       <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
 
       <HeroSlider />
+
+      <Marquee 
+        texts={[
+          "NEW COLD WEATHER DROPS",
+          "FREE SHIPPING OVER ₹1500",
+          "CAMPUS EDITS 2026",
+          "GET 10% OFF FOR STUDENTS",
+          "LIMITED EDITION SWEATSHIRTS"
+        ]} 
+      />
 
       <section className={styles.section}>
         <div className="container">

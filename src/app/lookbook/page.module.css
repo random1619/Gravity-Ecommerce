@@ -36,13 +36,127 @@
 }
 
 .lookCard {
-  cursor: pointer;
   border-radius: var(--radius-2xl);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-color);
   aspect-ratio: 9 / 16;
   position: relative;
+}
+
+/* === HOTSPOT PINS & TOOLTIPS === */
+.hotspot {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  z-index: 5;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+}
+
+.pulsePin {
+  width: 14px;
+  height: 14px;
+  background: var(--accent-secondary);
+  border: 2px solid white;
+  border-radius: 50%;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: all var(--transition-fast);
+}
+
+.hotspot::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--accent-secondary);
+  border-radius: 50%;
+  top: -3px;
+  left: -3px;
+  animation: hotspotPulse 2s infinite;
+}
+
+@keyframes hotspotPulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.hotspotTooltip {
+  position: absolute;
+  bottom: 35px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-2);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  width: 200px;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+[data-theme='dark'] .hotspotTooltip {
+  background: rgba(13, 13, 21, 0.95);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.hotspot:hover .hotspotTooltip {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltipImg {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.tooltipMeta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.tooltipName {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tooltipPrice {
+  font-size: 11px;
+  color: var(--accent-secondary);
+  font-weight: 700;
+}
+
+.tooltipLink {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent-indigo) !important;
+  text-transform: uppercase;
 }
 
 .imageWrapper {

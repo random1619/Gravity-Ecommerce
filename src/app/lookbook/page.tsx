@@ -13,6 +13,8 @@ interface LookItem {
   price: number
   imageUrl: string
   link: string
+  top?: string
+  left?: string
 }
 
 interface Look {
@@ -30,8 +32,8 @@ const lookbookData: Look[] = [
     tag: 'CAMPUS DAILY',
     image: '/look1.png',
     items: [
-      { id: '1', name: 'Oversized Graffiti Tee', price: 699, imageUrl: '/product-tee.png', link: '/product/1' },
-      { id: '2', name: 'Acid Wash Cargos', price: 999, imageUrl: '/product-cargos.png', link: '/product/2' }
+      { id: '1', name: 'Oversized Graffiti Tee', price: 699, imageUrl: '/product-tee-premium.png', link: '/product/1', top: '35%', left: '42%' },
+      { id: '2', name: 'Acid Wash Cargos', price: 999, imageUrl: '/product-cargos-premium.png', link: '/product/2', top: '65%', left: '48%' }
     ]
   },
   {
@@ -40,8 +42,8 @@ const lookbookData: Look[] = [
     tag: 'STREET EDITORIAL',
     image: '/look2.png',
     items: [
-      { id: '3', name: 'Desert Storm Hoodie', price: 1299, imageUrl: '/product-hoodie.png', link: '/product/3' },
-      { id: '6', name: 'Basic Black Beanie', price: 299, imageUrl: '/product-acc.png', link: '/product/6' }
+      { id: '3', name: 'Desert Storm Hoodie', price: 1299, imageUrl: '/product-hoodie-premium.png', link: '/product/3', top: '40%', left: '48%' },
+      { id: '6', name: 'Basic Black Beanie', price: 299, imageUrl: '/variants/product-6-black.png', link: '/product/6', top: '15%', left: '50%' }
     ]
   },
   {
@@ -50,8 +52,8 @@ const lookbookData: Look[] = [
     tag: 'WINTER VIBE',
     image: '/look3.png',
     items: [
-      { id: '10', name: 'Distressed Denim Jacket', price: 1499, imageUrl: '/product-jacket.png', link: '/product/10' },
-      { id: '7', name: 'Silver Chain Necklace', price: 399, imageUrl: '/product-acc.png', link: '/product/7' }
+      { id: '10', name: 'Distressed Denim Jacket', price: 1499, imageUrl: '/product-jacket-premium.png', link: '/product/10', top: '38%', left: '45%' },
+      { id: '7', name: 'Silver Chain Necklace', price: 399, imageUrl: '/variants/product-7-silver.png', link: '/product/7', top: '25%', left: '50%' }
     ]
   }
 ]
@@ -67,16 +69,38 @@ export default function LookbookPage() {
         <header className={styles.header}>
           <h1 className={styles.title}>STYLE EDITORIAL &apos;26</h1>
           <p className={styles.subtitle}>
-            Explore our curated streetwear combinations. Click any look to shop the exact fits.
+            Explore our curated streetwear combinations. Hover over coordinates to inspect individual garments.
           </p>
         </header>
 
         <div className={styles.grid}>
           {lookbookData.map(look => (
-            <div key={look.id} className={styles.lookCard} onClick={() => setSelectedLook(look)}>
+            <div key={look.id} className={styles.lookCard}>
               <div className={styles.imageWrapper}>
                 <img src={look.image} alt={look.title} className={styles.lookImage} />
-                <div className={styles.overlay}>
+                
+                {look.items.map(item => (
+                  <div
+                    key={item.id}
+                    className={styles.hotspot}
+                    style={{ top: item.top, left: item.left }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className={styles.pulsePin}></div>
+                    <div className={styles.hotspotTooltip}>
+                      <img src={item.imageUrl} alt={item.name} className={styles.tooltipImg} />
+                      <div className={styles.tooltipMeta}>
+                        <span className={styles.tooltipName}>{item.name}</span>
+                        <span className={styles.tooltipPrice}>₹{item.price}</span>
+                      </div>
+                      <Link href={item.link} className={styles.tooltipLink}>
+                        Inspect
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+
+                <div className={styles.overlay} onClick={() => setSelectedLook(look)}>
                   <div className={styles.cardHeader}>
                     <span className={styles.tag}>{look.tag}</span>
                     <h2 className={styles.lookTitle}>{look.title}</h2>
