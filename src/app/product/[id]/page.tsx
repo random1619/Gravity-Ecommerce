@@ -7,20 +7,18 @@ import ProductCard from '@/components/ui/ProductCard';
 import { useCart } from '@/lib/CartContext';
 import { useAuth } from '@/lib/AuthContext';
 import LoginModal from '@/components/ui/LoginModal';
-
-const mockProduct: any = {};
-const relatedProducts: any[] = [];
-
+import type { Product } from '@/lib/data';
 import { useParams } from 'next/navigation';
 
 export default function ProductDetail() {
     const params = useParams();
-    const id = params.id as string;
+    const idParam = params.id;
+    const id = Array.isArray(idParam) ? idParam[0] : idParam;
 
     const { addToCart } = useCart();
     const { isAuthenticated } = useAuth();
-    const [product, setProduct] = useState<any>(null);
-    const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
+    const [product, setProduct] = useState<Product | null>(null);
+    const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(0);
     const [selectedSize, setSelectedSize] = useState('M');
@@ -32,15 +30,19 @@ export default function ProductDetail() {
             setLoading(true);
             try {
                 // Fetch main product
+                if (!id) {
+                    setProduct(null);
+                    return;
+                }
                 const pRes = await fetch(`/api/products/${id}`);
-                const pData = await pRes.json();
+                const pData = (await pRes.json()) as Product;
                 setProduct(pData);
 
                 // Fetch related products (same category)
                 if (pData.category) {
                     const rRes = await fetch(`/api/products?category=${pData.category}`);
-                    const rData = await rRes.json();
-                    setRelatedProducts(rData.filter((p: any) => p.id !== id).slice(0, 3));
+                    const rData = (await rRes.json()) as Product[];
+                    setRelatedProducts(rData.filter((p) => p.id !== id).slice(0, 3));
                 }
             } catch (error) {
                 console.error('Failed to fetch product data:', error);
@@ -52,6 +54,7 @@ export default function ProductDetail() {
     }, [id]);
 
     const handleAddToCart = () => {
+        if (!product) return;
         // Check if user is logged in
         if (!isAuthenticated) {
             setShowLoginModal(true);
@@ -151,10 +154,10 @@ export default function ProductDetail() {
             <section className={styles.reviewsSection}>
                 <h2>What Students Say</h2>
                 <div className={styles.reviewsGrid}>
-                    {(product.reviews || []).map((review: any) => (
+                    {(product.reviews || []).map((review) => (
                         <div key={review.id} className={styles.reviewCard}>
                             <div className={styles.rating}>★★★★★</div>
-                            <p className={styles.comment}>"{review.comment}"</p>
+                            <p className={styles.comment}>&quot;{review.comment}&quot;</p>
                             <p className={styles.user}>- {review.user}</p>
                         </div>
                     ))}

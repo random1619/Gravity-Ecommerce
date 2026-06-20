@@ -5,7 +5,6 @@ import styles from './page.module.css';
 import { useAuth } from '@/lib/AuthContext';
 import { useTheme } from '@/lib/ThemeContext';
 import Link from 'next/link';
-import Button from '@/components/ui/Button';
 
 export default function SettingsPage() {
     const { user, isAuthenticated, logout } = useAuth();
@@ -14,9 +13,24 @@ export default function SettingsPage() {
     const [newsletter, setNewsletter] = useState(true);
     const [saved, setSaved] = useState(false);
 
-    const handleSave = () => {
+    const triggerSaved = () => {
         setSaved(true);
         setTimeout(() => setSaved(false), 2000);
+    };
+
+    const handleToggleTheme = () => {
+        toggleTheme();
+        triggerSaved();
+    };
+
+    const handleToggleNotifications = () => {
+        setNotifications((prev) => !prev);
+        triggerSaved();
+    };
+
+    const handleToggleNewsletter = () => {
+        setNewsletter((prev) => !prev);
+        triggerSaved();
     };
 
     if (!isAuthenticated) {
@@ -62,7 +76,7 @@ export default function SettingsPage() {
                             </div>
                             <button
                                 className={`${styles.toggle} ${theme === 'dark' ? styles.active : ''}`}
-                                onClick={toggleTheme}
+                                onClick={handleToggleTheme}
                             >
                                 <span className={styles.toggleThumb}></span>
                             </button>
@@ -81,7 +95,7 @@ export default function SettingsPage() {
                             </div>
                             <button
                                 className={`${styles.toggle} ${notifications ? styles.active : ''}`}
-                                onClick={() => setNotifications(!notifications)}
+                                onClick={handleToggleNotifications}
                             >
                                 <span className={styles.toggleThumb}></span>
                             </button>
@@ -94,7 +108,7 @@ export default function SettingsPage() {
                             </div>
                             <button
                                 className={`${styles.toggle} ${newsletter ? styles.active : ''}`}
-                                onClick={() => setNewsletter(!newsletter)}
+                                onClick={handleToggleNewsletter}
                             >
                                 <span className={styles.toggleThumb}></span>
                             </button>

@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/AuthContext';
 import Link from 'next/link';
 
 export default function OrdersPage() {
-    const { user, isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuth();
 
     // Mock orders data
     const orders = [

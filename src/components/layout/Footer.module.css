@@ -1,69 +1,104 @@
 .footer {
     background: var(--bg-secondary);
     border-top: 1px solid var(--border-color);
-    padding-top: var(--spacing-2xl);
-    margin-top: var(--spacing-2xl);
+    padding-top: var(--spacing-16);
+    margin-top: var(--spacing-16);
 }
 
 .footerContainer {
     display: grid;
     grid-template-columns: 1.5fr 2fr;
-    gap: var(--spacing-xl);
-    padding-bottom: var(--spacing-xl);
+    gap: var(--spacing-12);
+    padding-bottom: var(--spacing-12);
 }
 
 .logo {
-    font-size: 32px;
-    margin-bottom: var(--spacing-md);
+    font-size: var(--text-3xl);
+    font-family: var(--font-display);
+    font-weight: var(--font-extrabold);
+    letter-spacing: var(--tracking-tighter);
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--spacing-4);
 }
 
 .tagline {
     color: var(--text-secondary);
-    max-width: 300px;
-    line-height: 1.6;
-    margin-bottom: var(--spacing-lg);
+    font-size: var(--text-base);
+    max-width: 320px;
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--spacing-6);
 }
 
 .socials {
     display: flex;
-    gap: var(--spacing-md);
-    font-size: 14px;
-    font-weight: 600;
+    gap: var(--spacing-4);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+}
+
+.socials a {
+    padding: var(--spacing-2);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+}
+
+.socials a:hover {
+    background: var(--accent-primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .linksGrid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-lg);
+    gap: var(--spacing-8);
 }
 
 .linkGroup h3 {
-    font-size: 16px;
-    margin-bottom: var(--spacing-md);
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--spacing-4);
     color: var(--text-primary);
 }
 
 .linkGroup a {
     display: block;
-    font-size: 14px;
+    font-size: var(--text-sm);
     color: var(--text-secondary);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-3);
+    transition: all var(--transition-fast);
+    padding-left: 0;
 }
 
 .linkGroup a:hover {
-    color: var(--accent-secondary);
+    color: var(--accent-primary);
+    padding-left: var(--spacing-1);
 }
 
 .bottomBar {
     border-top: 1px solid var(--border-color);
-    padding: var(--spacing-lg) 0;
+    padding: var(--spacing-6) 0;
     text-align: center;
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--text-tertiary);
 }
 
 @media (max-width: 768px) {
     .footerContainer {
         grid-template-columns: 1fr;
+        gap: var(--spacing-8);
+    }
+
+    .linksGrid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-6);
+    }
+
+    .logo {
+        font-size: var(--text-2xl);
     }
 }

@@ -1,11 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getProductById } from '@/lib/data';
+import { isValidProductId } from '@/lib/security';
 
 export async function GET(
-    request: Request,
+    _request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
+
+    if (!isValidProductId(id)) {
+        return NextResponse.json({ error: 'Invalid product ID' }, { status: 400 });
+    }
     const product = getProductById(id);
 
     if (!product) {

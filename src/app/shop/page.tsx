@@ -5,15 +5,16 @@ import styles from './page.module.css';
 import ProductCard from '@/components/ui/ProductCard';
 import QuickView from '@/components/ui/QuickView';
 import LoginModal from '@/components/ui/LoginModal';
+import type { Product } from '@/lib/data';
 
 const categories = ['All', 'T-Shirts', 'Bottoms', 'Hoodies', 'Accessories', 'Outerwear'];
 
 export default function Shop() {
-    const [allProducts, setAllProducts] = useState<any[]>([]);
+    const [allProducts, setAllProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState('All');
     const [priceRange, setPriceRange] = useState(2000);
-    const [quickViewProduct, setQuickViewProduct] = useState<any>(null);
+    const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
     const [showLoginModal, setShowLoginModal] = useState(false);
 
     React.useEffect(() => {
@@ -21,7 +22,7 @@ export default function Shop() {
             setLoading(true);
             try {
                 const response = await fetch(`/api/products?category=${activeCategory === 'All' ? '' : activeCategory}&maxPrice=${priceRange}`);
-                const data = await response.json();
+                const data = (await response.json()) as Product[];
                 setAllProducts(data);
             } catch (error) {
                 console.error('Failed to fetch products:', error);

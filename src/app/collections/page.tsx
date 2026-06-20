@@ -3,16 +3,17 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
+import type { Collection } from '@/lib/data';
 
 export default function CollectionsPage() {
-    const [collections, setCollections] = useState<any[]>([]);
+    const [collections, setCollections] = useState<Collection[]>([]);
     const [loading, setLoading] = useState(true);
 
     React.useEffect(() => {
         const fetchCollections = async () => {
             try {
                 const res = await fetch('/api/collections');
-                const data = await res.json();
+                const data = (await res.json()) as Collection[];
                 setCollections(data);
             } catch (err) {
                 console.error(err);
@@ -33,8 +34,12 @@ export default function CollectionsPage() {
             </header>
 
             <div className={styles.grid}>
-                {collections.map((col: any) => (
-                    <Link key={col.id} href={`/shop?category=${col.id}`} className={styles.card}>
+                {collections.map((col) => (
+                    <Link
+                        key={col.id}
+                        href={`/shop?category=${col.category ?? col.id}`}
+                        className={styles.card}
+                    >
                         <div className={styles.imageOverlay}></div>
                         <img src={col.imageUrl} alt={col.title} className={styles.image} />
                         <div className={styles.content}>
@@ -49,8 +54,8 @@ export default function CollectionsPage() {
 
             <section className={styles.featuredSection}>
                 <div className={styles.featuredBanner}>
-                    <h2>WINTER '24 LIMITED DROP</h2>
-                    <p>Exclusive heavyweight hoodies and sweatshirts. Once it's gone, it's gone.</p>
+                    <h2>WINTER &apos;24 LIMITED DROP</h2>
+                    <p>Exclusive heavyweight hoodies and sweatshirts. Once it&apos;s gone, it&apos;s gone.</p>
                     <Link href="/shop" className={styles.bannerBtn}>Shop Limited Drop</Link>
                 </div>
             </section>

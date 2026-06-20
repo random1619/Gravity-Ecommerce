@@ -24,6 +24,7 @@ export default function WishlistPage() {
         // Load wishlist from localStorage
         const saved = localStorage.getItem('gravity-wishlist');
         if (saved) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setWishlistItems(JSON.parse(saved));
         } else {
             // Add some demo items if empty

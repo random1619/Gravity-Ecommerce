@@ -3,19 +3,30 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-md);
-    font-weight: 600;
-    transition: var(--transition-fast);
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-semibold);
+    transition: all var(--transition-base);
     cursor: pointer;
     white-space: nowrap;
-    gap: var(--spacing-sm);
-    font-family: inherit;
+    gap: var(--spacing-2);
+    font-family: var(--font-body);
     overflow: hidden;
+    letter-spacing: var(--tracking-wide);
+    will-change: transform, box-shadow;
+}
+
+.button:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.button:active:not(:disabled) {
+    transform: translateY(0);
 }
 
 .button:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
+    transform: none !important;
 }
 
 /* Ripple Effect */
@@ -35,80 +46,127 @@
         transform: translate(-50%, -50%) scale(0);
         opacity: 1;
     }
-
     to {
         transform: translate(-50%, -50%) scale(20);
         opacity: 0;
     }
 }
 
-/* Variants */
+/* === PRIMARY VARIANT (Electric Blue) === */
 .primary {
     background: var(--accent-primary);
-    color: var(--bg-primary);
+    color: #ffffff;
+    box-shadow: var(--shadow-md);
+    border: none;
 }
 
 .primary:hover:not(:disabled) {
-    opacity: 0.9;
-    transform: translateY(-1px);
+    background: var(--accent-primary-hover);
+    box-shadow: var(--shadow-lg);
 }
 
+.primary:focus-visible {
+    box-shadow: var(--shadow-focus);
+    outline: none;
+}
+
+/* === SECONDARY VARIANT (Hot Pink Gradient) === */
 .secondary {
-    background: var(--accent-secondary);
-    color: white;
+    background: var(--gradient-cta);
+    color: #ffffff;
+    box-shadow: var(--shadow-md);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.secondary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #ff4081 0%, #ff80ab 100%);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.secondary:hover:not(:disabled)::before {
+    opacity: 1;
 }
 
 .secondary:hover:not(:disabled) {
-    opacity: 0.9;
-    transform: translateY(-1px);
+    box-shadow: var(--shadow-xl);
 }
 
+.secondary:focus-visible {
+    box-shadow: var(--shadow-focus);
+    outline: none;
+}
+
+/* === OUTLINE VARIANT === */
 .outline {
     background: transparent;
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--border-strong);
     color: var(--text-primary);
 }
 
 .outline:hover:not(:disabled) {
     background: var(--bg-secondary);
-    border-color: var(--text-primary);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
 }
 
+/* === GHOST VARIANT === */
 .ghost {
     background: transparent;
     color: var(--text-primary);
+    border: none;
 }
 
 .ghost:hover:not(:disabled) {
     background: var(--bg-secondary);
+    color: var(--accent-primary);
 }
 
+/* === DANGER VARIANT === */
 .danger {
-    background: #dc3545;
+    background: var(--error-border);
     color: white;
+    box-shadow: var(--shadow-md);
+    border: none;
 }
 
-/* Sizes */
+.danger:hover:not(:disabled) {
+    filter: brightness(1.1);
+    box-shadow: var(--shadow-lg);
+}
+
+/* === SIZE VARIANTS === */
 .sm {
-    padding: 8px 16px;
-    font-size: 14px;
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: var(--text-sm);
+    height: 36px;
 }
 
 .md {
-    padding: 12px 24px;
-    font-size: 16px;
+    padding: var(--spacing-3) var(--spacing-6);
+    font-size: var(--text-base);
+    height: 44px;
 }
 
 .lg {
-    padding: 16px 32px;
-    font-size: 18px;
+    padding: var(--spacing-4) var(--spacing-8);
+    font-size: var(--text-lg);
+    height: 52px;
+    font-weight: var(--font-bold);
 }
 
 .full {
     width: 100%;
-    padding: 14px;
+    padding: var(--spacing-4);
+    height: 52px;
 }
 
+/* === LOADING SPINNER === */
 .loader {
     width: 18px;
     height: 18px;
@@ -123,7 +181,6 @@
     0% {
         transform: rotate(0deg);
     }
-
     100% {
         transform: rotate(360deg);
     }

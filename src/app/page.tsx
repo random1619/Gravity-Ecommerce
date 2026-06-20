@@ -7,11 +7,11 @@ import HeroSlider from '@/components/ui/HeroSlider';
 import ProductCard from '@/components/ui/ProductCard';
 import ProductSkeleton from '@/components/ui/ProductSkeleton';
 import Button from '@/components/ui/Button';
-
+import type { Product } from '@/lib/data';
 
 export default function Home() {
-  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
-  const [budgetDrops, setBudgetDrops] = useState<any[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [budgetDrops, setBudgetDrops] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,8 +24,8 @@ export default function Home() {
           fetch('/api/products?maxPrice=999'), // Budget
         ]);
 
-        const data1 = await res1.json();
-        const data2 = await res2.json();
+        const data1 = (await res1.json()) as Product[];
+        const data2 = (await res2.json()) as Product[];
 
         setFeaturedProducts(data1.slice(0, 4));
         setBudgetDrops(data2.slice(0, 4));
@@ -49,7 +49,7 @@ export default function Home() {
               <h2 className={styles.sectionTitle}>NEWEST DROPS</h2>
               <p className={styles.sectionSubtitle}>The freshest styles for the semester.</p>
             </div>
-            <Link href="/shop" className={styles.viewAll}>View All →</Link>
+            <Link href="/shop" className={styles.viewAll}>View All -&gt;</Link>
           </div>
           <div className={styles.productGrid}>
             {loading ? (
@@ -71,7 +71,9 @@ export default function Home() {
           <div className={styles.bannerContent}>
             <h2>VERIFIED STUDENT?</h2>
             <p>Get an extra 20% OFF on all orders. Link your ID in 30 seconds.</p>
-            <Button variant="secondary" size="lg">Verify Now</Button>
+            <Link href="/discount">
+              <Button variant="secondary" size="lg">Verify Now</Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -80,10 +82,12 @@ export default function Home() {
         <div className="container">
           <div className={styles.sectionHeader}>
             <div>
-              <h2 className={styles.sectionTitle}>UNDER ₹999</h2>
+              <h2 className={styles.sectionTitle}>UNDER RS. 999</h2>
               <p className={styles.sectionSubtitle}>Drip on a budget. No compromises.</p>
             </div>
-            <Button variant="outline" size="sm">Explore Deals</Button>
+            <Link href="/shop?maxPrice=999">
+              <Button variant="outline" size="sm">Explore Deals</Button>
+            </Link>
           </div>
           <div className={styles.productGrid}>
             {loading ? (
@@ -108,7 +112,7 @@ export default function Home() {
             {[1, 2, 3, 4].map(i => (
               <div key={i} className={styles.reelPlaceholder}>
                 <img src={`/reel-${i}.png`} alt={`Gravity Reel ${i}`} className={styles.reelImage} />
-                <div className={styles.reelOverlay}>▶ Play</div>
+                <div className={styles.reelOverlay}>Play</div>
               </div>
             ))}
           </div>

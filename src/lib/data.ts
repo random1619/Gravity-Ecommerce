@@ -15,6 +15,15 @@ export interface Product {
     reviews: { id: number; user: string; rating: number; comment: string }[];
 }
 
+export interface Collection {
+    id: string;
+    title: string;
+    subtitle: string;
+    itemCount: number;
+    imageUrl: string;
+    category?: string;
+}
+
 export const products: Product[] = [
     {
         id: '1',
@@ -77,7 +86,7 @@ export const products: Product[] = [
         description: 'Vibrant cobalt blue joggers for a standout street look. Elasticated cuffs and premium drawstring detail.',
         fabric: 'Premium Loopback Cotton',
         fit: 'Slim Fit Jogger',
-        care: 'Machine wash 30°C.',
+        care: 'Machine wash 30C.',
         sizes: ['S', 'M', 'L'],
         reviews: []
     },
@@ -155,34 +164,38 @@ export const getProductById = (id: string) => {
     return products.find(p => p.id === id);
 };
 
-export const collections = [
+export const collections: Collection[] = [
     {
         id: 'oversized',
         title: 'THE OVERSIZED DROP',
         subtitle: 'Maximum comfort. Maximum drip.',
         itemCount: 12,
-        imageUrl: '/product-tee.png'
+        imageUrl: '/product-tee.png',
+        category: 'T-Shirts',
     },
     {
         id: 'cargos',
         title: 'URBAN CARGOS',
         subtitle: 'Function meets street style.',
         itemCount: 8,
-        imageUrl: '/product-cargos.png'
+        imageUrl: '/product-cargos.png',
+        category: 'Bottoms',
     },
     {
         id: 'anime',
         title: 'ANIME & MANGA',
         subtitle: 'Wear your fandom.',
         itemCount: 15,
-        imageUrl: '/product-hoodie.png'
+        imageUrl: '/product-hoodie.png',
+        category: 'Hoodies',
     },
     {
         id: 'accessories',
         title: 'STREET ACCS',
         subtitle: 'Complete the look.',
         itemCount: 20,
-        imageUrl: '/product-acc.png'
+        imageUrl: '/product-acc.png',
+        category: 'Accessories',
     }
 ];
 

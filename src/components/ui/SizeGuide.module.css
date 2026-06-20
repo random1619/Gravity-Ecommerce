@@ -1,0 +1,170 @@
+.sizeGuide {
+    padding: var(--spacing-8);
+}
+
+.sizeGuide h2 {
+    font-size: var(--text-3xl);
+    font-family: var(--font-display);
+    font-weight: var(--font-extrabold);
+    margin-bottom: var(--spacing-2);
+    color: var(--text-primary);
+}
+
+.subtitle {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-8);
+}
+
+.categories {
+    display: flex;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-8);
+    flex-wrap: wrap;
+}
+
+.categoryBtn {
+    padding: var(--spacing-3) var(--spacing-6);
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.categoryBtn:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+.categoryBtn.active {
+    background: var(--gradient-cta);
+    color: white;
+    border-color: transparent;
+}
+
+.tableWrapper {
+    overflow-x: auto;
+    margin-bottom: var(--spacing-8);
+}
+
+.sizeTable {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.sizeTable thead {
+    background: var(--gradient-hero);
+    color: white;
+}
+
+.sizeTable th {
+    padding: var(--spacing-4);
+    text-align: left;
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}
+
+.sizeTable td {
+    padding: var(--spacing-4);
+    border-top: 1px solid var(--border-color);
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+}
+
+.sizeCell {
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+}
+
+.sizeTable tr:hover {
+    background: var(--bg-primary);
+}
+
+.tips {
+    background: var(--bg-secondary);
+    padding: var(--spacing-6);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--spacing-6);
+}
+
+.tips h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--spacing-4);
+    color: var(--text-primary);
+}
+
+.tipsList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.tip {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+}
+
+.tip strong {
+    color: var(--accent-primary);
+    font-weight: var(--font-bold);
+}
+
+.help {
+    text-align: center;
+    padding: var(--spacing-4);
+}
+
+.help p {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-2);
+}
+
+.contactLink {
+    color: var(--accent-primary);
+    font-weight: var(--font-semibold);
+    text-decoration: underline;
+    transition: color var(--transition-fast);
+}
+
+.contactLink:hover {
+    color: var(--accent-primary-hover);
+}
+
+@media (max-width: 640px) {
+    .sizeGuide {
+        padding: var(--spacing-6);
+    }
+
+    .sizeGuide h2 {
+        font-size: var(--text-2xl);
+    }
+
+    .categories {
+        flex-direction: column;
+    }
+
+    .categoryBtn {
+        width: 100%;
+    }
+
+    .sizeTable {
+        font-size: var(--text-sm);
+    }
+
+    .sizeTable th,
+    .sizeTable td {
+        padding: var(--spacing-2) var(--spacing-3);
+    }
+}

@@ -6,7 +6,7 @@ import Button from '@/components/ui/Button';
 
 export default function StudentDiscount() {
     const [step, setStep] = useState(1);
-    const [formData, setFormData] = useState({ name: '', college: '', dob: '', idNumber: '' });
+    const [formData, setFormData] = useState({ name: '', email: '', college: '', studentId: '' });
     const [isVerifying, setIsVerifying] = useState(false);
 
     const handleNext = async (e: React.FormEvent) => {
@@ -61,6 +61,16 @@ export default function StudentDiscount() {
                                 />
                             </div>
                             <div className={styles.inputGroup}>
+                                <label>Email Address</label>
+                                <input
+                                    type="email"
+                                    placeholder="you@college.edu"
+                                    required
+                                    value={formData.email}
+                                    onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                />
+                            </div>
+                            <div className={styles.inputGroup}>
                                 <label>College / University</label>
                                 <input
                                     type="text"
@@ -76,6 +86,16 @@ export default function StudentDiscount() {
 
                     {step === 2 && (
                         <div className={styles.uploadSection}>
+                            <div className={styles.inputGroup}>
+                                <label>Student ID Number</label>
+                                <input
+                                    type="text"
+                                    placeholder="STU123456"
+                                    required
+                                    value={formData.studentId}
+                                    onChange={e => setFormData({ ...formData, studentId: e.target.value })}
+                                />
+                            </div>
                             <div className={styles.uploadBox}>
                                 <span className={styles.uploadIcon}>🪪</span>
                                 <p>Drag & drop your Student ID card or click to browse</p>
@@ -96,7 +116,7 @@ export default function StudentDiscount() {
                     {step === 3 && (
                         <div className={styles.successState}>
                             <div className={styles.successIcon}>✅</div>
-                            <h2>YOU'RE VERIFIED!</h2>
+                            <h2>YOU&apos;RE VERIFIED!</h2>
                             <p>Your exclusive student discount has been applied to your account. Enjoy 20% OFF on everything.</p>
                             <div className={styles.promoBox}>
                                 <span>PROMO CODE:</span>
@@ -117,7 +137,7 @@ export default function StudentDiscount() {
                     </div>
                     <div className={styles.faqItem}>
                         <h4>Is my data safe?</h4>
-                        <p>Yes, we use secure hashing to verify your identity and don't store raw ID images.</p>
+                        <p>Yes, we use secure hashing to verify your identity and don&apos;t store raw ID images.</p>
                     </div>
                 </section>
             </div>

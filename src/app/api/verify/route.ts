@@ -25,6 +25,8 @@ export async function POST(request: Request) {
         const sanitizedStudentId = sanitizeString(data.studentId, 50);
         const sanitizedName = data.name ? sanitizeString(data.name, 100) : undefined;
 
+        const referenceId = `${sanitizedStudentId.slice(-4)}-${sanitizedEmail.split('@')[0]}`;
+
         // Simulated verification logic
         // In production, never log sensitive user data
         // console.log('Verifying student');
@@ -37,7 +39,9 @@ export async function POST(request: Request) {
         return NextResponse.json({
             success: true,
             message: 'Student status verified!',
-            promoCode: 'STUDENT20'
+            promoCode: 'STUDENT20',
+            referenceId,
+            name: sanitizedName ?? undefined,
         });
     } catch (error) {
         console.error('Verify API error:', error);

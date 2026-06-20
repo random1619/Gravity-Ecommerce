@@ -1,0 +1,209 @@
+.contactPage {
+    padding: var(--spacing-4);
+    min-height: 100vh;
+}
+
+.hero {
+    text-align: center;
+    padding: var(--spacing-12) var(--spacing-4);
+    margin-bottom: var(--spacing-12);
+}
+
+.hero h1 {
+    font-size: var(--text-4xl);
+    font-family: var(--font-display);
+    font-weight: var(--font-extrabold);
+    margin-bottom: var(--spacing-3);
+}
+
+.hero p {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: var(--spacing-12);
+    align-items: start;
+}
+
+.formSection {
+    background: var(--bg-primary);
+    padding: var(--spacing-8);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.formGroup label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}
+
+.input,
+.select,
+.textarea {
+    padding: var(--spacing-4);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: var(--text-base);
+    font-family: inherit;
+    transition: all var(--transition-base);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: var(--shadow-focus);
+    background: var(--bg-primary);
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+.submitBtn {
+    padding: var(--spacing-4) var(--spacing-6);
+    height: 52px;
+    background: var(--gradient-cta);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.submitBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+}
+
+.submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.successMessage {
+    padding: var(--spacing-4);
+    background: rgba(0, 200, 83, 0.1);
+    border: 2px solid var(--accent-success);
+    border-radius: var(--radius-lg);
+    color: var(--accent-success);
+    font-weight: var(--font-semibold);
+    text-align: center;
+}
+
+.infoSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.infoCard {
+    background: var(--bg-primary);
+    padding: var(--spacing-6);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+}
+
+.infoCard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent-primary);
+}
+
+.iconWrapper {
+    width: 48px;
+    height: 48px;
+    background: var(--gradient-hero);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-bottom: var(--spacing-3);
+}
+
+.infoCard h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--spacing-2);
+    color: var(--text-primary);
+}
+
+.infoCard p {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-1);
+}
+
+.subtitle {
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+}
+
+.link {
+    color: var(--accent-primary);
+    text-decoration: none;
+    font-weight: var(--font-semibold);
+    transition: color var(--transition-fast);
+}
+
+.link:hover {
+    color: var(--accent-primary-hover);
+}
+
+@media (max-width: 1024px) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .hero h1 {
+        font-size: var(--text-3xl);
+    }
+
+    .hero p {
+        font-size: var(--text-base);
+    }
+
+    .formSection {
+        padding: var(--spacing-6);
+    }
+
+    .infoSection {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-4);
+    }
+}

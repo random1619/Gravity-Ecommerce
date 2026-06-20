@@ -4,50 +4,56 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './HeroSlider.module.css';
+import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+
 
 const slides = [
     {
         id: 1,
         image: '/slider/slide1.png',
         title: 'NEW ARRIVALS',
-        subtitle: 'Fresh Styles for Campus',
+        subtitle: 'Fresh styles for campus life.',
         cta: 'Shop Now',
         link: '/shop?category=new',
+        tag: 'Just Dropped',
     },
     {
         id: 2,
         image: '/slider/slide2.png',
-        title: 'UNDER ₹999',
-        subtitle: 'Drip on a Budget',
+        title: 'UNDER RS. 999',
+        subtitle: 'Budget fits with premium energy.',
         cta: 'Explore Deals',
         link: '/shop?maxPrice=999',
+        tag: 'Best Value',
     },
     {
         id: 3,
         image: '/slider/slide3.png',
         title: 'STUDENT DISCOUNT',
-        subtitle: '20% OFF Everything',
+        subtitle: 'Extra 20% off every drop.',
         cta: 'Verify Now',
         link: '/discount',
+        tag: 'Exclusive',
     },
     {
         id: 4,
         image: '/slider/slide4.png',
         title: 'TRENDING NOW',
-        subtitle: 'Street Style Essentials',
+        subtitle: 'Street style essentials for the week.',
         cta: 'View Collection',
         link: '/shop?category=trending',
+        tag: 'Trending',
     },
     {
         id: 5,
         image: '/slider/slide5.png',
         title: 'THE OVERSIZED DROP',
-        subtitle: 'Comfort Meets Style',
+        subtitle: 'Comfort meets statement silhouettes.',
         cta: 'Shop Oversized',
         link: '/collections',
+        tag: 'Oversized',
     },
 ];
-
 
 const HeroSlider: React.FC = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -65,6 +71,19 @@ const HeroSlider: React.FC = () => {
         setCurrentSlide(index);
     };
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'ArrowRight') {
+            nextSlide();
+        }
+        if (event.key === 'ArrowLeft') {
+            prevSlide();
+        }
+        if (event.key === ' ') {
+            event.preventDefault();
+            setIsPaused((prev) => !prev);
+        }
+    };
+
     // Auto-play
     useEffect(() => {
         if (!isPaused) {
@@ -78,13 +97,20 @@ const HeroSlider: React.FC = () => {
             className={styles.sliderContainer}
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
+            onFocusCapture={() => setIsPaused(true)}
+            onBlurCapture={() => setIsPaused(false)}
+            onKeyDown={handleKeyDown}
+            role="region"
+            aria-roledescription="carousel"
+            aria-label="Featured promotions"
+            tabIndex={0}
         >
             <div className={styles.slider}>
                 {slides.map((slide, index) => (
                     <div
                         key={slide.id}
-                        className={`${styles.slide} ${index === currentSlide ? styles.active : ''
-                            }`}
+                        className={`${styles.slide} ${index === currentSlide ? styles.active : ''}`}
+                        aria-hidden={index !== currentSlide}
                     >
                         <Image
                             src={slide.image}
@@ -93,6 +119,23 @@ const HeroSlider: React.FC = () => {
                             priority={index === 0}
                             className={styles.slideImage}
                         />
+                        <div className={styles.overlay} />
+                        <div className={styles.content}>
+                            <div className={styles.contentInner}>
+                                <span className={styles.kicker}>{slide.tag}</span>
+                                <h2 className={styles.title}>{slide.title}</h2>
+                                <p className={styles.subtitle}>{slide.subtitle}</p>
+                                <div className={styles.ctaRow}>
+                                    <Link className={styles.ctaLink} href={slide.link}>
+                                        {slide.cta}
+                                        <ArrowRight size={16} className={styles.ctaIcon} />
+                                    </Link>
+                                    <Link className={styles.ctaSecondary} href="/shop">
+                                        Browse All
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 ))}
             </div>
@@ -103,27 +146,42 @@ const HeroSlider: React.FC = () => {
                 onClick={prevSlide}
                 aria-label="Previous slide"
             >
-                ‹
+                <ChevronLeft size={24} />
             </button>
             <button
                 className={`${styles.nav} ${styles.navNext}`}
                 onClick={nextSlide}
                 aria-label="Next slide"
             >
-                ›
+                <ChevronRight size={24} />
             </button>
+
 
             {/* Indicator Dots */}
             <div className={styles.indicators}>
                 {slides.map((_, index) => (
                     <button
                         key={index}
-                        className={`${styles.dot} ${index === currentSlide ? styles.dotActive : ''
-                            }`}
+                        className={`${styles.dot} ${index === currentSlide ? styles.dotActive : ''}`}
                         onClick={() => goToSlide(index)}
                         aria-label={`Go to slide ${index + 1}`}
+                        aria-current={index === currentSlide}
                     />
                 ))}
+            </div>
+
+            <div className={styles.progressWrap} aria-hidden>
+                <div
+                    key={currentSlide}
+                    className={styles.progressBar}
+                    style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
+                />
+            </div>
+
+            <div className={styles.slideCounter} aria-hidden>
+                <span>{String(currentSlide + 1).padStart(2, '0')}</span>
+                <span className={styles.counterDivider}></span>
+                <span>{String(slides.length).padStart(2, '0')}</span>
             </div>
         </div>
     );

@@ -75,7 +75,7 @@ export default function Cart() {
                         <div className={styles.offerIcon}>🎓</div>
                         <div>
                             <h4>Student Discount Applied</h4>
-                            <p>You've saved extra ₹{studentDiscount} using your verified status.</p>
+                            <p>You&apos;ve saved extra ₹{studentDiscount} using your verified status.</p>
                         </div>
                     </div>
                 </main>
@@ -99,9 +99,11 @@ export default function Cart() {
                         <span>₹{total}</span>
                     </div>
 
-                    <Button variant="primary" size="full" className={styles.checkoutBtn}>
-                        CHECKOUT NOW
-                    </Button>
+                    <Link href="/checkout">
+                        <Button variant="primary" size="full" className={styles.checkoutBtn}>
+                            CHECKOUT NOW
+                        </Button>
+                    </Link>
 
                     <div className={styles.paymentMethods}>
                         <p>WE ACCEPT</p>

@@ -8,7 +8,7 @@ import { useTheme } from '@/lib/ThemeContext';
 import { useCart } from '@/lib/CartContext';
 import { useAuth } from '@/lib/AuthContext';
 import LoginModal from '../ui/LoginModal';
-
+import { Sun, Moon, ShoppingCart, User, ChevronDown, Package, Heart, Settings, LogOut } from 'lucide-react';
 
 const Navbar = () => {
     const { theme, toggleTheme } = useTheme();
@@ -26,7 +26,7 @@ const Navbar = () => {
             try {
                 const res = await fetch('/api/products');
                 const products = await res.json();
-                const uniqueCategories = Array.from(new Set(products.map((p: any) => p.category))) as string[];
+                const uniqueCategories = Array.from(new Set(products.map((p: Product) => p.category))) as string[];
                 setTrends([...uniqueCategories, 'Oversized', 'Streetwear', 'New Drops']);
             } catch (err) {
                 console.error('Failed to fetch trends', err);
@@ -103,13 +103,13 @@ const Navbar = () => {
                     </div>
 
                     <button className={styles.themeToggle} onClick={toggleTheme} aria-label="Toggle Theme">
-                        {theme === 'light' ? '🌙' : '☀️'}
+                        {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
                     </button>
 
                     <button className={styles.iconBtn} aria-label="Cart">
                         <Link href="/cart">
                             <div className={styles.cartIcon}>
-                                🛒
+                                <ShoppingCart size={20} />
                                 <span className={styles.badge}>{cartCount}</span>
                             </div>
                         </Link>
@@ -121,14 +121,16 @@ const Navbar = () => {
                                 className={styles.userBtn}
                                 onClick={() => setShowUserDropdown(!showUserDropdown)}
                             >
-                                <span className={styles.avatar}>👤</span>
+                                <User size={16} className={styles.avatar} />
                                 <span>Hi, {user?.name}</span>
-                                <span className={styles.dropdownArrow}>▼</span>
+                                <ChevronDown size={14} className={styles.dropdownArrow} />
                             </button>
                             {showUserDropdown && (
                                 <div className={styles.userDropdown}>
                                     <div className={styles.dropdownHeader}>
-                                        <div className={styles.dropdownAvatar}>👤</div>
+                                        <div className={styles.dropdownAvatar}>
+                                            <User size={20} />
+                                        </div>
                                         <div>
                                             <p className={styles.dropdownName}>{user?.name}</p>
                                             <p className={styles.dropdownEmail}>{user?.email}</p>
@@ -136,20 +138,20 @@ const Navbar = () => {
                                     </div>
                                     <div className={styles.dropdownDivider}></div>
                                     <Link href="/orders" className={styles.dropdownItem} onClick={() => setShowUserDropdown(false)}>
-                                        📦 My Orders
+                                        <Package size={16} /> My Orders
                                     </Link>
                                     <Link href="/wishlist" className={styles.dropdownItem} onClick={() => setShowUserDropdown(false)}>
-                                        ❤️ Wishlist
+                                        <Heart size={16} /> Wishlist
                                     </Link>
                                     <Link href="/settings" className={styles.dropdownItem} onClick={() => setShowUserDropdown(false)}>
-                                        ⚙️ Settings
+                                        <Settings size={16} /> Settings
                                     </Link>
                                     <div className={styles.dropdownDivider}></div>
                                     <button
                                         className={styles.logoutBtn}
                                         onClick={() => { logout(); setShowUserDropdown(false); }}
                                     >
-                                        🚪 Logout
+                                        <LogOut size={16} /> Logout
                                     </button>
                                 </div>
                             )}

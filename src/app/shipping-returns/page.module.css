@@ -1,0 +1,322 @@
+.policyPage {
+    padding: var(--spacing-4);
+    min-height: 100vh;
+}
+
+.hero {
+    text-align: center;
+    padding: var(--spacing-12) var(--spacing-4);
+    margin-bottom: var(--spacing-12);
+}
+
+.hero h1 {
+    font-size: var(--text-4xl);
+    font-family: var(--font-display);
+    font-weight: var(--font-extrabold);
+    margin-bottom: var(--spacing-3);
+}
+
+.hero p {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section {
+    margin-bottom: var(--spacing-16);
+}
+
+.section h2 {
+    font-size: var(--text-2xl);
+    font-family: var(--font-display);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--spacing-6);
+    color: var(--text-primary);
+}
+
+.section p {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--spacing-4);
+}
+
+.shippingOptions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-6);
+    margin-top: var(--spacing-8);
+}
+
+.optionCard {
+    background: var(--bg-primary);
+    padding: var(--spacing-6);
+    border-radius: var(--radius-2xl);
+    border: 2px solid var(--border-color);
+    transition: all var(--transition-base);
+}
+
+.optionCard:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent-primary);
+}
+
+.optionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-3);
+}
+
+.optionCard h3 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+}
+
+.price {
+    font-size: var(--text-xl);
+    font-weight: var(--font-extrabold);
+    font-family: var(--font-display);
+    color: var(--accent-primary);
+}
+
+.optionCard > p {
+    font-size: var(--text-base);
+    color: var(--text-tertiary);
+    margin-bottom: var(--spacing-4);
+}
+
+.optionCard ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.optionCard ul li {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    padding: var(--spacing-2) 0;
+    padding-left: var(--spacing-6);
+    position: relative;
+}
+
+.optionCard ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--accent-success);
+    font-weight: var(--font-bold);
+}
+
+.infoBox {
+    background: rgba(0, 102, 255, 0.1);
+    border-left: 4px solid var(--accent-primary);
+    padding: var(--spacing-4);
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-6);
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+}
+
+.infoBox strong {
+    color: var(--accent-primary);
+    font-weight: var(--font-bold);
+}
+
+.returnSteps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-6);
+    margin-top: var(--spacing-8);
+}
+
+.step {
+    display: flex;
+    gap: var(--spacing-4);
+}
+
+.stepNumber {
+    width: 48px;
+    height: 48px;
+    background: var(--gradient-hero);
+    color: white;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xl);
+    font-weight: var(--font-extrabold);
+    font-family: var(--font-display);
+    flex-shrink: 0;
+}
+
+.stepContent h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--spacing-2);
+    color: var(--text-primary);
+}
+
+.stepContent p {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+}
+
+.requirements {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    margin-top: var(--spacing-8);
+}
+
+.requirement {
+    display: flex;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-color);
+}
+
+.icon {
+    width: 32px;
+    height: 32px;
+    background: var(--accent-success);
+    color: white;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-bold);
+    flex-shrink: 0;
+}
+
+.requirement h4 {
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--spacing-1);
+    color: var(--text-primary);
+}
+
+.requirement p {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.list {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--spacing-6);
+}
+
+.list li {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    padding: var(--spacing-3) 0;
+    padding-left: var(--spacing-8);
+    position: relative;
+    line-height: var(--leading-relaxed);
+}
+
+.list li::before {
+    content: '•';
+    position: absolute;
+    left: var(--spacing-3);
+    color: var(--accent-primary);
+    font-size: var(--text-2xl);
+    line-height: 1;
+}
+
+.ctaSection {
+    text-align: center;
+    padding: var(--spacing-12);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-2xl);
+    margin-top: var(--spacing-16);
+}
+
+.ctaSection h2 {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--spacing-3);
+}
+
+.ctaSection p {
+    font-size: var(--text-lg);
+    margin-bottom: var(--spacing-8);
+}
+
+.ctaButtons {
+    display: flex;
+    gap: var(--spacing-4);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.primaryBtn,
+.secondaryBtn {
+    padding: var(--spacing-4) var(--spacing-8);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    text-decoration: none;
+    transition: all var(--transition-base);
+}
+
+.primaryBtn {
+    background: var(--gradient-cta);
+    color: white;
+}
+
+.primaryBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+}
+
+.secondaryBtn {
+    background: white;
+    color: var(--accent-primary);
+    border: 2px solid var(--accent-primary);
+}
+
+.secondaryBtn:hover {
+    background: var(--accent-primary);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: var(--text-3xl);
+    }
+
+    .hero p {
+        font-size: var(--text-base);
+    }
+
+    .shippingOptions {
+        grid-template-columns: 1fr;
+    }
+
+    .returnSteps {
+        grid-template-columns: 1fr;
+    }
+
+    .ctaButtons {
+        flex-direction: column;
+    }
+
+    .primaryBtn,
+    .secondaryBtn {
+        width: 100%;
+    }
+}

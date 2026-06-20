@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import styles from './QuickView.module.css';
 import Modal from './Modal';
 import Button from './Button';
@@ -12,6 +13,7 @@ interface QuickViewProps {
     onClose: () => void;
     onLoginRequired?: () => void;
     product: {
+        id: string;
         name: string;
         price: number;
         originalPrice?: number;
@@ -48,7 +50,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, onLoginRequired,
         }
 
         addToCart({
-            id: product.name,
+            id: product.id,
             name: product.name,
             price: product.price,
             imageUrl: product.imageUrl,
@@ -99,7 +101,9 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, onLoginRequired,
                     <Button variant="primary" size="full" onClick={handleAddToCart}>
                         {showSuccess ? '✓ Added!' : 'Add to Bag'}
                     </Button>
-                    <a href="/shop" className={styles.detailsLink}>View Full Details</a>
+                    <Link href={`/product/${product.id}`} className={styles.detailsLink}>
+                        View Full Details
+                    </Link>
                 </div>
             </div>
         </Modal>

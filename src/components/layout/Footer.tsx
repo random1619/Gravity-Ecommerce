@@ -19,23 +19,23 @@ const Footer = () => {
                     <div className={styles.linkGroup}>
                         <h3>Shop</h3>
                         <Link href="/shop">All Products</Link>
-                        <Link href="/collections">New Arrivals</Link>
-                        <Link href="/collections">Featured Drops</Link>
+                        <Link href="/collections">Collections</Link>
+                        <Link href="/shop">New Arrivals</Link>
                         <Link href="/discount">Student Discount</Link>
                     </div>
                     <div className={styles.linkGroup}>
                         <h3>Help</h3>
-                        <Link href="#">Support</Link>
-                        <Link href="#">Order Status</Link>
-                        <Link href="#">Shipping & Returns</Link>
-                        <Link href="#">Size Guide</Link>
+                        <Link href="/contact">Contact Us</Link>
+                        <Link href="/faq">FAQ</Link>
+                        <Link href="/shipping-returns">Shipping & Returns</Link>
+                        <Link href="/orders">Order Status</Link>
                     </div>
                     <div className={styles.linkGroup}>
-                        <h3>About</h3>
-                        <Link href="#">Our Story</Link>
-                        <Link href="#">Sustainability</Link>
-                        <Link href="#">Contact</Link>
-                        <Link href="#">Trust Badges</Link>
+                        <h3>Company</h3>
+                        <Link href="/about">About Us</Link>
+                        <Link href="/about">Our Mission</Link>
+                        <Link href="/contact">Get in Touch</Link>
+                        <Link href="/about">Sustainability</Link>
                     </div>
                 </div>
             </div>

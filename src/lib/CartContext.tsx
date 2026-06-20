@@ -33,6 +33,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const savedCart = localStorage.getItem('gravity-cart');
         if (savedCart) {
             try {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setItems(JSON.parse(savedCart));
             } catch (error) {
                 console.error('Failed to parse cart from localStorage', error);

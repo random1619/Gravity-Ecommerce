@@ -4,7 +4,7 @@
 }
 
 .section {
-  padding: var(--spacing-2xl) 0;
+  padding: calc(var(--spacing-2xl) + 8px) 0;
 }
 
 .sectionHeader {
@@ -12,22 +12,34 @@
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: var(--spacing-xl);
+  gap: var(--spacing-lg);
 }
 
 .sectionTitle {
-  font-size: 32px;
+  font-size: 34px;
   text-transform: uppercase;
   margin-bottom: 8px;
+  letter-spacing: 0.08em;
 }
 
 .sectionSubtitle {
   color: var(--text-secondary);
+  max-width: 560px;
 }
 
 .viewAll {
   font-weight: 700;
   color: var(--text-primary);
-  border-bottom: 2px solid var(--accent-primary);
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.6);
+  transition: var(--transition-fast);
+}
+
+.viewAll:hover {
+  border-color: var(--accent-secondary);
+  color: var(--accent-secondary);
 }
 
 .productGrid {
@@ -37,10 +49,26 @@
 }
 
 .discountBanner {
-  background: var(--accent-primary);
-  color: white;
+  background: linear-gradient(135deg, #0f1f1a 0%, #1c2b26 55%, #0f1f1a 100%);
+  color: #fdfbf7;
   padding: var(--spacing-2xl) 0;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.discountBanner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 10%, rgba(242, 107, 79, 0.35), transparent 50%),
+    radial-gradient(circle at 80% 0%, rgba(14, 165, 164, 0.25), transparent 45%);
+  opacity: 0.9;
+}
+
+.bannerContent {
+  position: relative;
+  z-index: 1;
 }
 
 .bannerContent h2 {
@@ -55,7 +83,7 @@
 }
 
 .budgetBg {
-  background: var(--bg-secondary);
+  background: linear-gradient(180deg, rgba(241, 236, 228, 0.75) 0%, rgba(241, 236, 228, 0.4) 100%);
 }
 
 .reelsGrid {
@@ -72,6 +100,8 @@
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .reelImage {
@@ -91,7 +121,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(15, 31, 26, 0.35);
   color: white;
   font-weight: 700;
   opacity: 0;
