@@ -65,6 +65,8 @@ const Navbar = () => {
                 <div className={styles.links}>
                     <Link href="/shop" className={styles.link}>Shop</Link>
                     <Link href="/collections" className={styles.link}>New Drops</Link>
+                    <Link href="/lookbook" className={styles.link}>Lookbook</Link>
+                    <Link href="/rewards" className={styles.link}>Rewards</Link>
                     <Link href="/discount" className={styles.link}>Student Offer</Link>
                 </div>
 

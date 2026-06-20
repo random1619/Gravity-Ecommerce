@@ -1,0 +1,264 @@
+.rewardsPage {
+  padding: calc(var(--spacing-2xl) + 8px) 0;
+  background: var(--bg-primary);
+  background-image: var(--page-gradient);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--spacing-12);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.clubBadge {
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-widest);
+  font-weight: var(--font-bold);
+  color: var(--accent-indigo);
+  text-transform: uppercase;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+  margin-bottom: var(--spacing-4);
+}
+
+.title {
+  font-size: clamp(28px, 5vw, 48px);
+  font-family: var(--font-display);
+  font-weight: var(--font-black);
+  line-height: var(--leading-tight);
+  text-transform: uppercase;
+  margin-bottom: var(--spacing-2);
+}
+
+.subtitle {
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+.loginBanner {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-12);
+  text-align: center;
+  border-radius: var(--radius-2xl);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.loginBanner h2 {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--spacing-4);
+}
+
+.loginBanner p {
+  color: var(--text-secondary);
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+.balanceCard {
+  background: linear-gradient(135deg, #1e1b4b 0%, #311042 100%);
+  color: white;
+  padding: var(--spacing-8);
+  border-radius: var(--radius-2xl);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.balanceInfo p {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 4px;
+}
+
+.balanceInfo h2 {
+  font-size: var(--text-5xl);
+  font-weight: var(--font-black);
+  margin-bottom: var(--spacing-2);
+}
+
+.balanceInfo h2 span {
+  font-size: var(--text-lg);
+  font-weight: var(--font-normal);
+  color: var(--accent-indigo);
+}
+
+.tierName {
+  color: var(--accent-gold) !important;
+  font-weight: var(--font-bold);
+  font-size: var(--text-base) !important;
+}
+
+.progressContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progressBar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-indigo) 0%, var(--accent-secondary) 100%);
+  border-radius: var(--radius-full);
+}
+
+.progressLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.rewardsLayout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-8);
+}
+
+.rewardsSection h2,
+.missionsSection h2 {
+  font-size: var(--text-xl);
+  margin-bottom: var(--spacing-6);
+  text-transform: uppercase;
+}
+
+.rewardsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-6);
+}
+
+.rewardCard {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-6);
+  border-radius: var(--radius-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  position: relative;
+}
+
+.rewardCard h3 {
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+}
+
+.costBadge {
+  position: absolute;
+  top: var(--spacing-6);
+  right: var(--spacing-6);
+  font-size: 11px;
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--accent-indigo);
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+  font-weight: var(--font-bold);
+}
+
+.rewardCard p {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  flex-grow: 1;
+}
+
+.redeemedBox {
+  background: rgba(0, 200, 83, 0.1);
+  border: 1px dashed var(--accent-success);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.redeemedBox p {
+  font-size: var(--text-xs);
+  color: var(--accent-success);
+  margin-bottom: 4px;
+}
+
+.redeemedBox code {
+  font-weight: var(--font-bold);
+  font-size: var(--text-base);
+  letter-spacing: 0.1em;
+}
+
+.challengesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.chCard {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all var(--transition-base);
+}
+
+.chCompleted {
+  opacity: 0.65;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.chHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chHeader h4 {
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+}
+
+.chPoints {
+  font-size: var(--text-xs);
+  color: var(--accent-success);
+  font-weight: var(--font-bold);
+}
+
+.chMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.check {
+  color: var(--accent-success);
+  font-weight: var(--font-bold);
+}
+
+@media (max-width: 900px) {
+  .rewardsLayout {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+  }
+
+  .rewardsGrid {
+    grid-template-columns: 1fr;
+  }
+}

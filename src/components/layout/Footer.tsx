@@ -20,7 +20,8 @@ const Footer = () => {
                         <h3>Shop</h3>
                         <Link href="/shop">All Products</Link>
                         <Link href="/collections">Collections</Link>
-                        <Link href="/shop">New Arrivals</Link>
+                        <Link href="/lookbook">Lookbook</Link>
+                        <Link href="/rewards">Gravity Rewards</Link>
                         <Link href="/discount">Student Discount</Link>
                     </div>
                     <div className={styles.linkGroup}>
@@ -35,7 +36,7 @@ const Footer = () => {
                         <Link href="/about">About Us</Link>
                         <Link href="/about">Our Mission</Link>
                         <Link href="/contact">Get in Touch</Link>
-                        <Link href="/about">Sustainability</Link>
+                        <Link href="/sustainability">Sustainability</Link>
                     </div>
                 </div>
             </div>
