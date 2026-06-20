@@ -5,6 +5,8 @@ import styles from './page.module.css';
 import { useAuth } from '@/lib/AuthContext';
 import Link from 'next/link';
 import ProductCard from '@/components/ui/ProductCard';
+import QuickView from '@/components/ui/QuickView';
+import LoginModal from '@/components/ui/LoginModal';
 
 interface Product {
     id: string;
@@ -14,11 +16,15 @@ interface Product {
     imageUrl: string;
     category: string;
     badge?: string;
+    description?: string;
+    sizes?: string[];
 }
 
 export default function WishlistPage() {
     const { isAuthenticated } = useAuth();
     const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
+    const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+    const [showLoginModal, setShowLoginModal] = useState(false);
 
     useEffect(() => {
         // Load wishlist from localStorage
@@ -28,7 +34,7 @@ export default function WishlistPage() {
             setWishlistItems(JSON.parse(saved));
         } else {
             // Add some demo items if empty
-            const demoItems = [
+            const demoItems: Product[] = [
                 {
                     id: '1',
                     name: 'Oversized Graffiti Tee',
@@ -36,7 +42,6 @@ export default function WishlistPage() {
                     originalPrice: 1299,
                     imageUrl: '/product1.png',
                     category: 'T-SHIRTS',
-                    badge: 'BESTSELLER',
                 },
                 {
                     id: '3',
@@ -73,6 +78,14 @@ export default function WishlistPage() {
 
     return (
         <div className={styles.container}>
+            <QuickView
+                isOpen={!!quickViewProduct}
+                onClose={() => setQuickViewProduct(null)}
+                onLoginRequired={() => setShowLoginModal(true)}
+                product={quickViewProduct}
+            />
+            <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+
             <h1 className={styles.title}>❤️ My Wishlist</h1>
             <p className={styles.subtitle}>{wishlistItems.length} items saved for later</p>
 
@@ -87,7 +100,10 @@ export default function WishlistPage() {
                 <div className={styles.grid}>
                     {wishlistItems.map((item) => (
                         <div key={item.id} className={styles.wishlistItem}>
-                            <ProductCard {...item} />
+                            <ProductCard
+                                {...item}
+                                onQuickView={() => setQuickViewProduct(item)}
+                            />
                             <button
                                 className={styles.removeBtn}
                                 onClick={() => removeFromWishlist(item.id)}

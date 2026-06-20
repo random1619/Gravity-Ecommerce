@@ -7,12 +7,16 @@ import HeroSlider from '@/components/ui/HeroSlider';
 import ProductCard from '@/components/ui/ProductCard';
 import ProductSkeleton from '@/components/ui/ProductSkeleton';
 import Button from '@/components/ui/Button';
+import QuickView from '@/components/ui/QuickView';
+import LoginModal from '@/components/ui/LoginModal';
 import type { Product } from '@/lib/data';
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [budgetDrops, setBudgetDrops] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -40,6 +44,14 @@ export default function Home() {
 
   return (
     <div className={styles.home}>
+      <QuickView
+        isOpen={!!quickViewProduct}
+        onClose={() => setQuickViewProduct(null)}
+        onLoginRequired={() => setShowLoginModal(true)}
+        product={quickViewProduct}
+      />
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+
       <HeroSlider />
 
       <section className={styles.section}>
@@ -60,7 +72,13 @@ export default function Home() {
                 <ProductSkeleton />
               </>
             ) : (
-              featuredProducts.map(p => <ProductCard key={p.id} {...p} />)
+              featuredProducts.map(p => (
+                <ProductCard
+                  key={p.id}
+                  {...p}
+                  onQuickView={() => setQuickViewProduct(p)}
+                />
+              ))
             )}
           </div>
         </div>
@@ -98,7 +116,13 @@ export default function Home() {
                 <ProductSkeleton />
               </>
             ) : (
-              budgetDrops.map(p => <ProductCard key={p.id} {...p} />)
+              budgetDrops.map(p => (
+                <ProductCard
+                  key={p.id}
+                  {...p}
+                  onQuickView={() => setQuickViewProduct(p)}
+                />
+              ))
             )}
           </div>
         </div>

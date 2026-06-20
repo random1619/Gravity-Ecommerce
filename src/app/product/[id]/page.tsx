@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import styles from './page.module.css';
 import Button from '@/components/ui/Button';
 import ProductCard from '@/components/ui/ProductCard';
+import QuickView from '@/components/ui/QuickView';
 import { useCart } from '@/lib/CartContext';
 import { useAuth } from '@/lib/AuthContext';
 import LoginModal from '@/components/ui/LoginModal';
@@ -24,6 +25,7 @@ export default function ProductDetail() {
     const [selectedSize, setSelectedSize] = useState('M');
     const [addedToCart, setAddedToCart] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
     React.useEffect(() => {
         const fetchData = async () => {
@@ -84,6 +86,14 @@ export default function ProductDetail() {
 
     return (
         <div className={`container ${styles.productPage}`}>
+            <QuickView
+                isOpen={!!quickViewProduct}
+                onClose={() => setQuickViewProduct(null)}
+                onLoginRequired={() => setShowLoginModal(true)}
+                product={quickViewProduct}
+            />
+            <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+
             <div className={styles.productLayout}>
                 {/* Gallery Section */}
                 <section className={styles.gallery}>
@@ -169,13 +179,16 @@ export default function ProductDetail() {
                 <section className={styles.relatedSection}>
                     <h2>You Might Also Like</h2>
                     <div className={styles.relatedGrid}>
-                        {relatedProducts.map(p => <ProductCard key={p.id} {...p} />)}
+                        {relatedProducts.map(p => (
+                            <ProductCard
+                                key={p.id}
+                                {...p}
+                                onQuickView={() => setQuickViewProduct(p)}
+                            />
+                        ))}
                     </div>
                 </section>
             )}
-
-            {/* Login Modal */}
-            <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
         </div>
     );
 }
