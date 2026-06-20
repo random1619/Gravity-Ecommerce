@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Eye } from 'lucide-react';
 import styles from './ProductCard.module.css';
 import Button from './Button';
 
@@ -39,6 +40,21 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     />
                 </Link>
                 {isNew && <span className={styles.badge}>NEW DROP</span>}
+                
+                {/* Floating Glassmorphic Quick View Trigger */}
+                <button
+                    className={styles.quickViewBtn}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onQuickView?.();
+                    }}
+                    title="Quick View"
+                    aria-label={`Quick view ${name}`}
+                >
+                    <Eye size={16} />
+                </button>
+
                 <div className={styles.overlay}>
                     <Button
                         variant="secondary"

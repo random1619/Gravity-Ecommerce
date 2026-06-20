@@ -58,7 +58,6 @@
     transform: scale(1.08);
 }
 
-/* === BADGE (NEW, SALE, etc) === */
 .badge {
     position: absolute;
     top: var(--spacing-3);
@@ -73,6 +72,35 @@
     letter-spacing: var(--tracking-wider);
     text-transform: uppercase;
     box-shadow: var(--shadow-md);
+}
+
+.quickViewBtn {
+    position: absolute;
+    top: var(--spacing-3);
+    right: var(--spacing-3);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 12;
+    transition: all var(--transition-base);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.quickViewBtn:hover {
+    background: var(--accent-secondary);
+    color: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 0 12px var(--accent-secondary);
+    border-color: transparent;
 }
 
 /* === OVERLAY WITH QUICK ADD === */
