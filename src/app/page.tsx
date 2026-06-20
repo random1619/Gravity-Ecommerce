@@ -10,6 +10,7 @@ import Button from '@/components/ui/Button';
 import QuickView from '@/components/ui/QuickView';
 import LoginModal from '@/components/ui/LoginModal';
 import Marquee from '@/components/ui/Marquee';
+import ScrollReveal from '@/components/ui/ScrollReveal';
 import type { Product } from '@/lib/data';
 
 export default function Home() {
@@ -68,10 +69,12 @@ export default function Home() {
       <section className={styles.section}>
         <div className="container">
           <div className={styles.sectionHeader}>
-            <div>
-              <h2 className={styles.sectionTitle}>NEWEST DROPS</h2>
-              <p className={styles.sectionSubtitle}>The freshest styles for the semester.</p>
-            </div>
+            <ScrollReveal direction="up" delay={100} duration={800}>
+              <div>
+                <h2 className={styles.sectionTitle}>NEWEST DROPS</h2>
+                <p className={styles.sectionSubtitle}>The freshest styles for the semester.</p>
+              </div>
+            </ScrollReveal>
             <Link href="/shop" className={styles.viewAll}>View All -&gt;</Link>
           </div>
           <div className={styles.productGrid}>
@@ -97,23 +100,27 @@ export default function Home() {
 
       <section className={styles.discountBanner}>
         <div className="container">
-          <div className={styles.bannerContent}>
-            <h2>VERIFIED STUDENT?</h2>
-            <p>Get an extra 20% OFF on all orders. Link your ID in 30 seconds.</p>
-            <Link href="/discount">
-              <Button variant="secondary" size="lg">Verify Now</Button>
-            </Link>
-          </div>
+          <ScrollReveal direction="up" duration={1000}>
+            <div className={styles.bannerContent}>
+              <h2>VERIFIED STUDENT?</h2>
+              <p>Get an extra 20% OFF on all orders. Link your ID in 30 seconds.</p>
+              <Link href="/discount">
+                <Button variant="secondary" size="lg">Verify Now</Button>
+              </Link>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
       <section className={`${styles.section} ${styles.budgetBg}`}>
         <div className="container">
           <div className={styles.sectionHeader}>
-            <div>
-              <h2 className={styles.sectionTitle}>UNDER RS. 999</h2>
-              <p className={styles.sectionSubtitle}>Drip on a budget. No compromises.</p>
-            </div>
+            <ScrollReveal direction="up" delay={100} duration={800}>
+              <div>
+                <h2 className={styles.sectionTitle}>UNDER RS. 999</h2>
+                <p className={styles.sectionSubtitle}>Drip on a budget. No compromises.</p>
+              </div>
+            </ScrollReveal>
             <Link href="/shop?maxPrice=999">
               <Button variant="outline" size="sm">Explore Deals</Button>
             </Link>
@@ -142,7 +149,9 @@ export default function Home() {
       {/* Mini Reels Section Preview */}
       <section className={styles.section}>
         <div className="container">
-          <h2 className={styles.sectionTitle}>WATCH THE VIBE</h2>
+          <ScrollReveal direction="up" duration={800}>
+            <h2 className={styles.sectionTitle}>WATCH THE VIBE</h2>
+          </ScrollReveal>
           <div className={styles.reelsGrid}>
             {[1, 2, 3, 4].map(i => (
               <div key={i} className={styles.reelPlaceholder}>

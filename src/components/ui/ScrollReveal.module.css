@@ -1,0 +1,28 @@
+.revealWrapper {
+    opacity: 0;
+    transition-property: opacity, transform;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1); /* Out-expo or custom premium curve */
+    will-change: transform, opacity;
+}
+
+.reveal_up {
+    transform: translateY(30px);
+}
+
+.reveal_down {
+    transform: translateY(-30px);
+}
+
+.reveal_left {
+    transform: translateX(30px);
+}
+
+.reveal_right {
+    transform: translateX(-30px);
+}
+
+/* Triggered State */
+.revealWrapper.visible {
+    opacity: 1;
+    transform: translate(0, 0);
+}

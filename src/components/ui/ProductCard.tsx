@@ -32,7 +32,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className={styles.card}>
             <div className={styles.imageWrapper}>
                 <Link href={`/product/${id}`}>
-                    <img src={imageUrl} alt={name} className={styles.image} />
+                    <img 
+                        src={imageUrl} 
+                        alt={name} 
+                        className={styles.image} 
+                    />
                 </Link>
                 {isNew && <span className={styles.badge}>NEW DROP</span>}
                 <div className={styles.overlay}>
@@ -55,6 +59,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <Link href={`/product/${id}`}>
                     <h3 className={styles.name}>{name}</h3>
                 </Link>
+
                 <div className={styles.priceRow}>
                     <span className={styles.price}>₹{price}</span>
                     {originalPrice && <span className={styles.oldPrice}>₹{originalPrice}</span>}

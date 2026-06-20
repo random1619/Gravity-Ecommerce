@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import DemoWarning from '@/components/ui/DemoWarning';
+import CustomCursor from '@/components/ui/CustomCursor';
 import { AuthProvider } from '@/lib/AuthContext';
 import { CartProvider } from '@/lib/CartContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <AuthProvider>
             <CartProvider>
+              <CustomCursor />
               <DemoWarning />
               <Navbar />
               {children}
