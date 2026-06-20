@@ -84,7 +84,7 @@
     align-items: center;
     width: 280px;
     position: relative;
-    border: 2px solid transparent;
+    border: 1.5px solid var(--border-color);
     transition: all var(--transition-base);
 }
 
@@ -95,37 +95,155 @@
     width: 320px;
 }
 
-.suggestions {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    margin-top: var(--spacing-sm);
-    box-shadow: var(--shadow-lg);
-    z-index: 1000;
+.kbdContainer {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: var(--spacing-2);
+    pointer-events: none;
+    transition: opacity var(--transition-fast) ease, transform var(--transition-fast) ease;
+}
+
+.searchBar:focus-within .kbdContainer {
+    opacity: 0;
+    transform: scale(0.85);
+    width: 0;
+    margin-left: 0;
     overflow: hidden;
 }
 
+.kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    font-family: var(--font-mono, monospace);
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='dark'] .kbd {
+    background: rgba(40, 40, 40, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.suggestions {
+    position: absolute;
+    top: calc(100% + var(--spacing-sm));
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    z-index: 1000;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+[data-theme='dark'] .suggestions {
+    background: rgba(15, 15, 15, 0.95);
+}
+
+.suggestionSection {
+    padding: var(--spacing-2) 0;
+}
+
+.suggestionSection + .suggestionSection {
+    border-top: 1px solid var(--border-color);
+}
+
+.suggestionHeader {
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--text-tertiary);
+}
+
 .suggestion {
-    padding: 10px 16px;
-    font-size: 14px;
+    padding: 8px 16px;
+    font-size: 13px;
     cursor: pointer;
-    transition: var(--transition-fast);
+    transition: all var(--transition-fast);
     color: var(--text-primary);
 }
 
 .suggestion:hover {
     background: var(--bg-secondary);
-    color: var(--accent-secondary);
+    color: var(--accent-primary);
+}
+
+.productSuggestion {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    color: inherit;
+}
+
+.productSuggestion:hover {
+    background: var(--bg-secondary);
+}
+
+.productSugImage {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.productSugInfo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.productSugName {
+    font-size: 13px;
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.productSugCategory {
+    font-size: 10px;
+    color: var(--text-tertiary);
+}
+
+.productSugPrice {
+    font-size: 12px;
+    font-weight: var(--font-bold);
+    color: var(--accent-primary);
 }
 
 .noSuggestion {
-    padding: 10px 16px;
-    font-size: 14px;
+    padding: 16px;
+    font-size: 13px;
     color: var(--text-tertiary);
+    text-align: center;
 }
 
 .themeToggle {

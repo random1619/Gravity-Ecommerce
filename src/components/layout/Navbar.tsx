@@ -17,6 +17,7 @@ const Navbar = () => {
     const { user, logout, isAuthenticated } = useAuth();
     const [search, setSearch] = useState('');
     const [trends, setTrends] = useState<string[]>([]);
+    const [allProducts, setAllProducts] = useState<Product[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showUserDropdown, setShowUserDropdown] = useState(false);
@@ -27,6 +28,7 @@ const Navbar = () => {
             try {
                 const res = await fetch('/api/products');
                 const products = await res.json();
+                setAllProducts(products);
                 const uniqueCategories = Array.from(new Set(products.map((p: Product) => p.category))) as string[];
                 setTrends([...uniqueCategories, 'Oversized', 'Streetwear', 'New Drops']);
             } catch (err) {
@@ -39,6 +41,20 @@ const Navbar = () => {
     const filteredTrends = trends.filter(trend =>
         trend.toLowerCase().includes(search.toLowerCase())
     );
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                const searchInput = searchRef.current?.querySelector('input');
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -54,6 +70,10 @@ const Navbar = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    const matchingProducts = allProducts.filter(p =>
+        p.name.toLowerCase().includes(search.toLowerCase())
+    );
 
     return (
         <nav className={styles.navbar}>
@@ -83,22 +103,52 @@ const Navbar = () => {
                             }}
                             onFocus={() => setShowSuggestions(true)}
                         />
+                        <div className={styles.kbdContainer}>
+                            <kbd className={styles.kbd}>Ctrl</kbd>
+                            <kbd className={styles.kbd}>K</kbd>
+                        </div>
                         {showSuggestions && search && (
                             <div className={styles.suggestions}>
-                                {filteredTrends.length > 0 ? (
-                                    filteredTrends.map(trend => (
-                                        <div
-                                            key={trend}
-                                            className={styles.suggestion}
-                                            onClick={() => {
-                                                setSearch(trend);
-                                                setShowSuggestions(false);
-                                            }}
-                                        >
-                                            {trend}
-                                        </div>
-                                    ))
-                                ) : (
+                                {filteredTrends.length > 0 && (
+                                    <div className={styles.suggestionSection}>
+                                        <div className={styles.suggestionHeader}>Categories & Trends</div>
+                                        {filteredTrends.slice(0, 3).map(trend => (
+                                            <div
+                                                key={trend}
+                                                className={styles.suggestion}
+                                                onClick={() => {
+                                                    setSearch(trend);
+                                                    setShowSuggestions(false);
+                                                }}
+                                            >
+                                                {trend}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                
+                                {matchingProducts.length > 0 && (
+                                    <div className={styles.suggestionSection}>
+                                        <div className={styles.suggestionHeader}>Matching Products</div>
+                                        {matchingProducts.slice(0, 4).map(p => (
+                                            <Link
+                                                href={`/product/${p.id}`}
+                                                key={p.id}
+                                                className={styles.productSuggestion}
+                                                onClick={() => setShowSuggestions(false)}
+                                            >
+                                                <img src={p.imageUrl} alt={p.name} className={styles.productSugImage} />
+                                                <div className={styles.productSugInfo}>
+                                                    <span className={styles.productSugName}>{p.name}</span>
+                                                    <span className={styles.productSugCategory}>{p.category}</span>
+                                                </div>
+                                                <span className={styles.productSugPrice}>₹{p.price}</span>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {filteredTrends.length === 0 && matchingProducts.length === 0 && (
                                     <div className={styles.noSuggestion}>No results found</div>
                                 )}
                             </div>
