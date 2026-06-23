@@ -28,20 +28,30 @@
   line-height: var(--leading-relaxed);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-8);
+/* === HORIZONTAL SCROLL GALLERY === */
+.story {
+  position: relative;
+  width: 100%;
+  height: 80vh;
   margin-top: var(--spacing-12);
 }
 
-.lookCard {
+.track {
+  height: 100%;
+  gap: var(--spacing-8);
+  padding: 0 var(--spacing-12);
+  align-items: stretch;
+}
+
+.panel {
+  flex: 0 0 80vw;
+  max-width: 900px;
+  height: 100%;
+  position: relative;
   border-radius: var(--radius-2xl);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-color);
-  aspect-ratio: 9 / 16;
-  position: relative;
 }
 
 /* === HOTSPOT PINS & TOOLTIPS === */
@@ -170,9 +180,11 @@
   height: 100%;
   object-fit: cover;
   transition: transform var(--transition-slow);
+  position: relative;
+  z-index: 1;
 }
 
-.lookCard:hover .lookImage {
+.panel:hover .lookImage {
   transform: scale(1.05);
 }
 
@@ -217,9 +229,22 @@
   transition: transform var(--transition-fast);
 }
 
-.lookCard:hover .shopBtn {
+.panel:hover .shopBtn {
   transform: translateX(5px);
   color: var(--accent-secondary);
+}
+
+/* Parallax depth layer — a translucent accent glow that sits behind the image
+   and reads as depth. Pure CSS, no extra GPU. The look image paints above it
+   (it is the only sibling without z-index, while depthLayer sets z-index: 0). */
+.depthLayer {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 50% at 30% 30%, rgba(var(--accent-secondary-rgb), 0.18), transparent 70%),
+    radial-gradient(50% 50% at 75% 70%, rgba(var(--accent-indigo-rgb), 0.14), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .modalContent {
@@ -283,11 +308,4 @@
 .itemMeta p {
   font-size: var(--text-sm);
   color: var(--text-secondary);
-}
-
-@media (max-width: 900px) {
-  .grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-6);
-  }
 }
