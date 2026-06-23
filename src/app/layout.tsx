@@ -10,6 +10,8 @@ import PageTransition from '@/components/ui/PageTransition';
 import { AuthProvider } from '@/lib/AuthContext';
 import { CartProvider } from '@/lib/CartContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
+import { DeviceTierProvider } from '@/hooks/useDeviceTier';
+import ClientWebGLCanvas from '@/components/three/ClientWebGLCanvas';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,11 +31,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider>
-          <AuthProvider>
-            <CartProvider>
-              <CustomCursor />
-              <DemoWarning />
-              <Navbar />
+          <DeviceTierProvider>
+            <AuthProvider>
+              <CartProvider>
+                <ClientWebGLCanvas />
+                <CustomCursor />
+                <DemoWarning />
+                <Navbar />
               <SmoothScroll>
                 <PageTransition>
                   {children}
@@ -41,8 +45,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </SmoothScroll>
               <Footer />
             </CartProvider>
-          </AuthProvider>
-        </ThemeProvider>
+            </AuthProvider>
+          </DeviceTierProvider>
+          </ThemeProvider>
       </body>
     </html>
   );

@@ -1,3 +1,8 @@
+/**
+ * @deprecated Replaced by the global WebGL canvas (WebGLCanvas.tsx + Experience.tsx).
+ * This 2D Canvas particle background is no longer mounted in the app.
+ * Kept for reference only — safe to delete in a future cleanup pass.
+ */
 'use client';
 
 import React, { useEffect, useRef } from 'react';

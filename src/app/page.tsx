@@ -13,7 +13,6 @@ import Marquee from '@/components/ui/Marquee';
 import ReelModal from '@/components/ui/ReelModal';
 import ScrollReveal from '@/components/motion/ScrollReveal';
 import SplitTextReveal from '@/components/motion/SplitTextReveal';
-import CanvasBackground from '@/components/ui/CanvasBackground';
 import type { Product } from '@/lib/data';
 
 const reelsData = [
@@ -59,7 +58,6 @@ export default function Home() {
 
     return (
         <div className={styles.home}>
-            <CanvasBackground />
             <QuickView
                 isOpen={!!quickViewProduct}
                 onClose={() => setQuickViewProduct(null)}
