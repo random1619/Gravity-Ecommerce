@@ -8,6 +8,7 @@ import QuickView from '@/components/ui/QuickView';
 import { useCart } from '@/lib/CartContext';
 import { useAuth } from '@/lib/AuthContext';
 import LoginModal from '@/components/ui/LoginModal';
+import ProductDistort from '@/components/three/scenes/ProductDistort';
 import type { Product } from '@/lib/data';
 import { useParams } from 'next/navigation';
 
@@ -98,7 +99,10 @@ export default function ProductDetail() {
                 {/* Gallery Section */}
                 <section className={styles.gallery}>
                     <div className={styles.mainImage}>
-                        <img src={product.images?.[activeImage] || '/product-tee.png'} alt={product.name} />
+                        <ProductDistort
+                            src={product.images?.[activeImage] || '/product-tee.png'}
+                            alt={product.name}
+                        />
                     </div>
                     <div className={styles.thumbnails}>
                         {(product.images || []).map((img: string, idx: number) => (
