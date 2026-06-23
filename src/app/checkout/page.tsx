@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import styles from './page.module.css';
 import Button from '@/components/ui/Button';
 import Link from 'next/link';
@@ -11,9 +11,17 @@ export default function CheckoutPage() {
     const { items, cartTotal, clearCart } = useCart();
     const router = useRouter();
     const [isPlacing, setIsPlacing] = useState(false);
+    const [isVerified, setIsVerified] = useState(false);
+    const [appliedPromo, setAppliedPromo] = useState('');
+
+    useEffect(() => {
+        setIsVerified(localStorage.getItem('gravity-student-verified') === 'true');
+        setAppliedPromo(localStorage.getItem('gravity-applied-promo') || '');
+    }, []);
 
     const subtotal = cartTotal;
-    const studentDiscount = Math.round(subtotal * 0.2);
+    const isDiscountEligible = isVerified || appliedPromo === 'STUDENT20';
+    const studentDiscount = isDiscountEligible ? Math.round(subtotal * 0.2) : 0;
     const shipping = subtotal > 0 ? 0 : 0;
     const total = Math.max(subtotal - studentDiscount + shipping, 0);
 
@@ -133,10 +141,12 @@ export default function CheckoutPage() {
                             <span>Subtotal</span>
                             <span>Rs. {subtotal}</span>
                         </div>
-                        <div className={`${styles.lineItem} ${styles.discount}`}>
-                            <span>Student Discount</span>
-                            <span>-Rs. {studentDiscount}</span>
-                        </div>
+                        {studentDiscount > 0 && (
+                            <div className={`${styles.lineItem} ${styles.discount}`}>
+                                <span>Discount (20%)</span>
+                                <span>-Rs. {studentDiscount}</span>
+                            </div>
+                        )}
                         <div className={styles.lineItem}>
                             <span>Shipping</span>
                             <span>{shipping === 0 ? 'FREE' : `Rs. ${shipping}`}</span>

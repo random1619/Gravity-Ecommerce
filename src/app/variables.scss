@@ -1,0 +1,88 @@
+// Font Families
+$font-body: 'Inter', system-ui, -apple-system, sans-serif;
+$font-display: 'Poppins', 'Inter', system-ui, sans-serif;
+$font-accent: 'Space Grotesk', 'Inter', sans-serif;
+$font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+// Brand Colors (Light Mode defaults, mapped from CSS variables for flexibility)
+$bg-primary: var(--bg-primary, #faf9f5);
+$bg-secondary: var(--bg-secondary, #f4f1eb);
+$bg-tertiary: var(--bg-tertiary, #e5e2da);
+
+$text-primary: var(--text-primary, #1c1a17);
+$text-secondary: var(--text-secondary, #5c5952);
+$text-tertiary: var(--text-tertiary, #8f8b80);
+
+$accent-primary: var(--accent-primary, #1c1a17);
+$accent-secondary: var(--accent-secondary, #c85a3c);
+$accent-success: var(--accent-success, #2b5c3d);
+
+// Transitions
+$transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+$transition-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+
+// Responsive Breakpoints
+$breakpoint-xs: 480px;
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+// --- Premium Mixins ---
+
+// Flexbox Center Helper
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Media Query Mixin
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: $breakpoint-xs) { @content; }
+  } @else if $breakpoint == sm {
+    @media (max-width: $breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: $breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: $breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: $breakpoint-xl) { @content; }
+  }
+}
+
+// Glassmorphism effect
+@mixin glass-card($blur: 16px, $bg-opacity: 0.85, $border-opacity: 0.08) {
+  background: rgba(250, 249, 245, $bg-opacity);
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+  border: 1px solid rgba(28, 26, 23, $border-opacity);
+  
+  [data-theme='dark'] & {
+    background: rgba(13, 13, 21, $bg-opacity - 0.05);
+    border-color: rgba(0, 229, 255, $border-opacity * 2);
+  }
+}
+
+// Hover elevation & shadow transition
+@mixin premium-elevation($shadow-hover: var(--shadow-xl)) {
+  transition: transform $transition-smooth, box-shadow $transition-smooth, border-color $transition-smooth;
+  
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: $shadow-hover;
+  }
+}
+
+// Gradient text styling
+@mixin gradient-text($gradient: var(--gradient-text)) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}

@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Eye } from 'lucide-react';
-import styles from './ProductCard.module.css';
+import styles from './ProductCard.module.scss';
 import Button from './Button';
 
 interface ProductCardProps {
@@ -30,7 +30,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : null;
 
     return (
-        <div className={styles.card}>
+        <div className={styles.card} data-cursor-text="SHOP">
             <div className={styles.imageWrapper}>
                 <Link href={`/product/${id}`}>
                     <img 

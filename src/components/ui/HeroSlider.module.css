@@ -22,8 +22,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0;
-    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slide.active {
@@ -36,12 +34,6 @@
     width: 100%;
     height: 100%;
     background-color: var(--bg-secondary);
-    transform: scale(1);
-    transition: transform 8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide.active .slideImage {
-    transform: scale(1.1);
 }
 
 .overlay {

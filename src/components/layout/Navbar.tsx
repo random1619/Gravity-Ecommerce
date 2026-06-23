@@ -9,6 +9,8 @@ import { useCart } from '@/lib/CartContext';
 import { useAuth } from '@/lib/AuthContext';
 import LoginModal from '../ui/LoginModal';
 import CartDrawer from '../ui/CartDrawer';
+import Magnetic from '../motion/Magnetic';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, ShoppingCart, User, ChevronDown, Package, Heart, Settings, LogOut, Search } from 'lucide-react';
 import type { Product } from '@/lib/data';
 
@@ -89,25 +91,42 @@ const Navbar = () => {
                 </div>
 
                 <div className={styles.actions}>
-                    <div className={styles.searchBarTrigger} onClick={() => setIsSearchOpen(true)}>
-                        <Search size={16} className={styles.searchIconInline} />
-                        <span className={styles.searchPlaceholderText}>Search trends...</span>
-                        <div className={styles.kbdContainer}>
-                            <kbd className={styles.kbd}>Ctrl</kbd>
-                            <kbd className={styles.kbd}>K</kbd>
+                    <Magnetic range={40} strength={0.15}>
+                        <div className={styles.searchBarTrigger} onClick={() => setIsSearchOpen(true)}>
+                            <Search size={16} className={styles.searchIconInline} />
+                            <span className={styles.searchPlaceholderText}>Search trends...</span>
+                            <div className={styles.kbdContainer}>
+                                <kbd className={styles.kbd}>Ctrl</kbd>
+                                <kbd className={styles.kbd}>K</kbd>
+                            </div>
                         </div>
-                    </div>
+                    </Magnetic>
 
-                    <button className={styles.themeToggle} onClick={toggleTheme} aria-label="Toggle Theme">
-                        {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-                    </button>
+                    <Magnetic range={40} strength={0.35}>
+                        <button className={styles.themeToggle} onClick={toggleTheme} aria-label="Toggle Theme">
+                            <AnimatePresence mode="wait" initial={false}>
+                                <motion.div
+                                    key={theme}
+                                    initial={{ y: -8, opacity: 0, rotate: -60 }}
+                                    animate={{ y: 0, opacity: 1, rotate: 0 }}
+                                    exit={{ y: 8, opacity: 0, rotate: 60 }}
+                                    transition={{ duration: 0.2 }}
+                                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                >
+                                    {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+                                </motion.div>
+                            </AnimatePresence>
+                        </button>
+                    </Magnetic>
 
-                    <button className={styles.iconBtn} aria-label="Cart" onClick={openCart}>
-                        <div className={styles.cartIcon}>
-                            <ShoppingCart size={20} />
-                            <span className={styles.badge}>{cartCount}</span>
-                        </div>
-                    </button>
+                    <Magnetic range={50} strength={0.3}>
+                        <button className={styles.iconBtn} aria-label="Cart" onClick={openCart}>
+                            <div className={styles.cartIcon}>
+                                <ShoppingCart size={20} />
+                                <span className={styles.badge}>{cartCount}</span>
+                            </div>
+                        </button>
+                    </Magnetic>
 
                     {isAuthenticated ? (
                         <div className={styles.userMenu}>

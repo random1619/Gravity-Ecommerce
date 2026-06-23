@@ -22,6 +22,7 @@ export default function StudentDiscount() {
                 });
                 const result = await response.json();
                 if (result.success) {
+                    localStorage.setItem('gravity-student-verified', 'true');
                     setStep(3);
                 }
             } catch (error) {

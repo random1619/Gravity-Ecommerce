@@ -6,6 +6,7 @@ import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 import Link from 'next/link'
+import GSAPParallax from '@/components/motion/GSAPParallax'
 
 interface LookItem {
   id: string
@@ -77,7 +78,9 @@ export default function LookbookPage() {
           {lookbookData.map(look => (
             <div key={look.id} className={styles.lookCard}>
               <div className={styles.imageWrapper}>
-                <img src={look.image} alt={look.title} className={styles.lookImage} />
+                <GSAPParallax speed={0.1}>
+                  <img src={look.image} alt={look.title} className={styles.lookImage} />
+                </GSAPParallax>
                 
                 {look.items.map(item => (
                   <div

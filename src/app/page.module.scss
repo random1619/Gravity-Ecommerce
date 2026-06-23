@@ -1,0 +1,182 @@
+@use './variables.scss' as *;
+
+.home {
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  padding: calc(var(--spacing-2xl) + 8px) 0;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--spacing-xl);
+  gap: var(--spacing-lg);
+
+  @include respond-to(sm) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+}
+
+.sectionTitle {
+  font-size: 34px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  letter-spacing: 0.08em;
+  font-family: $font-display;
+
+  @include respond-to(sm) {
+    font-size: 24px;
+  }
+}
+
+.sectionSubtitle {
+  color: $text-secondary;
+  max-width: 560px;
+}
+
+.viewAll {
+  font-weight: 700;
+  color: $text-primary;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.6);
+  transition: $transition-fast;
+
+  &:hover {
+    border-color: $accent-secondary;
+    color: $accent-secondary;
+    transform: translateX(4px);
+  }
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-lg);
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(xs) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.discountBanner {
+  background: linear-gradient(135deg, #0f1f1a 0%, #1c2b26 55%, #0f1f1a 100%);
+  color: #fdfbf7;
+  padding: var(--spacing-2xl) 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 10%, rgba(242, 107, 79, 0.35), transparent 50%),
+      radial-gradient(circle at 80% 0%, rgba(14, 165, 164, 0.25), transparent 45%);
+    opacity: 0.9;
+  }
+}
+
+.bannerContent {
+  position: relative;
+  z-index: 1;
+
+  h2 {
+    font-size: 48px;
+    margin-bottom: var(--spacing-md);
+    font-family: $font-display;
+
+    @include respond-to(sm) {
+      font-size: 32px;
+    }
+  }
+
+  p {
+    font-size: 18px;
+    margin-bottom: var(--spacing-lg);
+    opacity: 0.9;
+  }
+}
+
+.budgetBg {
+  background: linear-gradient(180deg, rgba(241, 236, 228, 0.75) 0%, rgba(241, 236, 228, 0.4) 100%);
+  
+  [data-theme='dark'] & {
+    background: linear-gradient(180deg, rgba(13, 13, 21, 0.8) 0%, rgba(5, 5, 8, 0.9) 100%);
+  }
+}
+
+.reelsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(xs) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reelPlaceholder {
+  aspect-ratio: 9 / 16;
+  background: $bg-secondary;
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: transform $transition-smooth, box-shadow $transition-smooth;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+
+    .reelImage {
+      transform: scale(1.05);
+    }
+
+    .reelOverlay {
+      opacity: 1;
+    }
+  }
+}
+
+.reelImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform $transition-smooth;
+}
+
+.reelOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 31, 26, 0.45);
+  color: white;
+  font-weight: 700;
+  font-family: $font-accent;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity $transition-base;
+  backdrop-filter: blur(4px);
+}

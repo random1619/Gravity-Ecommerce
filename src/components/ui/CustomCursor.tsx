@@ -1,24 +1,36 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import styles from './CustomCursor.module.css';
 
 export default function CustomCursor() {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [trail, setTrail] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  const [cursorText, setCursorText] = useState('');
   const [isVisible, setIsVisible] = useState(false);
-  const trailRef = useRef({ x: 0, y: 0 });
+
+  // Raw mouse coordinates
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Springs for the outer follower circle
+  const springConfig = { damping: 28, stiffness: 220, mass: 0.5 };
+  const followerX = useSpring(mouseX, springConfig);
+  const followerY = useSpring(mouseY, springConfig);
+
+  // Springs for the inner dot
+  const dotX = useSpring(mouseX, { damping: 40, stiffness: 450 });
+  const dotY = useSpring(mouseY, { damping: 40, stiffness: 450 });
 
   useEffect(() => {
-    // Check if device supports hover/mouse (disable on touch-only devices)
     const hasMouse = window.matchMedia('(pointer: fine)').matches;
     if (!hasMouse) return;
 
     setIsVisible(true);
 
     const handleMouseMove = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
     };
 
     const handleMouseEnter = () => setIsVisible(true);
@@ -28,21 +40,17 @@ export default function CustomCursor() {
     document.addEventListener('mouseenter', handleMouseEnter);
     document.addEventListener('mouseleave', handleMouseLeave);
 
-    // Track mouse enter/leave on interactive elements
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (
-        target.tagName === 'A' ||
-        target.tagName === 'BUTTON' ||
-        target.closest('button') ||
-        target.closest('a') ||
-        target.closest('[role="button"]') ||
-        target.closest(`.${styles.interactive}`) ||
-        target.getAttribute('data-hover')
-      ) {
+      const interactiveEl = target.closest('a, button, [role="button"], [data-cursor-text]');
+      
+      if (interactiveEl) {
         setIsHovering(true);
+        const text = interactiveEl.getAttribute('data-cursor-text') || '';
+        setCursorText(text);
       } else {
         setIsHovering(false);
+        setCursorText('');
       }
     };
 
@@ -54,46 +62,52 @@ export default function CustomCursor() {
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseover', handleMouseOver);
     };
-  }, []);
-
-  // Request Animation Frame for trailing lag effect
-  useEffect(() => {
-    let animationFrameId: number;
-
-    const updateTrail = () => {
-      const dx = position.x - trailRef.current.x;
-      const dy = position.y - trailRef.current.y;
-      
-      // Speed up or slow down lag here
-      trailRef.current.x += dx * 0.15;
-      trailRef.current.y += dy * 0.15;
-      
-      setTrail({ x: trailRef.current.x, y: trailRef.current.y });
-      animationFrameId = requestAnimationFrame(updateTrail);
-    };
-
-    animationFrameId = requestAnimationFrame(updateTrail);
-
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [position]);
+  }, [mouseX, mouseY]);
 
   if (!isVisible) return null;
 
   return (
     <>
       {/* Outer Follower Circle */}
-      <div
-        className={`${styles.cursorFollower} ${isHovering ? styles.hover : ''}`}
+      <motion.div
+        className={`${styles.cursorFollower} ${isHovering ? styles.hover : ''} ${cursorText ? styles.hasText : ''}`}
         style={{
-          transform: `translate3d(${trail.x - 16}px, ${trail.y - 16}px, 0)`,
+          x: followerX,
+          y: followerY,
+          translateX: -16,
+          translateY: -16,
         }}
-      />
+        animate={{
+          scale: cursorText ? 1.75 : (isHovering ? 1.5 : 1),
+          backgroundColor: cursorText ? 'rgba(255, 255, 255, 0.15)' : (isHovering ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0)'),
+          borderColor: isHovering ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.8)',
+        }}
+        transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+      >
+        {cursorText && (
+          <motion.span 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.15 }}
+            className={styles.cursorLabel}
+          >
+            {cursorText}
+          </motion.span>
+        )}
+      </motion.div>
       {/* Inner Dot */}
-      <div
+      <motion.div
         className={`${styles.cursorDot} ${isHovering ? styles.hover : ''}`}
         style={{
-          transform: `translate3d(${position.x - 4}px, ${position.y - 4}px, 0)`,
+          x: dotX,
+          y: dotY,
+          translateX: -4,
+          translateY: -4,
         }}
+        animate={{
+          scale: isHovering ? 0 : 1,
+        }}
+        transition={{ duration: 0.15 }}
       />
     </>
   );

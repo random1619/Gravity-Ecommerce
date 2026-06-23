@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './HeroSlider.module.css';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
-
+import { motion, AnimatePresence } from 'framer-motion';
 
 const slides = [
     {
@@ -58,16 +58,20 @@ const slides = [
 const HeroSlider: React.FC = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+    const [direction, setDirection] = useState(1); // 1 = next, -1 = prev
 
     const nextSlide = useCallback(() => {
+        setDirection(1);
         setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, []);
 
     const prevSlide = useCallback(() => {
+        setDirection(-1);
         setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
     }, []);
 
     const goToSlide = (index: number) => {
+        setDirection(index > currentSlide ? 1 : -1);
         setCurrentSlide(index);
     };
 
@@ -87,10 +91,39 @@ const HeroSlider: React.FC = () => {
     // Auto-play
     useEffect(() => {
         if (!isPaused) {
-            const interval = setInterval(nextSlide, 5000); // 5 seconds
+            const interval = setInterval(nextSlide, 6000); // 6 seconds
             return () => clearInterval(interval);
         }
     }, [isPaused, nextSlide]);
+
+    // Directional slide variants
+    const slideVariants = {
+        enter: (dir: number) => ({
+            x: dir > 0 ? '100%' : '-100%',
+            opacity: 0,
+            scale: 1.05
+        }),
+        center: {
+            x: 0,
+            opacity: 1,
+            scale: 1,
+            transition: {
+                x: { type: 'spring' as const, stiffness: 220, damping: 26 },
+                opacity: { duration: 0.6 },
+                scale: { duration: 0.8, ease: 'easeOut' as const }
+            }
+        },
+        exit: (dir: number) => ({
+            x: dir > 0 ? '-100%' : '100%',
+            opacity: 0,
+            scale: 0.95,
+            transition: {
+                x: { type: 'spring' as const, stiffness: 220, damping: 26 },
+                opacity: { duration: 0.6 },
+                scale: { duration: 0.6, ease: 'easeIn' as const }
+            }
+        })
+    };
 
     return (
         <div
@@ -106,38 +139,68 @@ const HeroSlider: React.FC = () => {
             tabIndex={0}
         >
             <div className={styles.slider}>
-                {slides.map((slide, index) => (
-                    <div
-                        key={slide.id}
-                        className={`${styles.slide} ${index === currentSlide ? styles.active : ''}`}
-                        aria-hidden={index !== currentSlide}
+                <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                    <motion.div
+                        key={currentSlide}
+                        custom={direction}
+                        variants={slideVariants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        className={`${styles.slide} ${styles.active}`}
                     >
                         <Image
-                            src={slide.image}
-                            alt={slide.title}
+                            src={slides[currentSlide].image}
+                            alt={slides[currentSlide].title}
                             fill
-                            priority={index === 0}
+                            priority
                             className={styles.slideImage}
                         />
                         <div className={styles.overlay} />
                         <div className={styles.content}>
                             <div className={styles.contentInner}>
-                                <span className={styles.kicker}>{slide.tag}</span>
-                                <h2 className={styles.title}>{slide.title}</h2>
-                                <p className={styles.subtitle}>{slide.subtitle}</p>
-                                <div className={styles.ctaRow}>
-                                    <Link className={styles.ctaLink} href={slide.link}>
-                                        {slide.cta}
+                                <motion.span
+                                    initial={{ opacity: 0, y: 15 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.1, duration: 0.5, ease: 'easeOut' }}
+                                    className={styles.kicker}
+                                >
+                                    {slides[currentSlide].tag}
+                                </motion.span>
+                                <motion.h2
+                                    initial={{ opacity: 0, y: 25 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2, duration: 0.6, ease: 'easeOut' }}
+                                    className={styles.title}
+                                >
+                                    {slides[currentSlide].title}
+                                </motion.h2>
+                                <motion.p
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3, duration: 0.6, ease: 'easeOut' }}
+                                    className={styles.subtitle}
+                                >
+                                    {slides[currentSlide].subtitle}
+                                </motion.p>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 15 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.4, duration: 0.5, ease: 'easeOut' }}
+                                    className={styles.ctaRow}
+                                >
+                                    <Link className={styles.ctaLink} href={slides[currentSlide].link}>
+                                        {slides[currentSlide].cta}
                                         <ArrowRight size={16} className={styles.ctaIcon} />
                                     </Link>
                                     <Link className={styles.ctaSecondary} href="/shop">
                                         Browse All
                                     </Link>
-                                </div>
+                                </motion.div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    </motion.div>
+                </AnimatePresence>
             </div>
 
             {/* Navigation Arrows */}
@@ -155,7 +218,6 @@ const HeroSlider: React.FC = () => {
             >
                 <ChevronRight size={24} />
             </button>
-
 
             {/* Indicator Dots */}
             <div className={styles.indicators}>

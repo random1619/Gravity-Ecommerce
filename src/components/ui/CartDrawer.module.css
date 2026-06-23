@@ -10,12 +10,6 @@
     z-index: 10000;
     display: flex;
     justify-content: flex-end;
-    animation: fadeOverlay 0.2s ease-out;
-}
-
-@keyframes fadeOverlay {
-    from { opacity: 0; }
-    to { opacity: 1; }
 }
 
 .drawer {
@@ -29,17 +23,11 @@
     box-shadow: -10px 0 40px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
-    animation: slideDrawer 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme='dark'] .drawer {
     background: rgba(13, 13, 21, 0.95);
     border-left-color: rgba(255, 255, 255, 0.08);
-}
-
-@keyframes slideDrawer {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
 }
 
 .header {

@@ -5,6 +5,8 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import DemoWarning from '@/components/ui/DemoWarning';
 import CustomCursor from '@/components/ui/CustomCursor';
+import SmoothScroll from '@/components/ui/SmoothScroll';
+import PageTransition from '@/components/ui/PageTransition';
 import { AuthProvider } from '@/lib/AuthContext';
 import { CartProvider } from '@/lib/CartContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
@@ -24,7 +26,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider>
           <AuthProvider>
@@ -32,7 +34,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <CustomCursor />
               <DemoWarning />
               <Navbar />
-              {children}
+              <SmoothScroll>
+                <PageTransition>
+                  {children}
+                </PageTransition>
+              </SmoothScroll>
               <Footer />
             </CartProvider>
           </AuthProvider>

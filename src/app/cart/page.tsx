@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import Button from '@/components/ui/Button';
 import Link from 'next/link';
@@ -8,8 +8,47 @@ import { useCart } from '@/lib/CartContext';
 
 export default function Cart() {
     const { items: cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
+    
+    const [isVerified, setIsVerified] = useState(false);
+    const [promoInput, setPromoInput] = useState('');
+    const [appliedPromo, setAppliedPromo] = useState('');
+    const [promoStatus, setPromoStatus] = useState<{ message: string; type: 'success' | 'error' | null }>({
+        message: '',
+        type: null
+    });
+
+    useEffect(() => {
+        setIsVerified(localStorage.getItem('gravity-student-verified') === 'true');
+        const savedPromo = localStorage.getItem('gravity-applied-promo');
+        if (savedPromo) {
+            setAppliedPromo(savedPromo);
+        }
+    }, []);
+
+    const handleApplyPromo = (e: React.FormEvent) => {
+        e.preventDefault();
+        const code = promoInput.trim().toUpperCase();
+        if (code === 'STUDENT20') {
+            setAppliedPromo('STUDENT20');
+            localStorage.setItem('gravity-applied-promo', 'STUDENT20');
+            setPromoStatus({ message: 'Promo code applied! 20% Discount active.', type: 'success' });
+            setPromoInput('');
+        } else if (code === '') {
+            setPromoStatus({ message: 'Please enter a promo code.', type: 'error' });
+        } else {
+            setPromoStatus({ message: 'Invalid promo code.', type: 'error' });
+        }
+    };
+
+    const handleRemovePromo = () => {
+        setAppliedPromo('');
+        localStorage.removeItem('gravity-applied-promo');
+        setPromoStatus({ message: 'Promo code removed.', type: null });
+    };
+
     const subtotal = cartTotal;
-    const studentDiscount = Math.round(subtotal * 0.2);
+    const isDiscountEligible = isVerified || appliedPromo === 'STUDENT20';
+    const studentDiscount = isDiscountEligible ? Math.round(subtotal * 0.2) : 0;
     const total = subtotal - studentDiscount;
 
     if (cartItems.length === 0) {
@@ -71,13 +110,32 @@ export default function Cart() {
                         </div>
                     ))}
 
-                    <div className={styles.studentOffer}>
-                        <div className={styles.offerIcon}>🎓</div>
-                        <div>
-                            <h4>Student Discount Applied</h4>
-                            <p>You&apos;ve saved extra ₹{studentDiscount} using your verified status.</p>
+                    {isDiscountEligible ? (
+                        <div className={styles.studentOffer}>
+                            <div className={styles.offerIcon}>🎓</div>
+                            <div>
+                                <h4>Discount Applied</h4>
+                                <p>
+                                    You&apos;ve saved extra ₹{studentDiscount} using {isVerified ? 'your verified student status' : 'promo code STUDENT20'}.
+                                    {!isVerified && (
+                                        <button onClick={handleRemovePromo} style={{ marginLeft: '10px', textDecoration: 'underline', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontWeight: 'bold' }}>
+                                            Remove Promo
+                                        </button>
+                                    )}
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div className={styles.studentBanner}>
+                            <div className={styles.bannerText}>
+                                <h4>Are you a student?</h4>
+                                <p>Verify your student status to get an extra 20% discount on all drops.</p>
+                            </div>
+                            <Link href="/discount" className={styles.bannerLink}>
+                                Verify Now &rarr;
+                            </Link>
+                        </div>
+                    )}
                 </main>
 
                 <aside className={styles.summary}>
@@ -86,10 +144,12 @@ export default function Cart() {
                         <span>Subtotal</span>
                         <span>₹{subtotal}</span>
                     </div>
-                    <div className={`${styles.summaryLine} ${styles.discountLine}`}>
-                        <span>Student Discount (20%)</span>
-                        <span>-₹{studentDiscount}</span>
-                    </div>
+                    {studentDiscount > 0 && (
+                        <div className={`${styles.summaryLine} ${styles.discountLine}`}>
+                            <span>Discount (20%)</span>
+                            <span>-₹{studentDiscount}</span>
+                        </div>
+                    )}
                     <div className={styles.summaryLine}>
                         <span>Shipping</span>
                         <span className={styles.free}>FREE</span>
@@ -105,7 +165,28 @@ export default function Cart() {
                         </Button>
                     </Link>
 
-                    <div className={styles.paymentMethods}>
+                    <div className={styles.promoSection}>
+                        <label style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--font-bold)', color: 'var(--text-secondary)' }}>
+                            HAVE A PROMO CODE?
+                        </label>
+                        <form onSubmit={handleApplyPromo} className={styles.promoForm}>
+                            <input
+                                type="text"
+                                placeholder="e.g. STUDENT20"
+                                value={promoInput}
+                                onChange={(e) => setPromoInput(e.target.value)}
+                                className={styles.promoInput}
+                            />
+                            <button type="submit" className={styles.promoBtn}>Apply</button>
+                        </form>
+                        {promoStatus.type && (
+                            <span className={`${styles.promoStatus} ${promoStatus.type === 'success' ? styles.promoSuccess : styles.promoError}`}>
+                                {promoStatus.message}
+                            </span>
+                        )}
+                    </div>
+
+                    <div className={styles.paymentMethods} style={{ marginTop: '20px' }}>
                         <p>WE ACCEPT</p>
                         <div className={styles.icons}>
                             <span>UPI</span>

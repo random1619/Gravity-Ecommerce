@@ -12,7 +12,6 @@
     z-index: 99999;
     padding: 40px 20px;
     box-sizing: border-box;
-    animation: fadeIn 0.2s ease-out;
 }
 
 .modal {
@@ -24,7 +23,6 @@
     max-width: 90vw;
     max-height: 90vh;
     overflow: auto;
-    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .closeBtn {
@@ -50,26 +48,6 @@
     background: var(--accent-secondary);
     color: white;
     transform: rotate(90deg);
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
 }
 
 @media (max-width: 768px) {
