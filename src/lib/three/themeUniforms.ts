@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import * as THREE from 'three';
 
 type ThemeName = 'light' | 'dark';
@@ -23,33 +23,35 @@ const DARK: ThemePalette = {
   c3: new THREE.Color('#ff007f'), // neon pink
 };
 
+/** Frozen palette table keyed by theme name. */
+const PALETTES: Record<ThemeName, ThemePalette> = { light: LIGHT, dark: DARK };
+
 function currentTheme(): ThemeName {
   if (typeof document === 'undefined') return 'light';
   return (document.documentElement.getAttribute('data-theme') as ThemeName) || 'light';
 }
 
-function paletteFor(theme: ThemeName): ThemePalette {
-  return theme === 'dark' ? DARK : LIGHT;
-}
-
 /**
  * React hook returning the current theme palette, updating live when the user
- * toggles theme. Watches the data-theme attribute via MutationObserver.
+ * toggles theme. Watches the data-theme attribute via useSyncExternalStore +
+ * MutationObserver — no setState-in-effect, concurrent-safe. Returns a stable
+ * reference per theme so consumers' memo deps stay clean across re-renders.
  */
 export function useThemePalette(): ThemePalette {
-  const [palette, setPalette] = useState<ThemePalette>(() => paletteFor(currentTheme()));
+  const theme = useThemeName();
+  return PALETTES[theme];
+}
 
-  useEffect(() => {
-    setPalette(paletteFor(currentTheme()));
-    const observer = new MutationObserver(() => {
-      setPalette(paletteFor(currentTheme()));
-    });
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme'],
-    });
-    return () => observer.disconnect();
-  }, []);
+/** Returns the live theme name ('light' | 'dark'), subscribing to data-theme. */
+function useThemeName(): ThemeName {
+  return useSyncExternalStore(subscribeTheme, currentTheme, () => 'light' as ThemeName);
+}
 
-  return palette;
+function subscribeTheme(callback: () => void): () => void {
+  const observer = new MutationObserver(callback);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
+  return () => observer.disconnect();
 }

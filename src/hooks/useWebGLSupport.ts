@@ -1,23 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
 /**
  * Detects whether a WebGL2 (preferred) or WebGL1 context can be created.
  * SSR-safe. Used to gate the entire WebGL canvas behind a fallback.
+ *
+ * WebGL capability never changes for a given page load, so there's no
+ * subscription — we just cache the result and return it via useSyncExternalStore
+ * to avoid setState-in-effect and stay concurrent-safe.
  */
 export function useWebGLSupport(): boolean {
-  const [supported, setSupported] = useState(false);
+  return useSyncExternalStore(subscribeNoop, () => webglSupported, () => false);
+}
 
-  useEffect(() => {
-    setSupported(detectWebGL());
-  }, []);
+const subscribeNoop = () => () => {};
 
-  return supported;
+let webglSupported = false;
+if (typeof window !== 'undefined') {
+  webglSupported = detectWebGL();
 }
 
 function detectWebGL(): boolean {
-  if (typeof window === 'undefined') return false;
   try {
     const canvas = document.createElement('canvas');
     const gl =

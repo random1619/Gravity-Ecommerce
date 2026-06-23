@@ -249,6 +249,14 @@
     line-height: var(--leading-relaxed);
 }
 
+/* Full-width wrapper for the Place Order CTA so the Magnetic pull (which
+   defaults to inline-block / shrink-to-fit) keeps the button spanning the
+   summary card. */
+.placeOrderWrap {
+    display: block;
+    width: 100%;
+}
+
 .emptyState {
     text-align: center;
     padding: var(--spacing-20) var(--spacing-6);

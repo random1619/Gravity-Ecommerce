@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useEffect, useRef, useState, useCallback } from 'react';
+import React, { Suspense, useEffect, useRef, useSyncExternalStore } from 'react';
 import { usePathname } from 'next/navigation';
 import CameraRig from '@/components/three/CameraRig';
 import Lighting from '@/components/three/Lighting';
@@ -12,83 +12,87 @@ import { useDeviceTier } from '@/hooks/useDeviceTier';
 import { lookbookR3FEnabled } from '@/lib/three/constants';
 
 /**
+ * Subscribe to window scroll/resize via a single shared rAF-coalesced store.
+ * Returns a monotonically increasing "tick" so React knows to re-read snapshot
+ * getters that depend on layout. Avoids setState-in-effect entirely.
+ */
+const NOOP = () => () => {};
+function subscribeScroll(callback: () => void): () => void {
+  let scheduled = false;
+  const schedule = () => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => {
+      scheduled = false;
+      callback();
+    });
+  };
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  return () => {
+    window.removeEventListener('scroll', schedule);
+    window.removeEventListener('resize', schedule);
+  };
+}
+
+/**
  * Tracks how far the first viewport-height section (hero) has scrolled
  * through the viewport. Returns a 0→1 fade multiplier:
  *   - 1.0 when scrollY ≈ 0 (hero fully visible)
  *   - 0.0 when scrollY ≥ one viewport height past the hero
- * Smoothed via requestAnimationFrame to avoid layout thrashing.
+ * Ease-out cubic for a natural fade-out feel.
  */
 function useHeroFade(): number {
-  const [fade, setFade] = useState(1);
-  const raf = useRef(0);
-  const update = useCallback(() => {
-    raf.current = 0;
-    const vh = window.innerHeight || 1;
-    // Fade over the first viewport of scroll travel (0 → vh)
-    const t = Math.min(1, window.scrollY / vh);
-    // Ease-out cubic for a natural fade-out feel
-    setFade(1 - t * t * t);
-  }, []);
-
-  useEffect(() => {
-    update();
-    const onScroll = () => {
-      if (!raf.current) raf.current = requestAnimationFrame(update);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (raf.current) cancelAnimationFrame(raf.current);
-    };
-  }, [update]);
-
-  return fade;
+  return useSyncExternalStore(
+    subscribeScroll,
+    () => {
+      const vh = window.innerHeight || 1;
+      const t = Math.min(1, window.scrollY / vh);
+      return 1 - t * t * t;
+    },
+    () => 1,
+  );
 }
 
 /**
  * Tracks the scroll progress (0→1) of the lookbook horizontal-pin section by
- * measuring the element carrying `data-lookbook-story`. Writes into a ref
- * (not state) because the value is consumed inside the R3F render loop where
- * re-renders are undesirable — LookbookGallery reads it each frame.
+ * measuring the element carrying `data-lookbook-story`.
  *
- * Returns false while there's no section to track so the caller can skip
- * mounting the gallery on non-lookbook routes.
+ * Returns `{ active, progress }` where `active` is whether the section exists
+ * (so the caller can skip mounting the gallery on non-lookbook routes) and
+ * `progress` is the latest 0..1 value (read live by the R3F render loop).
  */
 function useLookbookProgress(progressRef: React.RefObject<number>): boolean {
-  const [active, setActive] = useState(false);
-  const raf = useRef(0);
+  // active is stable for the lifetime of the DOM, so it does not need scroll
+  // reactivity — read it once on mount via an effect-free lazy check.
+  const active = useSyncExternalStore(
+    NOOP,
+    () => !!document.querySelector('[data-lookbook-story]'),
+    () => false,
+  );
 
   useEffect(() => {
-    const el = document.querySelector('[data-lookbook-story]') as HTMLElement | null;
-    if (!el) {
+    if (!active) {
       progressRef.current = 0;
-      setActive(false);
       return;
     }
-    setActive(true);
-
+    const el = document.querySelector('[data-lookbook-story]') as HTMLElement | null;
+    if (!el) return;
+    // Keep the ref fresh on scroll/resize so the R3F frame loop reads it.
     const update = () => {
-      raf.current = 0;
       const rect = el.getBoundingClientRect();
       const traveled = window.innerHeight - rect.top;
       const span = window.innerHeight + rect.height;
       progressRef.current = span > 0 ? Math.min(1, Math.max(0, traveled / span)) : 0;
     };
-    const onScroll = () => {
-      if (!raf.current) raf.current = requestAnimationFrame(update);
-    };
     update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
     return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (raf.current) cancelAnimationFrame(raf.current);
-      setActive(false);
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
     };
-  }, [progressRef]);
+  }, [active, progressRef]);
 
   return active;
 }

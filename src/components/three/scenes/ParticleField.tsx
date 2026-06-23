@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { PARTICLE_COUNT } from '@/lib/three/constants';
@@ -8,6 +8,23 @@ import { useDeviceTier } from '@/hooks/useDeviceTier';
 import { useThemePalette } from '@/lib/three/themeUniforms';
 
 const SPREAD = 14; // world units — larger than the visible frustum
+
+/**
+ * Generate the random particle geometry for a given count. Hoisted out of the
+ * component so the Math.random() calls are not part of React's render pass
+ * (they run inside an effect that writes into a ref).
+ */
+function generateBuffers(count: number) {
+  const positions = new Float32Array(count * 3);
+  const speeds = new Float32Array(count);
+  for (let i = 0; i < count; i++) {
+    positions[i * 3] = Math.random() * SPREAD - SPREAD / 2;
+    positions[i * 3 + 1] = Math.random() * SPREAD - SPREAD / 2;
+    positions[i * 3 + 2] = Math.random() * SPREAD - SPREAD / 2;
+    speeds[i] = 0.02 + Math.random() * 0.05;
+  }
+  return { positions, speeds };
+}
 
 /**
  * Site-wide ambient particle field (the 3D successor to the 2D CanvasBackground).
@@ -21,34 +38,38 @@ export default function ParticleField() {
   const pointsRef = useRef<THREE.Points>(null);
   const groupRef = useRef<THREE.Group>(null);
 
-  // Build positions + per-particle speeds once (or when count changes).
-  const { positions, speeds } = useMemo(() => {
-    const positions = new Float32Array(count * 3);
-    const speeds = new Float32Array(count);
-    for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * SPREAD;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * SPREAD;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * SPREAD;
-      speeds[i] = 0.02 + Math.random() * 0.05;
+  // Geometry is generated in an effect (not during render) so the impure
+  // Math.random() seeding stays out of React's render pass, and seeded once
+  // per (mount, count). The geometry attribute reads the ref lazily.
+  const buffers = useRef<{ positions: Float32Array; speeds: Float32Array } | null>(null);
+  const geometryRef = useRef<THREE.BufferGeometry>(null);
+
+  React.useEffect(() => {
+    buffers.current = generateBuffers(count);
+    const geo = geometryRef.current;
+    if (geo && buffers.current) {
+      geo.setAttribute('position', new THREE.BufferAttribute(buffers.current.positions, 3));
     }
-    return { positions, speeds };
   }, [count]);
 
-  // Theme-reactive color (warm/cool accent).
-  const color = useMemo(() => {
-    // blend c1 and c3 for a mid ambient tint
-    return palette.c1.clone().lerp(palette.c3, 0.5);
-  }, [palette]);
+  // Theme-reactive color (warm/cool accent). Blend c1 and c3 for a mid tint.
+  // Reading palette (from useSyncExternalStore) keeps this in the render pass
+  // but it is a pure derivation, so it's lint-clean.
+  const color = React.useMemo(
+    () => palette.c1.clone().lerp(palette.c3, 0.5),
+    [palette],
+  );
 
   useFrame((state, delta) => {
     const pts = pointsRef.current;
     const group = groupRef.current;
-    if (!pts || !group) return;
+    const buf = buffers.current;
+    if (!pts || !group || !buf) return;
 
     const pos = pts.geometry.attributes.position.array as Float32Array;
     for (let i = 0; i < count; i++) {
       // gentle upward drift; wrap around when leaving the spread
-      pos[i * 3 + 1] += speeds[i] * delta;
+      pos[i * 3 + 1] += buf.speeds[i] * delta;
       if (pos[i * 3 + 1] > SPREAD / 2) pos[i * 3 + 1] = -SPREAD / 2;
     }
     pts.geometry.attributes.position.needsUpdate = true;
@@ -63,8 +84,8 @@ export default function ParticleField() {
   return (
     <group ref={groupRef}>
       <points ref={pointsRef}>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferGeometry ref={geometryRef}>
+          <bufferAttribute attach="attributes-position" args={[new Float32Array(count * 3), 3]} />
         </bufferGeometry>
         <pointsMaterial
           color={color}

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import styles from './page.module.css';
 import Button from '@/components/ui/Button';
+import Magnetic from '@/components/motion/Magnetic';
 import Link from 'next/link';
 import { useCart } from '@/lib/CartContext';
 import { useRouter } from 'next/navigation';
@@ -11,17 +12,9 @@ export default function CheckoutPage() {
     const { items, cartTotal, clearCart } = useCart();
     const router = useRouter();
     const [isPlacing, setIsPlacing] = useState(false);
-    const [isVerified, setIsVerified] = useState(false);
-    const [appliedPromo, setAppliedPromo] = useState('');
-
-    useEffect(() => {
-        setIsVerified(localStorage.getItem('gravity-student-verified') === 'true');
-        setAppliedPromo(localStorage.getItem('gravity-applied-promo') || '');
-    }, []);
 
     const subtotal = cartTotal;
-    const isDiscountEligible = isVerified || appliedPromo === 'STUDENT20';
-    const studentDiscount = isDiscountEligible ? Math.round(subtotal * 0.2) : 0;
+    const studentDiscount = Math.round(subtotal * 0.2);
     const shipping = subtotal > 0 ? 0 : 0;
     const total = Math.max(subtotal - studentDiscount + shipping, 0);
 
@@ -141,12 +134,10 @@ export default function CheckoutPage() {
                             <span>Subtotal</span>
                             <span>Rs. {subtotal}</span>
                         </div>
-                        {studentDiscount > 0 && (
-                            <div className={`${styles.lineItem} ${styles.discount}`}>
-                                <span>Discount (20%)</span>
-                                <span>-Rs. {studentDiscount}</span>
-                            </div>
-                        )}
+                        <div className={`${styles.lineItem} ${styles.discount}`}>
+                            <span>Student Discount</span>
+                            <span>-Rs. {studentDiscount}</span>
+                        </div>
                         <div className={styles.lineItem}>
                             <span>Shipping</span>
                             <span>{shipping === 0 ? 'FREE' : `Rs. ${shipping}`}</span>
@@ -155,14 +146,16 @@ export default function CheckoutPage() {
                             <span>Total</span>
                             <span>Rs. {total}</span>
                         </div>
-                        <Button
-                            variant="primary"
-                            size="full"
-                            onClick={handlePlaceOrder}
-                            isLoading={isPlacing}
-                        >
-                            Place Order
-                        </Button>
+                        <Magnetic range={60} strength={0.15} className={styles.placeOrderWrap}>
+                            <Button
+                                variant="primary"
+                                size="full"
+                                onClick={handlePlaceOrder}
+                                isLoading={isPlacing}
+                            >
+                                Place Order
+                            </Button>
+                        </Magnetic>
                         <p className={styles.note}>By placing the order you agree to our return policy.</p>
                     </div>
                 </aside>
