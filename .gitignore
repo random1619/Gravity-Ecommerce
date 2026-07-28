@@ -42,6 +42,14 @@ next-env.d.ts
 tmpclaude-*
 build_log.txt
 
+# AI Contexts & Assistant files
+.planning/
+.agents/
+.gemini/
+.claude/
+AGENTS.md
+*.bat
+start.bat
 
 # Superpowers brainstorm mockups
 /.superpowers/
