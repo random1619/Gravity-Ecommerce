@@ -9,7 +9,7 @@ export default function SuccessPage() {
     return (
         <div className={`container ${styles.successPage}`}>
             <div className={styles.card}>
-                <div className={styles.icon}>?</div>
+                <div className={styles.icon}>✓</div>
                 <h1>Order Confirmed</h1>
                 <p>Your order is in. We are preparing the shipment and will notify you soon.</p>
                 <div className={styles.actions}>

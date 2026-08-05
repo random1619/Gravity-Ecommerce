@@ -59,7 +59,7 @@ export default function RewardsPage() {
         
         <header className={styles.header}>
           <span className={styles.clubBadge}>GRAVITY CLUB</span>
-          <h1 className={styles.title}>LOVALTY & STUDENT REWARDS</h1>
+          <h1 className={styles.title}>LOYALTY & STUDENT REWARDS</h1>
           <p className={styles.subtitle}>
             Earn Gravity Coins on every drop, complete campus missions, and unlock exclusive streetwear discounts.
           </p>

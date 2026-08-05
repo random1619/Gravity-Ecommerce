@@ -80,7 +80,7 @@ export default function Cart() {
                             <div className={styles.itemInfo}>
                                 <div className={styles.itemHeader}>
                                     <h3>{item.name}</h3>
-                                    <p className={styles.itemPrice}>₹{item.price}</p>
+                                    <p className={styles.itemPrice}>₹{item.price * item.quantity}</p>
                                 </div>
                                 <p className={styles.itemMeta}>Size: {item.size} | Qty: {item.quantity}</p>
                                 <div className={styles.itemActions}>

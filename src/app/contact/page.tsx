@@ -113,6 +113,12 @@ export default function ContactPage() {
               </div>
             )}
 
+            {status === 'error' && (
+              <div className={styles.errorMessage}>
+                Something went wrong. Please try again.
+              </div>
+            )}
+
             <button
               type="submit"
               className={styles.submitBtn}

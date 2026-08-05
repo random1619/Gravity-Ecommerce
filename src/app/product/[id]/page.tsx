@@ -170,7 +170,7 @@ export default function ProductDetail() {
                 <div className={styles.reviewsGrid}>
                     {(product.reviews || []).map((review) => (
                         <div key={review.id} className={styles.reviewCard}>
-                            <div className={styles.rating}>★★★★★</div>
+                            <div className={styles.rating}>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</div>
                             <p className={styles.comment}>&quot;{review.comment}&quot;</p>
                             <p className={styles.user}>- {review.user}</p>
                         </div>

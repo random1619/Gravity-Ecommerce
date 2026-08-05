@@ -9,9 +9,12 @@ import SmoothScroll from '@/components/ui/SmoothScroll';
 import PageTransition from '@/components/ui/PageTransition';
 import { AuthProvider } from '@/lib/AuthContext';
 import { CartProvider } from '@/lib/CartContext';
+import { WishlistProvider } from '@/lib/WishlistContext';
+import { RecentlyViewedProvider } from '@/lib/RecentlyViewedContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
 import { DeviceTierProvider } from '@/hooks/useDeviceTier';
 import ClientWebGLCanvas from '@/components/three/ClientWebGLCanvas';
+import ErrorBoundary from '@/components/ui/ErrorBoundary';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -34,17 +37,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <DeviceTierProvider>
             <AuthProvider>
               <CartProvider>
-                <ClientWebGLCanvas />
-                <CustomCursor />
-                <DemoWarning />
-                <Navbar />
-              <SmoothScroll>
-                <PageTransition>
-                  {children}
-                </PageTransition>
-              </SmoothScroll>
-              <Footer />
-            </CartProvider>
+                <WishlistProvider>
+                  <RecentlyViewedProvider>
+                    <ClientWebGLCanvas />
+                    <CustomCursor />
+                    <DemoWarning />
+                    <Navbar />
+                    <SmoothScroll>
+                      <PageTransition>
+                        <ErrorBoundary>
+                          {children}
+                        </ErrorBoundary>
+                      </PageTransition>
+                    </SmoothScroll>
+                    <Footer />
+                  </RecentlyViewedProvider>
+                </WishlistProvider>
+              </CartProvider>
             </AuthProvider>
           </DeviceTierProvider>
           </ThemeProvider>

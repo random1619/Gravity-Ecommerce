@@ -116,6 +116,12 @@
     outline: none;
 }
 
+.errorText {
+    font-size: var(--text-xs);
+    color: var(--accent-secondary);
+    font-weight: var(--font-medium);
+}
+
 .paymentOptions {
     display: grid;
     gap: var(--spacing-3);

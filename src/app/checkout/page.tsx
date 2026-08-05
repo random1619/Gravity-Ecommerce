@@ -13,8 +13,34 @@ export default function CheckoutPage() {
     const router = useRouter();
     const [isPlacing, setIsPlacing] = useState(false);
 
+    const getInitialDiscountState = () => {
+        if (typeof window === 'undefined') return { isVerified: false, appliedPromo: '' };
+        return {
+            isVerified: localStorage.getItem('gravity-student-verified') === 'true',
+            appliedPromo: localStorage.getItem('gravity-applied-promo') || '',
+        };
+    };
+
+    const [{ isVerified, appliedPromo }] = useState(getInitialDiscountState);
+    const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', city: '', state: '', postal: '' });
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const validateForm = (): boolean => {
+        const newErrors: Record<string, string> = {};
+        if (!form.name.trim()) newErrors.name = 'Name is required';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'Valid email is required';
+        if (!/^\+?\d{10,15}$/.test(form.phone.replace(/[\s-]/g, ''))) newErrors.phone = 'Valid phone number is required';
+        if (!form.address.trim()) newErrors.address = 'Address is required';
+        if (!form.city.trim()) newErrors.city = 'City is required';
+        if (!form.state.trim()) newErrors.state = 'State is required';
+        if (!/^\d{5,6}$/.test(form.postal)) newErrors.postal = 'Valid postal code is required';
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const isDiscountEligible = isVerified || appliedPromo === 'STUDENT20';
     const subtotal = cartTotal;
-    const studentDiscount = Math.round(subtotal * 0.2);
+    const studentDiscount = isDiscountEligible ? Math.round(subtotal * 0.2) : 0;
     const shipping = subtotal > 0 ? 0 : 0;
     const total = Math.max(subtotal - studentDiscount + shipping, 0);
 
@@ -35,6 +61,7 @@ export default function CheckoutPage() {
     }
 
     const handlePlaceOrder = () => {
+        if (!validateForm()) return;
         setIsPlacing(true);
         setTimeout(() => {
             clearCart();
@@ -59,15 +86,18 @@ export default function CheckoutPage() {
                         <div className={styles.grid}>
                             <div className={styles.inputGroup}>
                                 <label>Full Name</label>
-                                <input type="text" placeholder="Your name" required />
+                                <input type="text" placeholder="Your name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+                                {errors.name && <span className={styles.errorText}>{errors.name}</span>}
                             </div>
                             <div className={styles.inputGroup}>
                                 <label>Email</label>
-                                <input type="email" placeholder="you@example.com" required />
+                                <input type="email" placeholder="you@example.com" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+                                {errors.email && <span className={styles.errorText}>{errors.email}</span>}
                             </div>
                             <div className={styles.inputGroup}>
                                 <label>Phone</label>
-                                <input type="tel" placeholder="+91 00000 00000" required />
+                                <input type="tel" placeholder="+91 00000 00000" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
+                                {errors.phone && <span className={styles.errorText}>{errors.phone}</span>}
                             </div>
                         </div>
                     </div>
@@ -77,19 +107,23 @@ export default function CheckoutPage() {
                         <div className={styles.grid}>
                             <div className={styles.inputGroupWide}>
                                 <label>Address</label>
-                                <input type="text" placeholder="House no, street, area" required />
+                                <input type="text" placeholder="House no, street, area" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} />
+                                {errors.address && <span className={styles.errorText}>{errors.address}</span>}
                             </div>
                             <div className={styles.inputGroup}>
                                 <label>City</label>
-                                <input type="text" placeholder="Mumbai" required />
+                                <input type="text" placeholder="Mumbai" value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} />
+                                {errors.city && <span className={styles.errorText}>{errors.city}</span>}
                             </div>
                             <div className={styles.inputGroup}>
                                 <label>State</label>
-                                <input type="text" placeholder="Maharashtra" required />
+                                <input type="text" placeholder="Maharashtra" value={form.state} onChange={e => setForm(f => ({ ...f, state: e.target.value }))} />
+                                {errors.state && <span className={styles.errorText}>{errors.state}</span>}
                             </div>
                             <div className={styles.inputGroup}>
                                 <label>Postal Code</label>
-                                <input type="text" placeholder="400001" required />
+                                <input type="text" placeholder="400001" value={form.postal} onChange={e => setForm(f => ({ ...f, postal: e.target.value }))} />
+                                {errors.postal && <span className={styles.errorText}>{errors.postal}</span>}
                             </div>
                         </div>
                     </div>
@@ -134,10 +168,12 @@ export default function CheckoutPage() {
                             <span>Subtotal</span>
                             <span>Rs. {subtotal}</span>
                         </div>
-                        <div className={`${styles.lineItem} ${styles.discount}`}>
-                            <span>Student Discount</span>
-                            <span>-Rs. {studentDiscount}</span>
-                        </div>
+                        {studentDiscount > 0 && (
+                            <div className={`${styles.lineItem} ${styles.discount}`}>
+                                <span>Student Discount</span>
+                                <span>-Rs. {studentDiscount}</span>
+                            </div>
+                        )}
                         <div className={styles.lineItem}>
                             <span>Shipping</span>
                             <span>{shipping === 0 ? 'FREE' : `Rs. ${shipping}`}</span>

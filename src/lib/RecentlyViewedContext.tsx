@@ -2,24 +2,26 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
-interface Product {
-  id: number
+interface RecentProduct {
+  id: string
   name: string
   price: number
-  image: string
+  originalPrice?: number
+  imageUrl: string
   category: string
+  isNew?: boolean
 }
 
 interface RecentlyViewedContextType {
-  recentlyViewed: Product[]
-  addToRecentlyViewed: (product: Product) => void
+  recentlyViewed: RecentProduct[]
+  addToRecentlyViewed: (product: RecentProduct) => void
   clearRecentlyViewed: () => void
 }
 
 const RecentlyViewedContext = createContext<RecentlyViewedContextType | undefined>(undefined)
 
 export function RecentlyViewedProvider({ children }: { children: ReactNode }) {
-  const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([])
+  const [recentlyViewed, setRecentlyViewed] = useState<RecentProduct[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
 
   // Load from localStorage on mount
@@ -43,7 +45,7 @@ export function RecentlyViewedProvider({ children }: { children: ReactNode }) {
     }
   }, [recentlyViewed, isInitialized])
 
-  const addToRecentlyViewed = (product: Product) => {
+  const addToRecentlyViewed = (product: RecentProduct) => {
     setRecentlyViewed(prev => {
       // Remove if already exists
       const filtered = prev.filter(item => item.id !== product.id)

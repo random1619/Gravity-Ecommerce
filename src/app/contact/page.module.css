@@ -120,6 +120,16 @@
     text-align: center;
 }
 
+.errorMessage {
+    padding: var(--spacing-4);
+    background: rgba(200, 90, 60, 0.1);
+    border: 2px solid var(--accent-secondary);
+    border-radius: var(--radius-lg);
+    color: var(--accent-secondary);
+    font-weight: var(--font-semibold);
+    text-align: center;
+}
+
 .infoSection {
     display: flex;
     flex-direction: column;
