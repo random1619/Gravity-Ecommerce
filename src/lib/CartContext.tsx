@@ -64,10 +64,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             );
 
             if (existingItemIndex > -1) {
-                // Update quantity of existing item
-                const updatedItems = [...currentItems];
-                updatedItems[existingItemIndex].quantity += 1;
-                return updatedItems;
+                // Update quantity of existing item (immutable — a mutated array
+                // keeps the same reference and React may skip the re-render)
+                return currentItems.map((i, index) =>
+                    index === existingItemIndex ? { ...i, quantity: i.quantity + 1 } : i
+                );
             } else {
                 // Add new item
                 return [...currentItems, { ...item, quantity: 1 }];

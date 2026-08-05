@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Eye } from 'lucide-react';
 import styles from './ProductCard.module.scss';
 import Button from './Button';
@@ -33,10 +34,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className={styles.card} data-cursor-text="SHOP">
             <div className={styles.imageWrapper}>
                 <Link href={`/product/${id}`}>
-                    <img 
-                        src={imageUrl} 
-                        alt={name} 
-                        className={styles.image} 
+                    <Image
+                        src={imageUrl}
+                        alt={name}
+                        className={styles.image}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 </Link>
                 {isNew && <span className={styles.badge}>NEW DROP</span>}

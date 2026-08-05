@@ -11,7 +11,7 @@ import LoginModal from '../ui/LoginModal';
 import CartDrawer from '../ui/CartDrawer';
 import Magnetic from '../motion/Magnetic';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, ShoppingCart, User, ChevronDown, Package, Heart, Settings, LogOut, Search } from 'lucide-react';
+import { Sun, Moon, ShoppingCart, User, ChevronDown, Package, Heart, Settings, LogOut, Search, Menu, X } from 'lucide-react';
 import type { Product } from '@/lib/data';
 
 const Navbar = () => {
@@ -24,6 +24,7 @@ const Navbar = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showUserDropdown, setShowUserDropdown] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const fetchTrends = async () => {
@@ -90,15 +91,28 @@ const Navbar = () => {
                 </div>
 
                 <div className={styles.actions}>
+                    <button
+                        className={styles.menuBtn}
+                        onClick={() => setIsMobileMenuOpen(prev => !prev)}
+                        aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                        aria-expanded={isMobileMenuOpen}
+                    >
+                        {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                    </button>
+
                     <Magnetic range={40} strength={0.15}>
-                        <div className={styles.searchBarTrigger} onClick={() => setIsSearchOpen(true)}>
+                        <button
+                            className={styles.searchBarTrigger}
+                            onClick={() => setIsSearchOpen(true)}
+                            aria-label="Search products (Ctrl+K)"
+                        >
                             <Search size={16} className={styles.searchIconInline} />
                             <span className={styles.searchPlaceholderText}>Search trends...</span>
-                            <div className={styles.kbdContainer}>
+                            <span className={styles.kbdContainer}>
                                 <kbd className={styles.kbd}>Ctrl</kbd>
                                 <kbd className={styles.kbd}>K</kbd>
-                            </div>
-                        </div>
+                            </span>
+                        </button>
                     </Magnetic>
 
                     <Magnetic range={40} strength={0.35}>
@@ -122,7 +136,7 @@ const Navbar = () => {
                         <button className={styles.iconBtn} aria-label="Cart" onClick={openCart}>
                             <div className={styles.cartIcon}>
                                 <ShoppingCart size={20} />
-                                <span className={styles.badge}>{cartCount}</span>
+                                {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}
                             </div>
                         </button>
                     </Magnetic>
@@ -178,6 +192,16 @@ const Navbar = () => {
 
             <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
             <CartDrawer />
+
+            {isMobileMenuOpen && (
+                <div className={styles.mobileMenu}>
+                    <Link href="/shop" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>Shop</Link>
+                    <Link href="/collections" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>New Drops</Link>
+                    <Link href="/lookbook" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>Lookbook</Link>
+                    <Link href="/rewards" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>Rewards</Link>
+                    <Link href="/discount" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>Student Offer</Link>
+                </div>
+            )}
 
             {isSearchOpen && (
                 <div className={styles.searchOverlay} onClick={() => setIsSearchOpen(false)}>

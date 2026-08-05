@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Fonts are loaded via next/font in layout.tsx (self-hosted, no render-blocking @import) */
 
 /* ============================================================
    DESIGN TOKENS — LIGHT MODE  ·  "Organic Earth"
@@ -31,11 +31,11 @@
   --accent-indigo-rgb: 72, 94, 166;
   --accent-success-rgb: 43, 92, 61;
 
-  /* === FONT FAMILIES (were referenced but undefined — now mapped) === */
-  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Poppins', 'Inter', system-ui, sans-serif;
-  --font-accent: 'Space Grotesk', 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  /* === FONT FAMILIES (variables injected by next/font in layout.tsx) === */
+  --font-body: var(--font-body), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-display), var(--font-body), system-ui, sans-serif;
+  --font-accent: var(--font-accent), var(--font-body), sans-serif;
+  --font-mono: var(--font-mono), 'SF Mono', ui-monospace, monospace;
 
   /* === BORDERS & DIVIDERS === */
   --border-color: rgba(28, 26, 23, 0.08);

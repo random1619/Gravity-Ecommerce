@@ -85,18 +85,18 @@ export default function CheckoutPage() {
                         <h2>Contact</h2>
                         <div className={styles.grid}>
                             <div className={styles.inputGroup}>
-                                <label>Full Name</label>
-                                <input type="text" placeholder="Your name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+                                <label htmlFor="checkout-name">Full Name</label>
+                                <input id="checkout-name" type="text" autoComplete="name" placeholder="Your name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
                                 {errors.name && <span className={styles.errorText}>{errors.name}</span>}
                             </div>
                             <div className={styles.inputGroup}>
-                                <label>Email</label>
-                                <input type="email" placeholder="you@example.com" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+                                <label htmlFor="checkout-email">Email</label>
+                                <input id="checkout-email" type="email" autoComplete="email" placeholder="you@example.com" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
                                 {errors.email && <span className={styles.errorText}>{errors.email}</span>}
                             </div>
                             <div className={styles.inputGroup}>
-                                <label>Phone</label>
-                                <input type="tel" placeholder="+91 00000 00000" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
+                                <label htmlFor="checkout-phone">Phone</label>
+                                <input id="checkout-phone" type="tel" autoComplete="tel" placeholder="+91 00000 00000" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
                                 {errors.phone && <span className={styles.errorText}>{errors.phone}</span>}
                             </div>
                         </div>
@@ -106,23 +106,23 @@ export default function CheckoutPage() {
                         <h2>Shipping Address</h2>
                         <div className={styles.grid}>
                             <div className={styles.inputGroupWide}>
-                                <label>Address</label>
-                                <input type="text" placeholder="House no, street, area" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} />
+                                <label htmlFor="checkout-address">Address</label>
+                                <input id="checkout-address" type="text" autoComplete="street-address" placeholder="House no, street, area" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} />
                                 {errors.address && <span className={styles.errorText}>{errors.address}</span>}
                             </div>
                             <div className={styles.inputGroup}>
-                                <label>City</label>
-                                <input type="text" placeholder="Mumbai" value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} />
+                                <label htmlFor="checkout-city">City</label>
+                                <input id="checkout-city" type="text" autoComplete="address-level2" placeholder="Mumbai" value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} />
                                 {errors.city && <span className={styles.errorText}>{errors.city}</span>}
                             </div>
                             <div className={styles.inputGroup}>
-                                <label>State</label>
-                                <input type="text" placeholder="Maharashtra" value={form.state} onChange={e => setForm(f => ({ ...f, state: e.target.value }))} />
+                                <label htmlFor="checkout-state">State</label>
+                                <input id="checkout-state" type="text" autoComplete="address-level1" placeholder="Maharashtra" value={form.state} onChange={e => setForm(f => ({ ...f, state: e.target.value }))} />
                                 {errors.state && <span className={styles.errorText}>{errors.state}</span>}
                             </div>
                             <div className={styles.inputGroup}>
-                                <label>Postal Code</label>
-                                <input type="text" placeholder="400001" value={form.postal} onChange={e => setForm(f => ({ ...f, postal: e.target.value }))} />
+                                <label htmlFor="checkout-postal">Postal Code</label>
+                                <input id="checkout-postal" type="text" autoComplete="postal-code" inputMode="numeric" placeholder="400001" value={form.postal} onChange={e => setForm(f => ({ ...f, postal: e.target.value }))} />
                                 {errors.postal && <span className={styles.errorText}>{errors.postal}</span>}
                             </div>
                         </div>
