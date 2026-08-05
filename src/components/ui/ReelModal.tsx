@@ -48,12 +48,13 @@ const ReelModal: React.FC<ReelModalProps> = ({ isOpen, onClose, reelId, imageUrl
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
-            // Set initial state
-            setIsLiked(false);
-            setLikeCount(Math.floor(1000 + Math.random() * 2000));
-            setComments(reelId ? [...(mockCommentsByReel[reelId] || [])] : []);
-            setIsPlaying(true);
-            setProgress(0);
+            requestAnimationFrame(() => {
+                setIsLiked(false);
+                setLikeCount(Math.floor(1000 + Math.random() * 2000));
+                setComments(reelId ? [...(mockCommentsByReel[reelId] || [])] : []);
+                setIsPlaying(true);
+                setProgress(0);
+            });
         } else {
             document.body.style.overflow = 'unset';
         }

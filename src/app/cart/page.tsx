@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from './page.module.css';
 import Button from '@/components/ui/Button';
 import Link from 'next/link';
@@ -9,21 +9,23 @@ import { useCart } from '@/lib/CartContext';
 export default function Cart() {
     const { items: cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
     
-    const [isVerified, setIsVerified] = useState(false);
+    const [isVerified] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('gravity-student-verified') === 'true';
+        }
+        return false;
+    });
     const [promoInput, setPromoInput] = useState('');
-    const [appliedPromo, setAppliedPromo] = useState('');
+    const [appliedPromo, setAppliedPromo] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('gravity-applied-promo') || '';
+        }
+        return '';
+    });
     const [promoStatus, setPromoStatus] = useState<{ message: string; type: 'success' | 'error' | null }>({
         message: '',
         type: null
     });
-
-    useEffect(() => {
-        setIsVerified(localStorage.getItem('gravity-student-verified') === 'true');
-        const savedPromo = localStorage.getItem('gravity-applied-promo');
-        if (savedPromo) {
-            setAppliedPromo(savedPromo);
-        }
-    }, []);
 
     const handleApplyPromo = (e: React.FormEvent) => {
         e.preventDefault();

@@ -3,6 +3,55 @@
  * This 2D Canvas particle background is no longer mounted in the app.
  * Kept for reference only — safe to delete in a future cleanup pass.
  */
+class Particle {
+  x: number;
+  y: number;
+  size: number;
+  speedX: number;
+  speedY: number;
+  color: string;
+
+  constructor(width: number, height: number, theme: string) {
+    this.x = Math.random() * width;
+    this.y = Math.random() * height;
+    this.size = Math.random() * 2 + 1;
+    this.speedX = (Math.random() - 0.5) * 0.4;
+    this.speedY = (Math.random() - 0.5) * 0.4;
+    this.color = theme === 'dark' ? 'rgba(0, 229, 255, 0.12)' : 'rgba(200, 90, 60, 0.08)';
+  }
+
+  update(width: number, height: number, mouse: { x: number; y: number; radius: number }) {
+    this.x += this.speedX;
+    this.y += this.speedY;
+
+    if (this.x < 0 || this.x > width) this.speedX *= -1;
+    if (this.y < 0 || this.y > height) this.speedY *= -1;
+
+    const dx = mouse.x - this.x;
+    const dy = mouse.y - this.y;
+    const distance = Math.hypot(dx, dy);
+
+    if (distance < mouse.radius) {
+      const forceDirectionX = dx / distance;
+      const forceDirectionY = dy / distance;
+      const maxDistance = mouse.radius;
+      const force = (maxDistance - distance) / maxDistance;
+      const directionX = forceDirectionX * force * 10;
+      const directionY = forceDirectionY * force * 10;
+
+      this.x -= directionX;
+      this.y -= directionY;
+    }
+  }
+
+  draw(ctx: CanvasRenderingContext2D) {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+}
+
 'use client';
 
 import React, { useEffect, useRef } from 'react';
@@ -42,68 +91,18 @@ export default function CanvasBackground() {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseout', handleMouseLeave);
 
-    class Particle {
-      x: number;
-      y: number;
-      size: number;
-      speedX: number;
-      speedY: number;
-      color: string;
-
-      constructor() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.size = Math.random() * 2 + 1;
-        this.speedX = (Math.random() - 0.5) * 0.4;
-        this.speedY = (Math.random() - 0.5) * 0.4;
-        this.color = theme === 'dark' ? 'rgba(0, 229, 255, 0.12)' : 'rgba(200, 90, 60, 0.08)';
-      }
-
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-
-        if (this.x < 0 || this.x > width) this.speedX *= -1;
-        if (this.y < 0 || this.y > height) this.speedY *= -1;
-
-        const dx = mouse.x - this.x;
-        const dy = mouse.y - this.y;
-        const distance = Math.hypot(dx, dy);
-
-        if (distance < mouse.radius) {
-          const forceDirectionX = dx / distance;
-          const forceDirectionY = dy / distance;
-          const maxDistance = mouse.radius;
-          const force = (maxDistance - distance) / maxDistance;
-          const directionX = forceDirectionX * force * 10;
-          const directionY = forceDirectionY * force * 10;
-
-          this.x -= directionX;
-          this.y -= directionY;
-        }
-      }
-
-      draw() {
-        if (!ctx) return;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-      }
-    }
-
     const particlesArray: Particle[] = [];
     const count = 35;
     for (let i = 0; i < count; i++) {
-      particlesArray.push(new Particle());
+      particlesArray.push(new Particle(width, height, theme));
     }
 
     const animate = () => {
       ctx.clearRect(0, 0, width, height);
 
-      particlesArray.forEach((p) => {
-        p.update();
-        p.draw();
+      particlesArray.forEach((particle) => {
+        particle.update(width, height, mouse);
+        particle.draw(ctx);
       });
 
       animationFrameId = requestAnimationFrame(animate);

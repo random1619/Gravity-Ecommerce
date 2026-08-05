@@ -45,6 +45,9 @@ const nextConfig: NextConfig = {
   },
   // Disable powered by header
   poweredByHeader: false,
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 export default nextConfig;

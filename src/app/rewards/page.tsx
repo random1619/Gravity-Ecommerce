@@ -30,7 +30,7 @@ export default function RewardsPage() {
     { id: '2', title: 'Free Express Shipping', cost: 150, description: 'Skip the standard delivery queues. Valid on next 3 orders.' },
     { id: '3', title: 'Rs. 500 Gift Card', cost: 800, description: 'Redeem flat Rs. 500 discount on your bag. No minimum order value.' }
   ])
-  const [challenges, setChallenges] = useState<Challenge[]>([
+  const [challenges] = useState<Challenge[]>([
     { id: 1, title: 'Verify Student ID', points: 150, progress: 'Completed', completed: true },
     { id: 2, title: 'Make Your First Drop Purchase', points: 200, progress: 'Completed', completed: true },
     { id: 3, title: 'Write 3 Product Reviews', points: 100, progress: '1/3 Reviews', completed: false }

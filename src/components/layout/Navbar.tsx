@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './Navbar.module.css';
 import Button from '../ui/Button';
@@ -24,7 +24,6 @@ const Navbar = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showUserDropdown, setShowUserDropdown] = useState(false);
-    const searchRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const fetchTrends = async () => {
@@ -244,7 +243,7 @@ const Navbar = () => {
                                     ) : (
                                         filteredTrends.length === 0 && (
                                             <div className={styles.modalNoResults}>
-                                                No results found for "{search}"
+                                                No results found for &quot;{search}&quot;
                                             </div>
                                         )
                                     )}

@@ -7,7 +7,12 @@ import styles from './CustomCursor.module.css';
 export default function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false);
   const [cursorText, setCursorText] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(pointer: fine)').matches;
+    }
+    return false;
+  });
 
   // Raw mouse coordinates
   const mouseX = useMotionValue(0);
@@ -25,8 +30,6 @@ export default function CustomCursor() {
   useEffect(() => {
     const hasMouse = window.matchMedia('(pointer: fine)').matches;
     if (!hasMouse) return;
-
-    setIsVisible(true);
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
