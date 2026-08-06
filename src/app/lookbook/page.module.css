@@ -1,67 +1,248 @@
 .lookbookPage {
-  padding: calc(var(--spacing-2xl) + 8px) 0;
+  padding: calc(var(--spacing-16) + 8px) 0 0;
   background: var(--bg-primary);
   background-image: var(--page-gradient);
+  overflow: clip;
 }
 
+/* ============ MASTHEAD ============ */
+
 .header {
+  position: relative;
   text-align: center;
-  margin-bottom: var(--spacing-12);
-  max-width: 800px;
+  margin-bottom: var(--spacing-10);
+  max-width: 900px;
   margin-left: auto;
   margin-right: auto;
 }
 
-.title {
-  font-size: clamp(32px, 6vw, 54px);
+.issueRow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+}
+
+.issueBadge {
+  color: var(--text-on-accent);
+  background: var(--accent-primary);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+}
+
+.issueNumber {
+  color: var(--accent-secondary);
+  font-family: var(--font-mono);
+}
+
+.issueSeason {
+  color: var(--text-tertiary);
+}
+
+.masthead {
+  display: flex;
+  flex-direction: column;
   font-family: var(--font-display);
   font-weight: var(--font-black);
-  line-height: var(--leading-tight);
+  font-size: clamp(56px, 12vw, 128px);
+  line-height: 0.92;
   text-transform: uppercase;
-  margin-bottom: var(--spacing-2);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--spacing-6);
+}
+
+.mastheadLine {
+  display: block;
+}
+
+/* Outlined second line — classic editorial masthead trick */
+.mastheadOutline {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--text-primary);
+  font-style: italic;
 }
 
 .subtitle {
-  font-size: var(--text-lg);
+  font-size: 1.125rem;
   color: var(--text-secondary);
   line-height: var(--leading-relaxed);
+  max-width: 560px;
+  margin: 0 auto;
 }
 
-/* === HORIZONTAL SCROLL GALLERY === */
+.scrollHint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-8);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.scrollHintLine {
+  width: 1px;
+  height: 44px;
+  background: var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.scrollHintLine::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -50%;
+  width: 100%;
+  height: 50%;
+  background: var(--accent-secondary);
+  animation: hintDrop 1.8s cubic-bezier(0.76, 0, 0.24, 1) infinite;
+}
+
+@keyframes hintDrop {
+  0% { top: -50%; }
+  60%, 100% { top: 110%; }
+}
+
+/* ============ MARQUEE DIVIDER ============ */
+
+.marquee {
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: var(--spacing-3) 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marqueeTrack {
+  display: inline-flex;
+  animation: marquee 22s linear infinite;
+}
+
+.marqueeGroup {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.marqueeWord {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  padding: 0 var(--spacing-6);
+}
+
+.marqueeDot {
+  color: var(--accent-secondary);
+  font-size: 0.875rem;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ============ HORIZONTAL SCROLL GALLERY ============ */
+
 .story {
   position: relative;
   width: 100%;
-  height: 80vh;
-  margin-top: var(--spacing-12);
+  height: 82vh;
+  min-height: 560px;
+  margin-top: var(--spacing-8);
 }
 
 .track {
   height: 100%;
-  gap: var(--spacing-8);
+  gap: var(--spacing-6);
   padding: 0 var(--spacing-12);
   align-items: stretch;
 }
 
 .panel {
-  flex: 0 0 80vw;
-  max-width: 900px;
+  flex: 0 0 min(80vw, 980px);
   height: 100%;
   position: relative;
   border-radius: var(--radius-2xl);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
 }
 
-/* === HOTSPOT PINS & TOOLTIPS === */
+/* --- Inner parallax image --- */
+
+.imageWrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.imageClip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Uniform film grain over every look — one treatment across the whole issue. */
+.imageClip::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+}
+
+.lookImage {
+  object-fit: cover;
+  /* base scale leaves travel room for the JS-driven translateX parallax;
+     transform is owned by the onProgress handler, not by CSS hover */
+  transform: scale(1.15);
+  will-change: transform;
+}
+
+/* Giant outlined panel index */
+.panelNumeral {
+  position: absolute;
+  top: var(--spacing-6);
+  right: var(--spacing-8);
+  z-index: 2;
+  font-family: var(--font-display);
+  font-weight: var(--font-black);
+  font-size: clamp(5rem, 10vw, 9rem);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ============ HOTSPOT PINS & TOOLTIPS ============ */
+
 .hotspot {
   position: absolute;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   z-index: 5;
   cursor: pointer;
   transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.hotspot:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 4px;
 }
 
 .pulsePin {
@@ -71,10 +252,10 @@
   border: 2px solid white;
   border-radius: 50%;
   position: absolute;
-  top: 5px;
-  left: 5px;
+  top: 9px;
+  left: 9px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  transition: all var(--transition-fast);
+  transition: transform var(--transition-fast);
 }
 
 .hotspot::after {
@@ -84,9 +265,21 @@
   height: 30px;
   border: 2px solid var(--accent-secondary);
   border-radius: 50%;
-  top: -3px;
-  left: -3px;
-  animation: hotspotPulse 2s infinite;
+  top: 1px;
+  left: 1px;
+  /* One ripple as an affordance hint, then the pin goes quiet — no constant blinking. */
+  animation: hotspotPulse 1.6s ease-out 2;
+}
+
+/* Re-ripple only when the reader shows intent. */
+.hotspot:hover::after,
+.hotspot:focus-visible::after {
+  animation: hotspotPulse 1.6s ease-out infinite;
+}
+
+.hotspot:hover .pulsePin,
+.hotspot:focus-visible .pulsePin {
+  transform: scale(1.35);
 }
 
 @keyframes hotspotPulse {
@@ -102,18 +295,18 @@
 
 .hotspotTooltip {
   position: absolute;
-  bottom: 35px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%) translateY(10px);
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: var(--spacing-2);
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  width: 200px;
+  width: 220px;
   box-shadow: var(--shadow-lg);
   opacity: 0;
   pointer-events: none;
@@ -122,19 +315,33 @@
 }
 
 [data-theme='dark'] .hotspotTooltip {
-  background: rgba(13, 13, 21, 0.95);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
 }
 
-.hotspot:hover .hotspotTooltip {
+.hotspot:hover .hotspotTooltip,
+.hotspot:focus-visible .hotspotTooltip,
+.hotspot:focus-within .hotspotTooltip {
   opacity: 1;
   pointer-events: auto;
   transform: translateX(-50%) translateY(0);
 }
 
+/* Pins on the right half flip the tooltip to open leftward so it never
+   clips outside the panel */
+.tooltipLeft {
+  left: auto;
+  right: 50%;
+  transform: translateX(50%) translateY(10px);
+}
+
+.hotspot:hover .tooltipLeft,
+.hotspot:focus-visible .tooltipLeft,
+.hotspot:focus-within .tooltipLeft {
+  transform: translateX(50%) translateY(0);
+}
+
 .tooltipImg {
-  width: 40px;
-  height: 40px;
   object-fit: cover;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
@@ -163,89 +370,326 @@
 }
 
 .tooltipLink {
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--accent-indigo) !important;
-  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: white !important;
+  background: var(--accent-primary);
+  transition: transform var(--transition-fast), background var(--transition-fast);
 }
 
-.imageWrapper {
-  width: 100%;
-  height: 100%;
-  position: relative;
+.tooltipLink:hover {
+  background: var(--accent-secondary);
+  transform: rotate(45deg);
 }
 
-.lookImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--transition-slow);
-  position: relative;
-  z-index: 1;
-}
-
-.panel:hover .lookImage {
-  transform: scale(1.05);
-}
+/* ============ PANEL OVERLAY ============ */
 
 .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.35) 45%, transparent 75%);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: var(--spacing-6);
+  padding: var(--spacing-8);
   z-index: 1;
+  cursor: pointer;
+}
+
+/* Counter-parallax caption layer — header up top, footer at the base, drifting
+   opposite the image. Sits above the image and the panel numeral. */
+.cardContent {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  min-height: 0;
+  will-change: transform;
 }
 
 .cardHeader {
   color: white;
+  align-self: flex-start;
+  text-align: left;
 }
 
 .tag {
+  display: inline-block;
   font-size: 10px;
   letter-spacing: var(--tracking-widest);
   font-weight: var(--font-bold);
-  color: var(--accent-secondary);
-  margin-bottom: var(--spacing-2);
-  display: block;
+  color: var(--on-dark-accent);
+  border: 1px solid rgba(var(--on-dark-accent-rgb), 0.4);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--spacing-3);
 }
 
 .lookTitle {
-  font-size: var(--text-xl);
+  font-size: clamp(24px, 3vw, 36px);
   text-transform: uppercase;
   font-family: var(--font-display);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+}
+
+.cardFooter {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+}
+
+.footerMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: left;
+}
+
+.pieceCount {
+  font-size: 11px;
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+}
+
+.lookTotal {
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
 }
 
 .shopBtn {
-  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
   color: white;
   font-weight: var(--font-bold);
-  font-size: var(--text-sm);
-  background: none;
-  border: none;
+  font-size: 0.875rem;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  padding: var(--spacing-3) var(--spacing-5);
+  border-radius: var(--radius-full);
   cursor: pointer;
-  transition: transform var(--transition-fast);
+  transition: all var(--transition-base);
 }
 
-.panel:hover .shopBtn {
-  transform: translateX(5px);
+.shopBtnIcon {
+  transition: transform var(--transition-base);
+}
+
+.panel:hover .shopBtn,
+.overlay:hover .shopBtn {
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+  transform: translateY(-2px);
+}
+
+.panel:hover .shopBtnIcon,
+.overlay:hover .shopBtnIcon {
+  transform: translateX(4px);
+}
+
+/* ============ CLOSING PANEL ============ */
+
+.endPanel {
+  background: var(--accent-primary);
+  border-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-basis: min(60vw, 640px);
+}
+
+.endPanelInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-10);
+  color: var(--text-on-accent);
+}
+
+.endKicker {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.5rem;
+  opacity: 0.7;
+}
+
+.endTitle {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: var(--font-black);
+  text-transform: uppercase;
+  line-height: var(--leading-tight);
+}
+
+.endText {
+  font-size: 1rem;
+  opacity: 0.8;
+  max-width: 340px;
+  line-height: var(--leading-relaxed);
+}
+
+.endCta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-8);
+  border-radius: var(--radius-full);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-weight: var(--font-bold);
+  font-size: 1rem;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-xl);
+}
+
+.endCta:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--shadow-2xl);
+}
+
+.endSecondary {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-on-accent);
+  opacity: 0.75;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: opacity var(--transition-fast);
+}
+
+.endSecondary:hover {
+  opacity: 1;
+}
+
+/* Next-issue tease — the reason to come back */
+.nextIssue {
+  margin-top: var(--spacing-10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.nextIssueRule {
+  width: 48px;
+  height: 1px;
+  background: var(--text-on-accent);
+  opacity: 0.5;
+}
+
+.nextIssueText {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+  max-width: 300px;
+  line-height: var(--leading-relaxed);
+}
+
+.nextIssueText em {
+  font-style: italic;
+}
+
+/* ============ FILMSTRIP PROGRESS RAIL ============ */
+
+.rail {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  max-width: 720px;
+  margin: var(--spacing-8) auto 0;
+  padding: 0 var(--spacing-6) var(--spacing-12);
+}
+
+.railLabel {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.railFolio {
+  font-family: var(--font-mono);
+  color: var(--accent-primary);
+  letter-spacing: 0.05em;
+}
+
+.railFolioTotal {
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+}
+
+.railChapters {
+  display: flex;
+  gap: var(--spacing-3);
+}
+
+.railChapter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.railChapter:hover {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.railChapterActive {
+  color: var(--text-on-accent);
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.railChapterDone {
   color: var(--accent-secondary);
+  border-color: var(--accent-secondary);
 }
 
-/* Parallax depth layer — a translucent accent glow that sits behind the image
-   and reads as depth. Pure CSS, no extra GPU. The look image paints above it
-   (it is the only sibling without z-index, while depthLayer sets z-index: 0). */
-.depthLayer {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(60% 50% at 30% 30%, rgba(var(--accent-secondary-rgb), 0.18), transparent 70%),
-    radial-gradient(50% 50% at 75% 70%, rgba(var(--accent-indigo-rgb), 0.14), transparent 70%);
-  pointer-events: none;
-  z-index: 0;
+.railTrack {
+  flex: 1;
+  height: 2px;
+  background: var(--border-color);
+  border-radius: 999px;
+  overflow: hidden;
 }
+
+.railFill {
+  height: 100%;
+  width: 100%;
+  background: var(--gradient-cta);
+  transform-origin: left;
+  transform: scaleX(0);
+  /* transform is driven from GSAP onUpdate via inline style */
+}
+
+/* ============ MODAL ============ */
 
 .modalContent {
   padding: var(--spacing-4);
@@ -253,15 +697,27 @@
   width: 100%;
 }
 
+.modalTag {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: var(--tracking-widest);
+  font-weight: var(--font-bold);
+  color: var(--accent-secondary);
+  border: 1px solid rgba(var(--accent-secondary-rgb), 0.35);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--spacing-3);
+}
+
 .modalTitle {
-  font-size: var(--text-xl);
+  font-size: 1.25rem;
   text-transform: uppercase;
   margin-bottom: var(--spacing-2);
 }
 
 .modalSubtitle {
   color: var(--text-secondary);
-  font-size: var(--text-sm);
+  font-size: 0.875rem;
   margin-bottom: var(--spacing-6);
 }
 
@@ -279,33 +735,144 @@
   padding: var(--spacing-4);
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-color);
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.itemRow:hover {
+  border-color: var(--accent-secondary);
+  transform: translateX(4px);
 }
 
 .itemImageWrapper {
+  position: relative;
   width: 60px;
   height: 60px;
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--border-color);
   background: white;
+  flex-shrink: 0;
 }
 
 .itemImage {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
 }
 
 .itemMeta {
   flex-grow: 1;
+  overflow: hidden;
 }
 
 .itemMeta h3 {
-  font-size: var(--text-sm);
+  font-size: 0.875rem;
   font-weight: var(--font-bold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .itemMeta p {
-  font-size: var(--text-sm);
+  font-size: 0.875rem;
   color: var(--text-secondary);
+}
+
+.modalTotal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--spacing-6);
+  padding-top: var(--spacing-4);
+  border-top: 1px dashed var(--border-color);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.modalTotal strong {
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  color: var(--accent-secondary);
+}
+
+/* ============ RESPONSIVE ============ */
+
+@media (max-width: 768px) {
+  .story {
+    height: 70vh;
+    min-height: 480px;
+  }
+
+  .track {
+    padding: 0 var(--spacing-4);
+    gap: var(--spacing-4);
+  }
+
+  .panel {
+    flex-basis: 88vw;
+  }
+
+  .endPanel {
+    flex-basis: 80vw;
+  }
+
+  .overlay {
+    padding: var(--spacing-5);
+  }
+
+  .cardFooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+  }
+
+  .panelNumeral {
+    font-size: 4.5rem;
+    top: var(--spacing-4);
+    right: var(--spacing-5);
+  }
+
+  .rail {
+    gap: var(--spacing-3);
+    padding-bottom: var(--spacing-8);
+  }
+
+  .railLabel {
+    display: none;
+  }
+}
+
+/* ============ REDUCED MOTION ============ */
+
+@media (prefers-reduced-motion: reduce) {
+  .marqueeTrack {
+    animation: none;
+  }
+
+  .scrollHintLine::after {
+    animation: none;
+  }
+
+  .hotspot::after {
+    animation: none;
+    opacity: 0.4;
+  }
+
+  /* ScrollStory renders a vertical stack — kill fixed heights so panels flow */
+  .story {
+    height: auto;
+    min-height: 0;
+  }
+
+  .panel {
+    height: 70vh;
+    min-height: 420px;
+    margin-bottom: var(--spacing-6);
+  }
+
+  .lookImage {
+    transform: none !important;
+  }
+
+  .rail {
+    display: none;
+  }
 }

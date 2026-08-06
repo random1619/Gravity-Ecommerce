@@ -1,24 +1,52 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import styles from './page.module.css';
+
+/** Kowalski springs — entrances, re-flow, and press all move through physics. */
+const spring = {
+    press: { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 },
+    layout: { type: 'spring', stiffness: 350, damping: 32, mass: 0.8 },
+} as const;
+
+const listVariants: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
+};
+
+const rowVariants: Variants = {
+    hidden: { opacity: 0, y: 18, scale: 0.98 },
+    show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 380, damping: 26, mass: 0.7 } },
+    exit: { opacity: 0, x: -24, scale: 0.97, transition: { duration: 0.18 } },
+};
 import Button from '@/components/ui/Button';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCart } from '@/lib/CartContext';
+import SplitTextReveal from '@/components/motion/SplitTextReveal';
+import {
+    APPLIED_PROMO_KEY,
+    STUDENT_VERIFIED_KEY,
+    isDiscountEligible,
+    normalizePromoCode,
+    studentDiscount,
+} from '@/lib/discount';
+import { GraduationCap } from 'lucide-react';
 
 export default function Cart() {
     const { items: cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
-    
+
     const [isVerified] = useState(() => {
         if (typeof window !== 'undefined') {
-            return localStorage.getItem('gravity-student-verified') === 'true';
+            return localStorage.getItem(STUDENT_VERIFIED_KEY) === 'true';
         }
         return false;
     });
     const [promoInput, setPromoInput] = useState('');
     const [appliedPromo, setAppliedPromo] = useState(() => {
         if (typeof window !== 'undefined') {
-            return localStorage.getItem('gravity-applied-promo') || '';
+            return localStorage.getItem(APPLIED_PROMO_KEY) || '';
         }
         return '';
     });
@@ -29,14 +57,16 @@ export default function Cart() {
 
     const handleApplyPromo = (e: React.FormEvent) => {
         e.preventDefault();
-        const code = promoInput.trim().toUpperCase();
-        if (code === 'STUDENT20') {
-            setAppliedPromo('STUDENT20');
-            localStorage.setItem('gravity-applied-promo', 'STUDENT20');
+        if (promoInput.trim() === '') {
+            setPromoStatus({ message: 'Please enter a promo code.', type: 'error' });
+            return;
+        }
+        const code = normalizePromoCode(promoInput);
+        if (code) {
+            setAppliedPromo(code);
+            localStorage.setItem(APPLIED_PROMO_KEY, code);
             setPromoStatus({ message: 'Promo code applied! 20% Discount active.', type: 'success' });
             setPromoInput('');
-        } else if (code === '') {
-            setPromoStatus({ message: 'Please enter a promo code.', type: 'error' });
         } else {
             setPromoStatus({ message: 'Invalid promo code.', type: 'error' });
         }
@@ -44,19 +74,19 @@ export default function Cart() {
 
     const handleRemovePromo = () => {
         setAppliedPromo('');
-        localStorage.removeItem('gravity-applied-promo');
+        localStorage.removeItem(APPLIED_PROMO_KEY);
         setPromoStatus({ message: 'Promo code removed.', type: null });
     };
 
     const subtotal = cartTotal;
-    const isDiscountEligible = isVerified || appliedPromo === 'STUDENT20';
-    const studentDiscount = isDiscountEligible ? Math.round(subtotal * 0.2) : 0;
-    const total = subtotal - studentDiscount;
+    const discountEligible = isDiscountEligible(isVerified, appliedPromo);
+    const discount = studentDiscount(subtotal, isVerified, appliedPromo);
+    const total = subtotal - discount;
 
     if (cartItems.length === 0) {
         return (
             <div className={`container ${styles.cartPage}`}>
-                <h1 className={styles.title}>YOUR BAG</h1>
+                <h1 className={styles.title}><SplitTextReveal text="YOUR BAG" /></h1>
                 <div style={{ textAlign: 'center', padding: '100px 20px' }}>
                     <h2>Your cart is empty</h2>
                     <p style={{ marginTop: '20px', marginBottom: '30px' }}>Add some items to get started!</p>
@@ -70,14 +100,23 @@ export default function Cart() {
 
     return (
         <div className={`container ${styles.cartPage}`}>
-            <h1 className={styles.title}>YOUR BAG</h1>
+            <h1 className={styles.title}><SplitTextReveal text="YOUR BAG" /></h1>
 
             <div className={styles.cartLayout}>
-                <main className={styles.itemsList}>
+                <motion.main className={styles.itemsList} variants={listVariants} initial="hidden" animate="show">
+                    <AnimatePresence initial={false}>
                     {cartItems.map(item => (
-                        <div key={`${item.id}-${item.size}`} className={styles.item}>
+                        <motion.div
+                            key={`${item.id}-${item.size}`}
+                            className={styles.item}
+                            variants={rowVariants}
+                            layout
+                            exit="exit"
+                            transition={spring.layout}
+                            whileHover={{ y: -2 }}
+                        >
                             <div className={styles.itemImage}>
-                                <img src={item.imageUrl} alt={item.name} />
+                                <Image src={item.imageUrl} alt={item.name} width={120} height={160} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             </div>
                             <div className={styles.itemInfo}>
                                 <div className={styles.itemHeader}>
@@ -86,39 +125,49 @@ export default function Cart() {
                                 </div>
                                 <p className={styles.itemMeta}>Size: {item.size} | Qty: {item.quantity}</p>
                                 <div className={styles.itemActions}>
-                                    <button
+                                    <motion.button
                                         className={styles.actionBtn}
                                         onClick={() => removeFromCart(item.id, item.size)}
+                                        whileHover={{ y: -1 }}
+                                        whileTap={{ scale: 0.94 }}
+                                        transition={spring.press}
                                     >
                                         Remove
-                                    </button>
+                                    </motion.button>
                                     <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                                        <button
+                                        <motion.button
                                             className={styles.actionBtn}
                                             onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
+                                            whileTap={{ scale: 0.9 }}
+                                            transition={spring.press}
+                                            aria-label="Decrease quantity"
                                         >
                                             -
-                                        </button>
+                                        </motion.button>
                                         <span>{item.quantity}</span>
-                                        <button
+                                        <motion.button
                                             className={styles.actionBtn}
                                             onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
+                                            whileTap={{ scale: 0.9 }}
+                                            transition={spring.press}
+                                            aria-label="Increase quantity"
                                         >
                                             +
-                                        </button>
+                                        </motion.button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
+                    </AnimatePresence>
 
-                    {isDiscountEligible ? (
+                    {discountEligible ? (
                         <div className={styles.studentOffer}>
-                            <div className={styles.offerIcon}>🎓</div>
+                            <div className={styles.offerIcon}><GraduationCap size={28} strokeWidth={1.5} /></div>
                             <div>
                                 <h4>Discount Applied</h4>
                                 <p>
-                                    You&apos;ve saved extra ₹{studentDiscount} using {isVerified ? 'your verified student status' : 'promo code STUDENT20'}.
+                                    You&apos;ve saved extra ₹{discount} using {isVerified ? 'your verified student status' : `promo code ${appliedPromo}`}.
                                     {!isVerified && (
                                         <button onClick={handleRemovePromo} style={{ marginLeft: '10px', textDecoration: 'underline', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontWeight: 'bold' }}>
                                             Remove Promo
@@ -138,7 +187,7 @@ export default function Cart() {
                             </Link>
                         </div>
                     )}
-                </main>
+                </motion.main>
 
                 <aside className={styles.summary}>
                     <h3>ORDER SUMMARY</h3>
@@ -146,10 +195,10 @@ export default function Cart() {
                         <span>Subtotal</span>
                         <span>₹{subtotal}</span>
                     </div>
-                    {studentDiscount > 0 && (
+                    {discount > 0 && (
                         <div className={`${styles.summaryLine} ${styles.discountLine}`}>
                             <span>Discount (20%)</span>
-                            <span>-₹{studentDiscount}</span>
+                            <span>-₹{discount}</span>
                         </div>
                     )}
                     <div className={styles.summaryLine}>
