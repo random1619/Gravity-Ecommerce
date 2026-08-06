@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { readStorage, isArray } from '@/lib/storage'
 
 interface WishlistProduct {
   id: string
@@ -28,17 +29,10 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<WishlistProduct[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
 
-  // Load wishlist from localStorage on mount
+  // Load wishlist from localStorage on mount (shape-validated).
   useEffect(() => {
-    const saved = localStorage.getItem('gravity-wishlist')
-    if (saved) {
-      try {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setWishlist(JSON.parse(saved))
-      } catch (error) {
-        console.error('Failed to load wishlist:', error)
-      }
-    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setWishlist(readStorage<WishlistProduct[]>('gravity-wishlist', [], isArray as (v: unknown) => v is WishlistProduct[]))
     setIsInitialized(true)
   }, [])
 

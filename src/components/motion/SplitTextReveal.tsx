@@ -40,6 +40,7 @@ export default function SplitTextReveal({ text, className = '', delay = 0 }: Spl
       viewport={{ once: true, amount: 0.2 }}
       className={`inline-flex flex-wrap ${className}`}
       style={{ display: 'inline-flex', overflow: 'hidden' }}
+      aria-label={text}
     >
       {words.map((word, wordIndex) => (
         <motion.span
@@ -47,6 +48,7 @@ export default function SplitTextReveal({ text, className = '', delay = 0 }: Spl
           variants={wordVariants}
           className="inline-flex mr-[0.25em]"
           style={{ display: 'inline-flex', overflow: 'hidden' }}
+          aria-hidden="true"
         >
           {word.split('').map((char, charIndex) => (
             <motion.span

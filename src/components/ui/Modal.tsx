@@ -9,9 +9,12 @@ interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     children: React.ReactNode;
+    /** Render your own close control inside `children` (e.g. the backstage-pass
+     *  login panel) instead of the default floating button. */
+    hideCloseButton?: boolean;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, hideCloseButton = false }) => {
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
@@ -55,9 +58,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
                         className={styles.modal}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
-                            x
-                        </button>
+                        {!hideCloseButton && (
+                            <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
+                                x
+                            </button>
+                        )}
                         {children}
                     </motion.div>
                 </motion.div>

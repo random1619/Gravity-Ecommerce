@@ -1,49 +1,72 @@
+/* ============================================================
+   CUSTOM CURSOR — "Organic Earth" editorial
+   Warm ink dot + trailing accent ring. Theme-aware via the
+   global design tokens, so it flips between terracotta (light)
+   and gold (dark) automatically.
+   ============================================================ */
+
 .cursorDot {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: -4px; /* half of width — centers the dot on the pointer */
+    left: -4px;
     width: 8px;
     height: 8px;
-    background-color: #ffffff; /* Inverted using blend-mode */
     border-radius: 50%;
+    background-color: var(--text-primary);
     pointer-events: none;
     z-index: 9999999;
-    mix-blend-mode: difference;
+    will-change: transform;
 }
 
-.cursorFollower {
+.cursorRing {
     position: fixed;
     top: 0;
     left: 0;
-    width: 32px;
-    height: 32px;
-    border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 50%;
+    border: 1.5px solid var(--accent-secondary);
+    background-color: rgba(var(--accent-secondary-rgb), 0.08);
     pointer-events: none;
     z-index: 9999998;
-    mix-blend-mode: difference;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    will-change: transform, width, height;
+    /* Center on the pointer regardless of animated size. framer-motion
+       writes `transform` from x/y; `translate` composes with it. */
+    translate: -50% -50%;
+    box-shadow: 0 0 0 0 rgba(var(--accent-secondary-rgb), 0);
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cursorRing.hasText {
+    background-color: var(--accent-secondary);
+    border-color: var(--accent-secondary);
+    box-shadow: 0 14px 40px -8px rgba(var(--accent-secondary-rgb), 0.4);
 }
 
 .cursorLabel {
-    font-size: 8px;
-    font-weight: 900;
-    letter-spacing: 0.12em;
-    color: #ffffff;
+    font-family: var(--font-accent, 'Space Grotesk', system-ui, sans-serif);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
+    color: var(--text-on-accent, #ffffff);
     pointer-events: none;
-    font-family: 'Space Grotesk', system-ui, sans-serif;
+    white-space: nowrap;
 }
 
-/* Hide native cursor globally when custom cursor is active */
-@media (pointer: fine) {
-    :global(body) {
-        cursor: none !important;
-    }
-    :global(a), :global(button), :global(input), :global(select), :global(textarea) {
-        cursor: none !important;
-    }
+/* Hide the native cursor ONLY while the custom cursor is actually mounted.
+   The component toggles `custom-cursor-active` on <body> — so under reduced
+   motion, coarse pointers, or first SSR paint (all cases where the component
+   renders null), the native cursor is left alone. */
+:global(body.custom-cursor-active),
+:global(body.custom-cursor-active a),
+:global(body.custom-cursor-active button),
+:global(body.custom-cursor-active input),
+:global(body.custom-cursor-active select),
+:global(body.custom-cursor-active textarea),
+:global(body.custom-cursor-active label),
+:global(body.custom-cursor-active [role='button']) {
+    cursor: none;
 }

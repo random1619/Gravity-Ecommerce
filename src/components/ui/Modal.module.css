@@ -46,7 +46,7 @@
 
 .closeBtn:hover {
     background: var(--accent-secondary);
-    color: white;
+    color: var(--text-on-accent);
     transform: rotate(90deg);
 }
 

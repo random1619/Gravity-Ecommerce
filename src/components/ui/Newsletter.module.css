@@ -14,7 +14,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(0, 102, 255, 0.1) 0%, rgba(255, 51, 102, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(var(--accent-gold-rgb), 0.14) 0%, rgba(var(--accent-secondary-rgb), 0.12) 100%);
     pointer-events: none;
 }
 
@@ -29,13 +29,13 @@
     font-size: var(--text-3xl);
     font-family: var(--font-display);
     font-weight: var(--font-extrabold);
-    color: white;
+    color: var(--on-dark-text);
     margin-bottom: var(--spacing-2);
 }
 
 .text p {
     font-size: var(--text-lg);
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--on-dark-muted);
     margin-bottom: var(--spacing-8);
 }
 
@@ -55,8 +55,8 @@
     padding: var(--spacing-4);
     height: 52px;
     border-radius: var(--radius-lg);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid var(--on-dark-glass-border);
+    background: var(--surface-elevated);
     color: var(--text-primary);
     font-size: var(--text-base);
     transition: all var(--transition-base);
@@ -68,9 +68,9 @@
 
 .input:focus {
     outline: none;
-    border-color: white;
-    background: white;
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+    border-color: var(--on-dark-text);
+    background: var(--surface-elevated);
+    box-shadow: 0 0 0 4px var(--on-dark-glass-border);
 }
 
 .input:disabled {
@@ -81,7 +81,7 @@
 .button {
     padding: var(--spacing-4) var(--spacing-6);
     height: 52px;
-    background: white;
+    background: var(--surface-elevated);
     color: var(--accent-primary);
     border: none;
     border-radius: var(--radius-lg);
@@ -112,21 +112,39 @@
     font-weight: var(--font-semibold);
     padding: var(--spacing-2) var(--spacing-4);
     border-radius: var(--radius-md);
+    animation: messageIn var(--transition-base) both;
+}
+
+@keyframes messageIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .message {
+        animation: none;
+    }
 }
 
 .message.success {
-    background: rgba(0, 200, 83, 0.2);
-    color: white;
+    background: rgba(var(--accent-success-rgb), 0.25);
+    color: var(--on-dark-text);
 }
 
 .message.error {
-    background: rgba(255, 51, 102, 0.2);
-    color: white;
+    background: var(--color-danger-bg);
+    color: var(--on-dark-text);
 }
 
 .privacy {
     font-size: var(--text-xs);
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--on-dark-muted);
     line-height: var(--leading-relaxed);
 }
 

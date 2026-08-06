@@ -5,6 +5,9 @@ import styles from './page.module.css';
 import { useAuth } from '@/lib/AuthContext';
 import { useTheme } from '@/lib/ThemeContext';
 import Link from 'next/link';
+import SplitTextReveal from '@/components/motion/SplitTextReveal';
+import ScrollReveal from '@/components/motion/ScrollReveal';
+import StaggerGrid from '@/components/motion/StaggerGrid';
 
 export default function SettingsPage() {
     const { user, isAuthenticated, logout } = useAuth();
@@ -37,7 +40,7 @@ export default function SettingsPage() {
         return (
             <div className={styles.container}>
                 <div className={styles.emptyState}>
-                    <h1>⚙️ Settings</h1>
+                    <h1>Settings</h1>
                     <p>Please login to manage your settings</p>
                     <Link href="/" className={styles.button}>
                         Go to Home
@@ -49,15 +52,17 @@ export default function SettingsPage() {
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>⚙️ Settings</h1>
-            <p className={styles.subtitle}>Manage your account preferences</p>
+            <h1 className={styles.title}><SplitTextReveal text="Settings" /></h1>
+            <ScrollReveal direction="up" delay={150}>
+                <p className={styles.subtitle}>Manage your account preferences</p>
+            </ScrollReveal>
 
-            <div className={styles.sections}>
+            <StaggerGrid className={styles.sections}>
                 {/* Profile Section */}
                 <div className={styles.section}>
-                    <h2 className={styles.sectionTitle}>Profile</h2>
+                    <h2 className={styles.sectionTitle}><SplitTextReveal text="Profile" /></h2>
                     <div className={styles.card}>
-                        <div className={styles.avatar}>👤</div>
+                        <div className={styles.avatar}>{user?.name?.charAt(0)?.toUpperCase() ?? 'G'}</div>
                         <div className={styles.profileInfo}>
                             <h3>{user?.name}</h3>
                             <p>{user?.email}</p>
@@ -67,7 +72,7 @@ export default function SettingsPage() {
 
                 {/* Appearance Section */}
                 <div className={styles.section}>
-                    <h2 className={styles.sectionTitle}>Appearance</h2>
+                    <h2 className={styles.sectionTitle}><SplitTextReveal text="Appearance" /></h2>
                     <div className={styles.card}>
                         <div className={styles.setting}>
                             <div>
@@ -86,7 +91,7 @@ export default function SettingsPage() {
 
                 {/* Notifications Section */}
                 <div className={styles.section}>
-                    <h2 className={styles.sectionTitle}>Notifications</h2>
+                    <h2 className={styles.sectionTitle}><SplitTextReveal text="Notifications" /></h2>
                     <div className={styles.card}>
                         <div className={styles.setting}>
                             <div>
@@ -118,18 +123,18 @@ export default function SettingsPage() {
 
                 {/* Account Section */}
                 <div className={styles.section}>
-                    <h2 className={styles.sectionTitle}>Account</h2>
+                    <h2 className={styles.sectionTitle}><SplitTextReveal text="Account" /></h2>
                     <div className={styles.card}>
                         <button className={styles.dangerBtn} onClick={logout}>
-                            🚪 Logout
+                            Logout
                         </button>
                     </div>
                 </div>
-            </div>
+            </StaggerGrid>
 
             {saved && (
                 <div className={styles.toast}>
-                    ✓ Settings saved successfully!
+                    Settings saved.
                 </div>
             )}
         </div>

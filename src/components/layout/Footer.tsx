@@ -9,9 +9,9 @@ const Footer = () => {
                     <h2 className={styles.logo}>GRAVITY.</h2>
                     <p className={styles.tagline}>High fashion. Low pressure. Budget-friendly trends for the next gen.</p>
                     <div className={styles.socials}>
-                        <Link href="#">Instagram</Link>
-                        <Link href="#">TikTok</Link>
-                        <Link href="#">X / Twitter</Link>
+                        <Link href="/social/instagram">Instagram</Link>
+                        <Link href="/social/tiktok">TikTok</Link>
+                        <Link href="/social/x">X / Twitter</Link>
                     </div>
                 </div>
 

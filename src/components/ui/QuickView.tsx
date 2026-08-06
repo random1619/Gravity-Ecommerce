@@ -1,12 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
 import styles from './QuickView.module.css';
 import Modal from './Modal';
 import Button from './Button';
 import { useCart } from '@/lib/CartContext';
 import { useAuth } from '@/lib/AuthContext';
+import { recordProductView } from '@/lib/recentlyViewed';
+import { Check } from 'lucide-react';
 
 interface QuickViewProps {
     isOpen: boolean;
@@ -29,6 +33,19 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, onLoginRequired,
     const { isAuthenticated } = useAuth();
     const [selectedSize, setSelectedSize] = useState<string>('');
     const [showSuccess, setShowSuccess] = useState(false);
+
+    // Record the view for the shop page's recently-viewed rail
+    useEffect(() => {
+        if (isOpen && product) {
+            recordProductView({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                imageUrl: product.imageUrl,
+                category: product.category,
+            });
+        }
+    }, [isOpen, product]);
 
     if (!product) return null;
 
@@ -70,7 +87,12 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, onLoginRequired,
         <Modal isOpen={isOpen} onClose={onClose}>
             <div className={styles.quickView}>
                 <div className={styles.imageCol}>
-                    <img src={product.imageUrl} alt={product.name} />
+                    <Image
+                        src={product.imageUrl}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                    />
                 </div>
                 <div className={styles.infoCol}>
                     <p className={styles.category}>{product.category}</p>
@@ -99,7 +121,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, onLoginRequired,
                     </div>
 
                     <Button variant="primary" size="full" onClick={handleAddToCart}>
-                        {showSuccess ? '✓ Added!' : 'Add to Bag'}
+                        {showSuccess ? <><Check size={16} strokeWidth={2.5} style={{ marginRight: 6, verticalAlign: '-2px' }} />Added!</> : 'Add to Bag'}
                     </Button>
                     <Link href={`/product/${product.id}`} className={styles.detailsLink}>
                         View Full Details

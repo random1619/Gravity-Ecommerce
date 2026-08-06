@@ -56,7 +56,7 @@
 
 .categoryBtn.active {
     background: var(--gradient-cta);
-    color: white;
+    color: var(--text-on-accent);
     border-color: transparent;
     box-shadow: var(--shadow-md);
 }
@@ -143,7 +143,7 @@
     padding: var(--spacing-12);
     background: var(--gradient-hero);
     border-radius: var(--radius-2xl);
-    color: white;
+    color: var(--text-on-accent);
 }
 
 .contactSection h2 {

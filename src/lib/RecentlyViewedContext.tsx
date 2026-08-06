@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { readStorage, isArray } from '@/lib/storage'
 
 interface RecentProduct {
   id: string
@@ -24,17 +25,10 @@ export function RecentlyViewedProvider({ children }: { children: ReactNode }) {
   const [recentlyViewed, setRecentlyViewed] = useState<RecentProduct[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount (shape-validated).
   useEffect(() => {
-    const saved = localStorage.getItem('gravity-recently-viewed')
-    if (saved) {
-      try {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setRecentlyViewed(JSON.parse(saved))
-      } catch (error) {
-        console.error('Failed to load recently viewed:', error)
-      }
-    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setRecentlyViewed(readStorage<RecentProduct[]>('gravity-recently-viewed', [], isArray as (v: unknown) => v is RecentProduct[]))
     setIsInitialized(true)
   }, [])
 

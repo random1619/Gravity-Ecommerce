@@ -2,10 +2,17 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { X, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/lib/CartContext';
 import styles from './CartDrawer.module.css';
 import { motion, AnimatePresence } from 'framer-motion';
+
+/** Kowalski springs — presses, entrances, and the shipping bar all move through physics. */
+const spring = {
+    snappy: { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 },
+    gentle: { type: 'spring', stiffness: 380, damping: 26, mass: 0.7 },
+} as const;
 
 const CartDrawer = () => {
     const { items, isCartOpen, closeCart, updateQuantity, removeFromCart, cartTotal } = useCart();
@@ -65,9 +72,16 @@ const CartDrawer = () => {
                                     {items.reduce((acc, item) => acc + item.quantity, 0)}
                                 </span>
                             </div>
-                            <button className={styles.closeBtn} onClick={closeCart} aria-label="Close Cart">
+                            <motion.button
+                                className={styles.closeBtn}
+                                onClick={closeCart}
+                                aria-label="Close Cart"
+                                whileHover={{ scale: 1.12 }}
+                                whileTap={{ scale: 0.88 }}
+                                transition={spring.snappy}
+                            >
                                 <X size={20} />
-                            </button>
+                            </motion.button>
                         </div>
 
                         {/* Free Shipping Progress Indicator */}
@@ -77,14 +91,14 @@ const CartDrawer = () => {
                                     {neededForShipping > 0 ? (
                                         <>Add <strong>₹{neededForShipping}</strong> more for <strong>FREE SHIPPING</strong></>
                                     ) : (
-                                        <strong>🎉 YOU HAVE UNLOCKED FREE SHIPPING!</strong>
+                                        <strong>You've unlocked free shipping.</strong>
                                     )}
                                 </p>
                                 <div className={styles.progressBar}>
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${shippingProgress}%` }}
-                                        transition={{ delay: 0.3, duration: 0.8, ease: 'easeOut' }}
+                                        transition={{ ...spring.gentle, delay: 0.15 }}
                                         className={styles.progressFill}
                                     />
                                 </div>
@@ -96,9 +110,11 @@ const CartDrawer = () => {
                                 <div className={styles.emptyState}>
                                     <ShoppingBag size={48} className={styles.emptyIcon} />
                                     <p>Your shopping bag is empty.</p>
-                                    <Link href="/shop" onClick={closeCart} className={styles.shopBtn}>
-                                        SHOP LATEST DROPS
-                                    </Link>
+                                    <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.96 }} transition={spring.snappy}>
+                                        <Link href="/shop" onClick={closeCart} className={styles.shopBtn}>
+                                            SHOP LATEST DROPS
+                                        </Link>
+                                    </motion.div>
                                 </div>
                             ) : (
                                 <motion.div 
@@ -115,35 +131,44 @@ const CartDrawer = () => {
                                                 layout
                                                 className={styles.itemRow}
                                             >
-                                                <img src={item.imageUrl} alt={item.name} className={styles.itemImg} />
+                                                <Image src={item.imageUrl} alt={item.name} width={72} height={96} className={styles.itemImg} />
                                                 <div className={styles.itemMeta}>
                                                     <h3 className={styles.itemName}>{item.name}</h3>
                                                     <p className={styles.itemSize}>Size: <strong>{item.size}</strong></p>
                                                     <div className={styles.itemQtyControls}>
-                                                        <button 
+                                                        <motion.button
                                                             onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
                                                             className={styles.qtyBtn}
+                                                            whileTap={{ scale: 0.85 }}
+                                                            transition={spring.snappy}
+                                                            aria-label="Decrease quantity"
                                                         >
                                                             <Minus size={12} />
-                                                        </button>
+                                                        </motion.button>
                                                         <span className={styles.qtyVal}>{item.quantity}</span>
-                                                        <button 
+                                                        <motion.button
                                                             onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
                                                             className={styles.qtyBtn}
+                                                            whileTap={{ scale: 0.85 }}
+                                                            transition={spring.snappy}
+                                                            aria-label="Increase quantity"
                                                         >
                                                             <Plus size={12} />
-                                                        </button>
+                                                        </motion.button>
                                                     </div>
                                                 </div>
                                                 <div className={styles.itemActionCol}>
                                                     <span className={styles.itemPrice}>₹{item.price * item.quantity}</span>
-                                                    <button 
+                                                    <motion.button
                                                         onClick={() => removeFromCart(item.id, item.size)}
                                                         className={styles.removeBtn}
                                                         aria-label="Remove item"
+                                                        whileHover={{ scale: 1.15 }}
+                                                        whileTap={{ scale: 0.85 }}
+                                                        transition={spring.snappy}
                                                     >
                                                         <Trash2 size={14} />
-                                                    </button>
+                                                    </motion.button>
                                                 </div>
                                             </motion.div>
                                         ))}
@@ -161,12 +186,16 @@ const CartDrawer = () => {
                                 <p className={styles.taxNotice}>Shipping & taxes calculated at checkout.</p>
                                 
                                 <div className={styles.actions}>
-                                    <Link href="/checkout" onClick={closeCart} className={styles.checkoutBtn}>
-                                        PROCEED TO CHECKOUT
-                                    </Link>
-                                    <Link href="/cart" onClick={closeCart} className={styles.viewCartBtn}>
-                                        VIEW BAG DETAILS
-                                    </Link>
+                                    <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }} transition={spring.snappy}>
+                                        <Link href="/checkout" onClick={closeCart} className={styles.checkoutBtn}>
+                                            PROCEED TO CHECKOUT
+                                        </Link>
+                                    </motion.div>
+                                    <motion.div whileTap={{ scale: 0.97 }} transition={spring.snappy}>
+                                        <Link href="/cart" onClick={closeCart} className={styles.viewCartBtn}>
+                                            VIEW BAG DETAILS
+                                        </Link>
+                                    </motion.div>
                                 </div>
                             </div>
                         )}

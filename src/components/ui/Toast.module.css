@@ -16,15 +16,15 @@
 }
 
 .toast.success {
-    border-left: 4px solid #10b981;
+    border-left: 4px solid var(--success-text);
 }
 
 .toast.error {
-    border-left: 4px solid #ef4444;
+    border-left: 4px solid var(--error-text);
 }
 
 .toast.info {
-    border-left: 4px solid #3b82f6;
+    border-left: 4px solid var(--accent-indigo);
 }
 
 .icon {
@@ -39,18 +39,18 @@
 }
 
 .success .icon {
-    background: #10b981;
-    color: white;
+    background: var(--success-text);
+    color: var(--text-on-accent);
 }
 
 .error .icon {
-    background: #ef4444;
+    background: var(--error-text);
     color: white;
 }
 
 .info .icon {
-    background: #3b82f6;
-    color: white;
+    background: var(--accent-indigo);
+    color: var(--text-on-accent);
 }
 
 .message {

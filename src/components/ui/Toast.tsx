@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Check, X, Info } from 'lucide-react';
 import styles from './Toast.module.css';
 
 export interface ToastProps {
@@ -23,9 +24,9 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', duration = 300
     }, [duration, onClose]);
 
     const icons = {
-        success: '✓',
-        error: '✕',
-        info: 'ℹ',
+        success: <Check size={16} strokeWidth={2.5} />,
+        error: <X size={16} strokeWidth={2.5} />,
+        info: <Info size={16} strokeWidth={2} />,
     };
 
     return (

@@ -12,30 +12,39 @@ interface StaggerGridProps {
   batchSize?: number;
 }
 
+/**
+ * Kowalski entrance: a slightly bouncier spring (higher stiffness, lower
+ * damping) so items accelerate in and settle with a soft overshoot — physics,
+ * never a fixed-duration tween. Transform + opacity only (compositor-only).
+ */
 const containerVariants: Variants = {
   hidden: {},
   show: {
     transition: {
-      staggerChildren: 0.06,
+      staggerChildren: 0.05,
+      // Let the first child start before the stagger clock for a snappier lead.
+      delayChildren: 0.04,
     },
   },
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.92, y: 16 },
+  hidden: { opacity: 0, scale: 0.94, y: 20 },
   show: {
     opacity: 1,
     scale: 1,
     y: 0,
     transition: {
-      // approximates GSAP back.out(1.4)
       type: 'spring',
-      stiffness: 260,
-      damping: 20,
-      mass: 0.6,
+      stiffness: 380,
+      damping: 24,
+      mass: 0.7,
     },
   },
 };
+
+/** Spring used when the grid re-flows (filter/sort) — interruptible layout motion. */
+const layoutSpring = { type: 'spring', stiffness: 350, damping: 32, mass: 0.8 } as const;
 
 /**
  * Standard grid-stagger preset: cards fade/scale/rise in with a springy
@@ -63,7 +72,12 @@ export default function StaggerGrid({ children, className, style, batchSize = 8 
     >
       {items.map((child, i) =>
         i < batchSize ? (
-          <motion.div key={(child as React.ReactElement)?.key ?? i} variants={itemVariants}>
+          <motion.div
+            key={(child as React.ReactElement)?.key ?? i}
+            variants={itemVariants}
+            layout
+            transition={layoutSpring}
+          >
             {child}
           </motion.div>
         ) : (

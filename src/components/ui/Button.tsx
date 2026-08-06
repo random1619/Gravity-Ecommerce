@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import styles from './Button.module.css';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -8,6 +9,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'sm' | 'md' | 'lg' | 'full';
   isLoading?: boolean;
 }
+
+/** Kowalski spring — press and lift move through physics, never fixed durations. */
+const spring = { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 } as const;
+
+const MotionButton = motion.button;
 
 const Button: React.FC<ButtonProps> = ({
   children,
@@ -20,6 +26,7 @@ const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const [ripples, setRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
+  const reduceMotion = useReducedMotion();
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const button = e.currentTarget;
@@ -38,18 +45,30 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const buttonClassName = `
-    ${styles.button} 
-    ${styles[variant]} 
-    ${styles[size]} 
+    ${styles.button}
+    ${styles[variant]}
+    ${styles[size]}
     ${className}
   `.trim();
 
+  // Framer owns hover/tap transforms (spring, interruptible). CSS keeps the
+  // color/shadow states. Reduced-motion users get no lift/press — only the
+  // native :active fallback defined in the stylesheet.
+  const motionProps = reduceMotion
+    ? {}
+    : {
+        whileHover: disabled || isLoading ? undefined : { y: -2 },
+        whileTap: disabled || isLoading ? undefined : { scale: 0.96, y: 0 },
+        transition: spring,
+      };
+
   return (
-    <button
+    <MotionButton
       className={buttonClassName}
       disabled={disabled || isLoading}
       onClick={handleClick}
-      {...props}
+      {...motionProps}
+      {...(props as React.ComponentProps<typeof MotionButton>)}
     >
       {ripples.map(ripple => (
         <span
@@ -59,9 +78,8 @@ const Button: React.FC<ButtonProps> = ({
         />
       ))}
       {isLoading ? <span className={styles.loader}></span> : children}
-    </button>
+    </MotionButton>
   );
 };
 
 export default Button;
-

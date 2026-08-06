@@ -1,90 +1,110 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Fonts are loaded via next/font/google in layout.tsx (self-hosted, CSP-safe).
+   The --font-* tokens below map to the CSS variables it exposes. */
 
 /* ============================================================
-   DESIGN TOKENS — LIGHT MODE  ·  "Organic Earth"
+   DESIGN TOKENS — LIGHT MODE  ·  "Porcelain & Sage"
+   One protagonist: muted sage-teal. Quiet-luxury, desaturated.
    ============================================================ */
 :root {
-  /* === BACKGROUNDS (Organic Earth - Light Mode) === */
-  --bg-primary: #faf9f5;
-  --bg-secondary: #f4f1eb;
-  --bg-tertiary: #e5e2da;
+  /* === BACKGROUNDS (Porcelain - Light Mode) === */
+  --bg-primary: #f6f5f2;
+  --bg-secondary: #edebe5;
+  --bg-tertiary: #e0ddd3;
 
-  /* === TEXT (Earthy Warm Charcoal) === */
-  --text-primary: #1c1a17;
-  --text-secondary: #5c5952;
-  --text-tertiary: #8f8b80;
+  /* === TEXT (Soft Warm Black) === */
+  --text-primary: #1a1a18;
+  --text-secondary: #565a52;
+  /* Set to #676c61 (4.95:1) to meet WCAG AA 4.5:1 on --bg-primary. */
+  --text-tertiary: #676c61;
 
-  /* === ACCENT COLORS === */
-  --accent-primary: #1c1a17;
-  --accent-primary-hover: #3a3730;
-  --accent-secondary: #c85a3c; /* Terracotta Clay */
-  --accent-secondary-hover: #a64227;
-  --accent-success: #2b5c3d; /* Forest Green */
-  --accent-success-hover: #1e422b;
-  --accent-gold: #b47c3c; /* Ochre Gold */
-  --accent-indigo: #485ea6; /* Soft Navy */
+  /* === ACCENT COLORS (one protagonist + one supporting tone) === */
+  --accent-primary: #3f6b5c; /* Deep Sage — the protagonist (5.55:1 on canvas) */
+  --accent-primary-hover: #335649;
+  --accent-secondary: #3f6b5c; /* links/eyebrow share the protagonist hue */
+  --accent-secondary-hover: #335649;
+  --accent-success: #3b7355; /* Moss — harmonious with sage */
+  --accent-success-hover: #2e5c44;
+  --accent-gold: #5d7a6d; /* Muted Sage — supporting tone for gradients/glows */
+  --accent-indigo: #5d7a6d; /* supporting tone (kept for token compatibility) */
 
   /* RGB channels (for alpha mixing in effects) */
-  --accent-primary-rgb: 28, 26, 23;
-  --accent-secondary-rgb: 200, 90, 60;
-  --accent-gold-rgb: 180, 124, 60;
-  --accent-indigo-rgb: 72, 94, 166;
-  --accent-success-rgb: 43, 92, 61;
+  --accent-primary-rgb: 63, 107, 92;
+  --accent-secondary-rgb: 63, 107, 92;
+  --accent-gold-rgb: 93, 122, 109;
+  --accent-indigo-rgb: 93, 122, 109;
+  --accent-success-rgb: 59, 115, 85;
 
-  /* === FONT FAMILIES (were referenced but undefined — now mapped) === */
-  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Poppins', 'Inter', system-ui, sans-serif;
-  --font-accent: 'Space Grotesk', 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  /* === FONT FAMILIES (backed by next/font CSS variables from layout.tsx) === */
+  --font-body: var(--font-inter), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-playfair), Georgia, 'Times New Roman', serif;
+  --font-accent: var(--font-space-grotesk), var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), 'SF Mono', ui-monospace, monospace;
 
-  /* === BORDERS & DIVIDERS === */
-  --border-color: rgba(28, 26, 23, 0.08);
-  --border-strong: rgba(28, 26, 23, 0.16);
-  --border-focus: rgba(28, 26, 23, 0.4);
+  /* === BORDERS & DIVIDERS (soft warm-black ink) === */
+  --border-color: rgba(26, 26, 24, 0.08);
+  --border-strong: rgba(26, 26, 24, 0.16);
+  --border-focus: rgba(26, 26, 24, 0.4);
 
   /* === SURFACE TREATMENTS === */
   --surface-elevated: #ffffff;
-  --surface-overlay: rgba(28, 26, 23, 0.45);
-  --glass-bg: rgba(250, 249, 245, 0.85);
-  --glass-border: rgba(28, 26, 23, 0.08);
+  --surface-overlay: rgba(26, 26, 24, 0.45);
+  --glass-bg: rgba(246, 245, 242, 0.85);
+  --glass-border: rgba(26, 26, 24, 0.08);
   --glass-blur: 16px;
 
-  /* === GRADIENTS === */
-  --gradient-hero: linear-gradient(135deg, #1c1a17 0%, #4a453f 100%);
-  --gradient-cta: linear-gradient(135deg, #c85a3c 0%, #e07d60 100%);
-  --gradient-premium: linear-gradient(135deg, #b47c3c 0%, #dca260 100%);
-  --gradient-text: linear-gradient(120deg, #c85a3c 0%, #b47c3c 55%, #485ea6 100%);
-  --gradient-border: linear-gradient(135deg, rgba(200, 90, 60, 0.6), rgba(180, 124, 60, 0.5), rgba(72, 94, 166, 0.4));
+  /* === GRADIENTS (single-hue sage family — no tri-color blends) === */
+  --gradient-hero: linear-gradient(135deg, #1a1a18 0%, #454a41 100%);
+  --gradient-cta: linear-gradient(135deg, #3f6b5c 0%, #5d7a6d 100%);
+  --gradient-premium: linear-gradient(135deg, #5d7a6d 0%, #7e988c 100%);
+  --gradient-text: linear-gradient(120deg, #335649 0%, #5d7a6d 100%);
+  --gradient-border: linear-gradient(135deg, rgba(63, 107, 92, 0.6), rgba(93, 122, 109, 0.5));
+  --gradient-banner: linear-gradient(135deg, #1a1a18 0%, #34382f 55%, #1a1a18 100%); /* dark editorial banner */
   --surface-glow: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6));
-  --page-gradient: radial-gradient(1200px 600px at 10% -10%, rgba(72, 94, 166, 0.05), transparent 60%),
-    radial-gradient(900px 500px at 90% 0%, rgba(200, 90, 60, 0.04), transparent 55%);
 
-  /* Ambient orbs (theme-aware, replaces hardcoded blue/red) */
-  --ambient-1: rgba(200, 90, 60, 0.06);
-  --ambient-2: rgba(72, 94, 166, 0.05);
-  --selection-bg: rgba(200, 90, 60, 0.18);
+  /* Text/icon color placed on top of solid accent backgrounds */
+  --text-on-accent: #ffffff;
+  --page-gradient: radial-gradient(1200px 600px at 10% -10%, rgba(63, 107, 92, 0.05), transparent 60%),
+    radial-gradient(900px 500px at 90% 0%, rgba(93, 122, 109, 0.04), transparent 55%);
 
-  /* === SHADOWS === */
-  --shadow-xs: 0 1px 2px rgba(28, 26, 23, 0.02);
-  --shadow-sm: 0 2px 4px rgba(28, 26, 23, 0.04);
-  --shadow-md: 0 6px 12px rgba(28, 26, 23, 0.05);
-  --shadow-lg: 0 12px 24px rgba(28, 26, 23, 0.08);
-  --shadow-xl: 0 20px 40px rgba(28, 26, 23, 0.12);
-  --shadow-2xl: 0 30px 60px rgba(28, 26, 23, 0.16);
-  --shadow-focus: 0 0 0 4px rgba(28, 26, 23, 0.08);
-  --shadow-color-glow: 0 14px 40px -8px rgba(200, 90, 60, 0.4);
+  /* Ambient orbs (theme-aware sage wash) */
+  --ambient-1: rgba(63, 107, 92, 0.06);
+  --ambient-2: rgba(93, 122, 109, 0.05);
+  --selection-bg: rgba(63, 107, 92, 0.16);
+
+  /* === SHADOWS (soft warm-black) === */
+  --shadow-xs: 0 1px 2px rgba(26, 26, 24, 0.02);
+  --shadow-sm: 0 2px 4px rgba(26, 26, 24, 0.04);
+  --shadow-md: 0 6px 12px rgba(26, 26, 24, 0.05);
+  --shadow-lg: 0 12px 24px rgba(26, 26, 24, 0.08);
+  --shadow-xl: 0 20px 40px rgba(26, 26, 24, 0.12);
+  --shadow-2xl: 0 30px 60px rgba(26, 26, 24, 0.16);
+  --shadow-focus: 0 0 0 4px rgba(63, 107, 92, 0.16);
+  --shadow-color-glow: 0 14px 40px -8px rgba(63, 107, 92, 0.35);
   --glow-accent: 0 0 0 transparent; /* no neon glow in light mode */
 
-  /* === STATE COLORS === */
-  --success-bg: #e8f5e9;
-  --success-text: #2b5c3d;
-  --success-border: #2b5c3d;
-  --error-bg: #ffebee;
-  --error-text: #c62828;
-  --error-border: #ef5350;
-  --warning-bg: #fff8e1;
-  --warning-text: #f57c00;
-  --warning-border: #ffc107;
+  /* === STATE COLORS (harmonious with sage — no raw dashboard hues) === */
+  --success-bg: #ebf1ee;
+  --success-text: #3b7355;
+  --success-border: #3b7355;
+  --error-bg: #f6ecea;
+  --error-text: #a83c2a;
+  --error-border: #a83c2a;
+  --warning-bg: #f3efe8;
+  --warning-text: #8a6218;
+  --warning-border: #8a6218;
+
+  /* === SEMANTIC HELPERS (professional palette — single source of truth) === */
+  --color-danger: #a83c2a;               /* destructive actions, logout hovers */
+  --color-danger-bg: rgba(168, 60, 42, 0.08);
+  --overlay-scrim: rgba(26, 26, 24, 0.45);       /* modal/drawer backdrop */
+  --overlay-scrim-strong: rgba(26, 26, 24, 0.9); /* reel/immersive backdrop */
+  --on-dark-text: #ffffff;               /* text over photography */
+  --on-dark-muted: rgba(255, 255, 255, 0.85);
+  --on-dark-glass: rgba(26, 26, 24, 0.45);       /* glass chip over imagery */
+  --on-dark-glass-border: rgba(255, 255, 255, 0.22);
+  --on-dark-accent: #a7c3b8;             /* pale sage — accent text/borders over dark photography */
+  --on-dark-accent-rgb: 167, 195, 184;
+  --gradient-accent: var(--gradient-cta); /* alias referenced by page modules */
 
   /* === LINE HEIGHTS === */
   --leading-tight: 1.1;
@@ -124,14 +144,6 @@
   --spacing-20: 5rem;
   --spacing-24: 6rem;
 
-  /* Legacy spacing (for compatibility) */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 48px;
-  --spacing-2xl: 64px;
-
   /* === BORDER RADIUS === */
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
@@ -149,62 +161,66 @@
 }
 
 /* ============================================================
-   DESIGN TOKENS — DARK MODE  ·  "Nocturnal Cyberpunk"
+   DESIGN TOKENS — DARK MODE  ·  "Charcoal & Sage"
+   The same brand at night: deep warm-charcoal, luminous sage.
    ============================================================ */
 [data-theme='dark'] {
-  /* === BACKGROUNDS (Nocturnal Cyberpunk - Dark Mode) === */
-  --bg-primary: #050508;
-  --bg-secondary: #0d0d15;
-  --bg-tertiary: #141424;
+  /* === BACKGROUNDS (Warm Charcoal) === */
+  --bg-primary: #0f100e;
+  --bg-secondary: #15170f;
+  --bg-tertiary: #1d2016;
 
-  /* === TEXT (Cyber Silver & Cool Grays) === */
-  --text-primary: #f0f2ff;
-  --text-secondary: #8c92b2;
-  --text-tertiary: #545975;
+  /* === TEXT (Bone & Muted Sage-Greys) === */
+  --text-primary: #f1eee4;
+  --text-secondary: #b3b6a6;
+  /* Set to #84887a (5.25:1) to clear WCAG AA 4.5:1 on --bg-primary. */
+  --text-tertiary: #84887a;
 
-  /* === ACCENT COLORS === */
-  --accent-primary: #00e5ff; /* Electric Cyan */
-  --accent-primary-hover: #00b8d4;
-  --accent-secondary: #ff007f; /* Neon Hot Pink */
-  --accent-secondary-hover: #d5006d;
-  --accent-success: #39ff14; /* Electric Green */
-  --accent-success-hover: #00e676;
-  --accent-gold: #ffd60a; /* Cyber Gold */
-  --accent-indigo: #8b2cff; /* Ultraviolet */
+  /* === ACCENT COLORS (Luminous Sage — lifted for dark) === */
+  --accent-primary: #7fa396; /* Luminous Sage — the protagonist (6.89:1 on canvas) */
+  --accent-primary-hover: #92b5a9;
+  --accent-secondary: #7fa396;
+  --accent-secondary-hover: #92b5a9;
+  --accent-success: #93b3a7; /* Pale Sage-Green */
+  --accent-success-hover: #7fa396;
+  --accent-gold: #7fa396; /* Signature Sage */
+  --accent-indigo: #93b3a7; /* lighter supporting sage */
 
   /* RGB channels */
-  --accent-primary-rgb: 0, 229, 255;
-  --accent-secondary-rgb: 255, 0, 127;
-  --accent-gold-rgb: 255, 214, 10;
-  --accent-indigo-rgb: 139, 44, 255;
-  --accent-success-rgb: 57, 255, 20;
+  --accent-primary-rgb: 127, 163, 150;
+  --accent-secondary-rgb: 127, 163, 150;
+  --accent-gold-rgb: 127, 163, 150;
+  --accent-indigo-rgb: 147, 179, 167;
+  --accent-success-rgb: 147, 179, 167;
 
-  /* === BORDERS === */
-  --border-color: rgba(0, 229, 255, 0.1);
-  --border-strong: rgba(255, 0, 127, 0.15);
-  --border-focus: rgba(0, 229, 255, 0.5);
+  /* === BORDERS (sage-tinted) === */
+  --border-color: rgba(127, 163, 150, 0.14);
+  --border-strong: rgba(127, 163, 150, 0.24);
+  --border-focus: rgba(127, 163, 150, 0.5);
 
   /* === SURFACES === */
-  --surface-elevated: #0f0f1d;
-  --surface-overlay: rgba(5, 5, 8, 0.85);
-  --glass-bg: rgba(13, 13, 21, 0.8);
-  --glass-border: rgba(0, 229, 255, 0.15);
+  --surface-elevated: #191b12;
+  --surface-overlay: rgba(15, 16, 14, 0.85);
+  --glass-bg: rgba(21, 23, 15, 0.8);
+  --glass-border: rgba(127, 163, 150, 0.18);
   --glass-blur: 18px;
-  --surface-glow: linear-gradient(145deg, rgba(20, 20, 36, 0.95), rgba(13, 13, 21, 0.6));
+  --surface-glow: linear-gradient(145deg, rgba(31, 34, 24, 0.95), rgba(21, 23, 15, 0.6));
 
-  /* === GRADIENTS === */
-  --gradient-hero: linear-gradient(135deg, #00e5ff 0%, #8b2cff 100%);
-  --gradient-cta: linear-gradient(135deg, #ff007f 0%, #8b2cff 100%);
-  --gradient-premium: linear-gradient(135deg, #ffd60a 0%, #ff007f 100%);
-  --gradient-text: linear-gradient(120deg, #00e5ff 0%, #8b2cff 50%, #ff007f 100%);
-  --gradient-border: linear-gradient(135deg, rgba(0, 229, 255, 0.7), rgba(139, 44, 255, 0.6), rgba(255, 0, 127, 0.6));
-  --page-gradient: radial-gradient(1200px 600px at 10% -10%, rgba(139, 44, 255, 0.08), transparent 60%),
-    radial-gradient(900px 500px at 90% 0%, rgba(255, 0, 127, 0.07), transparent 55%);
+  /* === GRADIENTS (single-hue sage) === */
+  --gradient-hero: linear-gradient(135deg, #7fa396 0%, #57705f 100%);
+  --gradient-cta: linear-gradient(135deg, #7fa396 0%, #5d7a6d 100%);
+  --gradient-premium: linear-gradient(135deg, #7fa396 0%, #a7c3b8 100%);
+  --gradient-text: linear-gradient(120deg, #7fa396 0%, #a7c3b8 100%);
+  --gradient-border: linear-gradient(135deg, rgba(127, 163, 150, 0.7), rgba(167, 195, 184, 0.6));
+  --gradient-banner: linear-gradient(135deg, #15170f 0%, #1e241e 55%, #15170f 100%); /* dark editorial banner — neutral ink, not the sage accent gradient */
+  --text-on-accent: #0f100e; /* dark text on luminous sage accents */
+  --page-gradient: radial-gradient(1200px 600px at 10% -10%, rgba(127, 163, 150, 0.08), transparent 60%),
+    radial-gradient(900px 500px at 90% 0%, rgba(127, 163, 150, 0.05), transparent 55%);
 
-  /* Ambient orbs (theme-aware neon) */
-  --ambient-1: rgba(0, 229, 255, 0.07);
-  --ambient-2: rgba(255, 0, 127, 0.06);
-  --selection-bg: rgba(0, 229, 255, 0.28);
+  /* Ambient orbs (theme-aware sage glow) */
+  --ambient-1: rgba(127, 163, 150, 0.07);
+  --ambient-2: rgba(127, 163, 150, 0.05);
+  --selection-bg: rgba(127, 163, 150, 0.28);
 
   /* === SHADOWS === */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.6);
@@ -213,20 +229,32 @@
   --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.9);
   --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.95);
   --shadow-2xl: 0 30px 60px rgba(0, 0, 0, 0.98);
-  --shadow-focus: 0 0 0 4px rgba(0, 229, 255, 0.25);
-  --shadow-color-glow: 0 0 40px -4px rgba(255, 0, 127, 0.55);
-  --glow-accent: 0 0 18px rgba(0, 229, 255, 0.45); /* neon glow active */
+  --shadow-focus: 0 0 0 4px rgba(127, 163, 150, 0.22);
+  --shadow-color-glow: 0 14px 40px -8px rgba(127, 163, 150, 0.35);
+  --glow-accent: 0 0 18px rgba(127, 163, 150, 0.3); /* subtle sage glow */
 
-  /* === STATE COLORS === */
-  --success-bg: rgba(57, 255, 20, 0.08);
-  --success-text: #39ff14;
-  --success-border: #39ff14;
-  --error-bg: rgba(255, 0, 127, 0.08);
-  --error-text: #ff007f;
-  --error-border: #ff007f;
-  --warning-bg: rgba(255, 214, 10, 0.08);
-  --warning-text: #ffd60a;
-  --warning-border: #ffd60a;
+  /* === STATE COLORS (harmonious with sage) === */
+  --success-bg: rgba(147, 179, 167, 0.12);
+  --success-text: #93b3a7;
+  --success-border: #93b3a7;
+  --error-bg: rgba(208, 138, 114, 0.12);
+  --error-text: #d08a72;
+  --error-border: #d08a72;
+  --warning-bg: rgba(201, 177, 133, 0.12);
+  --warning-text: #c9b185;
+  --warning-border: #c9b185;
+
+  /* === SEMANTIC HELPERS (dark) === */
+  --color-danger: #d08a72;
+  --color-danger-bg: rgba(208, 138, 114, 0.12);
+  --overlay-scrim: rgba(15, 16, 14, 0.55);
+  --overlay-scrim-strong: rgba(15, 16, 14, 0.92);
+  --on-dark-text: #f1eee4;
+  --on-dark-muted: rgba(241, 238, 228, 0.85);
+  --on-dark-glass: rgba(15, 16, 14, 0.5);
+  --on-dark-glass-border: rgba(127, 163, 150, 0.28);
+  --on-dark-accent: #a7c3b8;             /* pale sage — pinned; reads over dark imagery in dark theme too */
+  --on-dark-accent-rgb: 167, 195, 184;
 }
 
 /* ============================================================
@@ -384,7 +412,7 @@ img { display: block; max-width: 100%; }
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2);
-  padding: 0.75rem 1.5rem;
+  padding: 0.8rem 1.6rem; /* ≈44px min touch target */
   font-family: var(--font-accent);
   font-size: 0.95rem;
   font-weight: var(--font-semibold);
@@ -428,7 +456,7 @@ img { display: block; max-width: 100%; }
 
 .btn--cta {
   background: var(--gradient-cta);
-  color: #fff;
+  color: var(--text-on-accent);
   box-shadow: var(--shadow-md);
 }
 .btn--cta:hover {
@@ -438,11 +466,11 @@ img { display: block; max-width: 100%; }
 
 .btn--premium {
   background: var(--gradient-premium);
-  color: #1c1a17;
+  color: var(--text-primary); /* dark text on sage gradient — light-mode base */
   font-weight: var(--font-bold);
   box-shadow: var(--shadow-md);
 }
-[data-theme='dark'] .btn--premium { color: #050508; }
+[data-theme='dark'] .btn--premium { color: var(--text-on-accent); }
 .btn--premium:hover {
   transform: translateY(-2px);
   box-shadow: 0 14px 40px -8px rgba(var(--accent-gold-rgb), 0.5);
@@ -455,8 +483,8 @@ img { display: block; max-width: 100%; }
 }
 .btn--secondary:hover {
   background: var(--bg-tertiary);
-  border-color: var(--accent-secondary);
-  color: var(--accent-secondary);
+  color: var(--text-primary);
+  box-shadow: inset 0 0 0 1px var(--accent-secondary);
   transform: translateY(-2px);
 }
 
@@ -469,6 +497,20 @@ img { display: block; max-width: 100%; }
   color: var(--accent-primary);
   border-color: var(--accent-primary);
   background: rgba(var(--accent-primary-rgb), 0.06);
+}
+
+/* Quiet button for use on dark gradient / imagery backgrounds */
+.btn--on-dark {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--on-dark-text, #fff);
+  border: 1px solid var(--on-dark-glass-border, rgba(255, 255, 255, 0.25));
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.btn--on-dark:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
 }
 
 .btn--sm { padding: 0.45rem 0.95rem; font-size: 0.825rem; }
@@ -637,16 +679,17 @@ kbd {
 /* ============================================================
    LAYOUT UTILITIES
    ============================================================ */
-.container { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 var(--spacing-md); }
+.container { width: 100%; max-width: 1320px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 56px); }
+.container--wide { max-width: 1520px; }
 .flex { display: flex; }
 .flex-column { display: flex; flex-direction: column; }
 .flex-wrap { flex-wrap: wrap; }
 .items-center { align-items: center; }
 .justify-center { justify-content: center; }
 .justify-between { justify-content: space-between; }
-.gap-sm { gap: var(--spacing-sm); }
-.gap-md { gap: var(--spacing-md); }
-.gap-lg { gap: var(--spacing-lg); }
+.gap-sm { gap: var(--spacing-2); }
+.gap-md { gap: var(--spacing-4); }
+.gap-lg { gap: var(--spacing-6); }
 
 /* Responsive auto-fill grid */
 .grid-auto {

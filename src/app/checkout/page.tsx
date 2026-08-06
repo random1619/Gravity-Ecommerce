@@ -1,12 +1,22 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import styles from './page.module.css';
 import Button from '@/components/ui/Button';
 import Magnetic from '@/components/motion/Magnetic';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCart } from '@/lib/CartContext';
+import { APPLIED_PROMO_KEY, STUDENT_VERIFIED_KEY, studentDiscount } from '@/lib/discount';
 import { useRouter } from 'next/navigation';
+import SplitTextReveal from '@/components/motion/SplitTextReveal';
+
+/** Kowalski springs — validation feedback and option presses arrive through physics. */
+const spring = {
+    snappy: { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 },
+    gentle: { type: 'spring', stiffness: 380, damping: 24, mass: 0.7 },
+} as const;
 
 export default function CheckoutPage() {
     const { items, cartTotal, clearCart } = useCart();
@@ -16,8 +26,8 @@ export default function CheckoutPage() {
     const getInitialDiscountState = () => {
         if (typeof window === 'undefined') return { isVerified: false, appliedPromo: '' };
         return {
-            isVerified: localStorage.getItem('gravity-student-verified') === 'true',
-            appliedPromo: localStorage.getItem('gravity-applied-promo') || '',
+            isVerified: localStorage.getItem(STUDENT_VERIFIED_KEY) === 'true',
+            appliedPromo: localStorage.getItem(APPLIED_PROMO_KEY) || '',
         };
     };
 
@@ -38,11 +48,17 @@ export default function CheckoutPage() {
         return Object.keys(newErrors).length === 0;
     };
 
-    const isDiscountEligible = isVerified || appliedPromo === 'STUDENT20';
+    // Validation errors spring in rather than popping — feedback should feel alive, not abrupt.
+    const errorMotion = {
+        initial: { opacity: 0, y: -4 },
+        animate: { opacity: 1, y: 0 },
+        transition: spring.gentle,
+    };
+
     const subtotal = cartTotal;
-    const studentDiscount = isDiscountEligible ? Math.round(subtotal * 0.2) : 0;
-    const shipping = subtotal > 0 ? 0 : 0;
-    const total = Math.max(subtotal - studentDiscount + shipping, 0);
+    const discount = studentDiscount(subtotal, isVerified, appliedPromo);
+    const shipping = 0;
+    const total = Math.max(subtotal - discount + shipping, 0);
 
     const lineItems = useMemo(() => items, [items]);
 
@@ -50,7 +66,7 @@ export default function CheckoutPage() {
         return (
             <div className={`container ${styles.checkoutPage}`}>
                 <div className={styles.emptyState}>
-                    <h1>Checkout</h1>
+                    <h1><SplitTextReveal text="Checkout" /></h1>
                     <p>Your bag is empty. Add items to continue.</p>
                     <Link href="/shop">
                         <Button variant="primary" size="lg">Shop Now</Button>
@@ -73,7 +89,7 @@ export default function CheckoutPage() {
         <div className={`container ${styles.checkoutPage}`}>
             <header className={styles.header}>
                 <div>
-                    <h1 className={styles.title}>Checkout</h1>
+                    <h1 className={styles.title}><SplitTextReveal text="Checkout" /></h1>
                     <p className={styles.subtitle}>Complete your details to place the order.</p>
                 </div>
                 <Link href="/cart" className={styles.backLink}>Back to Cart</Link>
@@ -82,67 +98,67 @@ export default function CheckoutPage() {
             <div className={styles.layout}>
                 <section className={styles.formSection}>
                     <div className={styles.card}>
-                        <h2>Contact</h2>
+                        <h2><SplitTextReveal text="Contact" /></h2>
                         <div className={styles.grid}>
                             <div className={styles.inputGroup}>
                                 <label>Full Name</label>
                                 <input type="text" placeholder="Your name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
-                                {errors.name && <span className={styles.errorText}>{errors.name}</span>}
+                                {errors.name && <motion.span className={styles.errorText} {...errorMotion}>{errors.name}</motion.span>}
                             </div>
                             <div className={styles.inputGroup}>
                                 <label>Email</label>
                                 <input type="email" placeholder="you@example.com" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
-                                {errors.email && <span className={styles.errorText}>{errors.email}</span>}
+                                {errors.email && <motion.span className={styles.errorText} {...errorMotion}>{errors.email}</motion.span>}
                             </div>
                             <div className={styles.inputGroup}>
                                 <label>Phone</label>
                                 <input type="tel" placeholder="+91 00000 00000" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
-                                {errors.phone && <span className={styles.errorText}>{errors.phone}</span>}
+                                {errors.phone && <motion.span className={styles.errorText} {...errorMotion}>{errors.phone}</motion.span>}
                             </div>
                         </div>
                     </div>
 
                     <div className={styles.card}>
-                        <h2>Shipping Address</h2>
+                        <h2><SplitTextReveal text="Shipping Address" /></h2>
                         <div className={styles.grid}>
                             <div className={styles.inputGroupWide}>
                                 <label>Address</label>
                                 <input type="text" placeholder="House no, street, area" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} />
-                                {errors.address && <span className={styles.errorText}>{errors.address}</span>}
+                                {errors.address && <motion.span className={styles.errorText} {...errorMotion}>{errors.address}</motion.span>}
                             </div>
                             <div className={styles.inputGroup}>
                                 <label>City</label>
                                 <input type="text" placeholder="Mumbai" value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} />
-                                {errors.city && <span className={styles.errorText}>{errors.city}</span>}
+                                {errors.city && <motion.span className={styles.errorText} {...errorMotion}>{errors.city}</motion.span>}
                             </div>
                             <div className={styles.inputGroup}>
                                 <label>State</label>
                                 <input type="text" placeholder="Maharashtra" value={form.state} onChange={e => setForm(f => ({ ...f, state: e.target.value }))} />
-                                {errors.state && <span className={styles.errorText}>{errors.state}</span>}
+                                {errors.state && <motion.span className={styles.errorText} {...errorMotion}>{errors.state}</motion.span>}
                             </div>
                             <div className={styles.inputGroup}>
                                 <label>Postal Code</label>
                                 <input type="text" placeholder="400001" value={form.postal} onChange={e => setForm(f => ({ ...f, postal: e.target.value }))} />
-                                {errors.postal && <span className={styles.errorText}>{errors.postal}</span>}
+                                {errors.postal && <motion.span className={styles.errorText} {...errorMotion}>{errors.postal}</motion.span>}
                             </div>
                         </div>
                     </div>
 
                     <div className={styles.card}>
-                        <h2>Payment</h2>
+                        <h2><SplitTextReveal text="Payment" /></h2>
                         <div className={styles.paymentOptions}>
-                            <label className={styles.paymentOption}>
+                            <motion.label className={styles.paymentOption} whileTap={{ scale: 0.98 }} transition={spring.snappy}>
                                 <input type="radio" name="payment" defaultChecked />
                                 <span>UPI / Wallet</span>
-                            </label>
-                            <label className={styles.paymentOption}>
+                            </motion.label>
+                            <motion.label className={styles.paymentOption} whileTap={{ scale: 0.98 }} transition={spring.snappy}>
                                 <input type="radio" name="payment" />
                                 <span>Credit or Debit Card</span>
-                            </label>
-                            <label className={styles.paymentOption}>
+                            </motion.label>
+                            <motion.label className={styles.paymentOption} whileTap={{ scale: 0.98 }} transition={spring.snappy}>
                                 <input type="radio" name="payment" />
                                 <span>Cash on Delivery</span>
-                            </label>
+                            </motion.label>
                         </div>
                     </div>
                 </section>
@@ -154,7 +170,7 @@ export default function CheckoutPage() {
                             {lineItems.map((item) => (
                                 <div key={`${item.id}-${item.size}`} className={styles.summaryItem}>
                                     <div className={styles.summaryImage}>
-                                        <img src={item.imageUrl} alt={item.name} />
+                                        <Image src={item.imageUrl} alt={item.name} width={64} height={85} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                     </div>
                                     <div>
                                         <p className={styles.summaryName}>{item.name}</p>
@@ -168,10 +184,10 @@ export default function CheckoutPage() {
                             <span>Subtotal</span>
                             <span>Rs. {subtotal}</span>
                         </div>
-                        {studentDiscount > 0 && (
+                        {discount > 0 && (
                             <div className={`${styles.lineItem} ${styles.discount}`}>
                                 <span>Student Discount</span>
-                                <span>-Rs. {studentDiscount}</span>
+                                <span>-Rs. {discount}</span>
                             </div>
                         )}
                         <div className={styles.lineItem}>

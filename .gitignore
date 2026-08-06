@@ -22,11 +22,13 @@
 .DS_Store
 *.pem
 
-# debug
+# debug and logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
+build_log.txt
 
 # env files (can opt-in for committing if needed)
 .env*
@@ -40,16 +42,24 @@ next-env.d.ts
 
 # agent and build logs
 tmpclaude-*
-build_log.txt
 
 # AI Contexts & Assistant files
 .planning/
 .agents/
 .gemini/
 .claude/
+.critique-evidence/
+.impeccable/
+.playwright-mcp/
+PRODUCT.md
+skills-lock.json
 AGENTS.md
 *.bat
 start.bat
 
-# Superpowers brainstorm mockups
+# Superpowers brainstorm mockups & temporary screenshots
 /.superpowers/
+.shot*
+.tmp_*
+*.tmp_*
+

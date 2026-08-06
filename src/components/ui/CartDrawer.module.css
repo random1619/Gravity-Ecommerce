@@ -4,7 +4,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: var(--overlay-scrim);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     z-index: 10000;
@@ -16,7 +16,7 @@
     width: 100%;
     max-width: 420px;
     height: 100%;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--glass-bg);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
     border-left: 1px solid var(--border-color);
@@ -26,8 +26,8 @@
 }
 
 [data-theme='dark'] .drawer {
-    background: rgba(13, 13, 21, 0.95);
-    border-left-color: rgba(255, 255, 255, 0.08);
+    background: var(--glass-bg);
+    border-left-color: var(--glass-border);
 }
 
 .header {
@@ -126,6 +126,7 @@
 }
 
 .shopBtn {
+    display: inline-block;
     background: var(--text-primary);
     color: var(--bg-primary);
     padding: var(--spacing-3) var(--spacing-6);
@@ -133,12 +134,12 @@
     font-weight: var(--font-bold);
     border-radius: var(--radius-lg);
     letter-spacing: var(--tracking-wider);
-    transition: all var(--transition-fast);
+    /* framer owns transform; CSS keeps opacity */
+    transition: opacity var(--transition-fast);
 }
 
 .shopBtn:hover {
     opacity: 0.9;
-    transform: translateY(-1px);
 }
 
 .itemsList {
@@ -155,8 +156,6 @@
 }
 
 .itemImg {
-    width: 72px;
-    height: 96px;
     object-fit: cover;
     border-radius: var(--radius-md);
     background: var(--bg-secondary);
@@ -232,7 +231,7 @@
 }
 
 .removeBtn:hover {
-    color: #ff453a;
+    color: var(--error-text);
 }
 
 /* Footer Section */
@@ -270,9 +269,10 @@
 }
 
 .checkoutBtn {
+    display: block;
     width: 100%;
     background: var(--gradient-cta);
-    color: white;
+    color: var(--text-on-accent);
     padding: 14px 0;
     border-radius: var(--radius-lg);
     font-size: 12px;
@@ -280,17 +280,19 @@
     text-align: center;
     letter-spacing: var(--tracking-wider);
     box-shadow: var(--shadow-md);
-    transition: all var(--transition-fast);
+    /* framer owns transform; CSS keeps opacity/shadow */
+    transition: opacity var(--transition-fast), box-shadow var(--transition-fast);
+    will-change: transform;
 }
 
 .checkoutBtn:hover {
     opacity: 0.95;
-    transform: translateY(-1px);
     box-shadow: var(--shadow-lg);
-    color: white;
+    color: var(--text-on-accent);
 }
 
 .viewCartBtn {
+    display: block;
     width: 100%;
     background: var(--bg-primary);
     border: 1.5px solid var(--border-strong);
@@ -302,6 +304,7 @@
     text-align: center;
     letter-spacing: var(--tracking-wider);
     transition: all var(--transition-fast);
+    will-change: transform;
 }
 
 .viewCartBtn:hover {

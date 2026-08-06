@@ -1,116 +1,547 @@
-.loginModal {
-    padding: var(--spacing-2xl);
-    max-width: 450px;
-    width: 100%;
+/* ============================================================
+   Backstage Pass — login panel
+   A members'-club ticket: dark editorial cover + light stub,
+   split by a perforated edge. One accent per surface:
+   gold lives on the cover, terracotta lives on the stub.
+   ============================================================ */
+
+.pass {
+    position: relative;
+    display: flex;
+    width: min(780px, 90vw);
+    min-height: 480px;
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    background: var(--bg-primary);
 }
 
-.title {
-    font-size: 28px;
+/* ---------- Cover — dark editorial panel ---------- */
+
+.cover {
+    position: relative;
+    flex: 0 0 42%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--spacing-5);
+    padding: var(--spacing-8) var(--spacing-10) var(--spacing-8) var(--spacing-8);
+    background: var(--gradient-banner);
+    color: var(--on-dark-text);
+    overflow: hidden;
+}
+
+/* Ember — the single warm light source, breathing slowly.
+   Gold lives here; the stub never sees it. */
+.ember {
+    position: absolute;
+    top: -30%;
+    left: -25%;
+    width: 75%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(127, 163, 150, 0.35) 0%,
+        rgba(63, 107, 92, 0.16) 42%,
+        transparent 70%
+    );
+    filter: blur(28px);
+    pointer-events: none;
+    animation: emberBreathe 7s ease-in-out infinite;
+}
+
+[data-theme='dark'] .ember {
+    background: radial-gradient(
+        circle,
+        rgba(147, 179, 167, 0.3) 0%,
+        rgba(127, 163, 150, 0.14) 42%,
+        transparent 70%
+    );
+}
+
+@keyframes emberBreathe {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.85; }
+    50% { transform: translate(6%, 8%) scale(1.12); opacity: 1; }
+}
+
+.coverTop {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.coverKicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(244, 241, 234, 0.85);
+    border: 1px solid rgba(244, 241, 234, 0.3);
+    border-radius: var(--radius-full);
+    padding: 6px 12px;
+}
+
+.coverTitle {
+    position: relative;
+    font-family: var(--font-display);
+    font-size: clamp(40px, 5.2vw, 58px);
+    line-height: 0.98;
+    letter-spacing: var(--tracking-tighter);
     font-weight: 800;
-    margin-bottom: var(--spacing-xs);
-    text-align: center;
+    margin: 0;
 }
 
-.subtitle {
-    text-align: center;
-    color: var(--text-secondary);
-    margin-bottom: var(--spacing-2xl);
-    font-size: 14px;
+.coverTitle em {
+    font-style: italic;
+    font-weight: 400;
+    /* The single gold moment on the cover */
+    background: var(--gradient-premium);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
+
+.coverTitleThin {
+    display: block;
+    font-weight: 300;
+    font-style: italic;
+    opacity: 0.75;
+}
+
+.coverCopy {
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(244, 241, 234, 0.72);
+    max-width: 30ch;
+    margin: 0;
+}
+
+/* Vertical masthead — pure editorial edge */
+.masthead {
+    position: absolute;
+    right: var(--spacing-5);
+    top: 50%;
+    transform: translateY(-50%);
+    writing-mode: vertical-rl;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: rgba(244, 241, 234, 0.4);
+    pointer-events: none;
+}
+
+/* Barcode + serial — the ticket's identity */
+.ticketMeta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-4);
+}
+
+.barcode {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 34px;
+    width: max-content;
+    animation: barcodeIn 0.7s steps(14) both 0.35s;
+}
+
+@keyframes barcodeIn {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+}
+
+.barcode span {
+    display: block;
+    height: 100%;
+    background: rgba(244, 241, 234, 0.85);
+}
+
+.barcode span:nth-child(3n) { height: 78%; }
+.barcode span:nth-child(4n) { height: 60%; }
+.barcode span:nth-child(7n) { height: 88%; }
+
+.serial {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    color: rgba(244, 241, 234, 0.55);
+}
+
+/* ---------- Perforation ---------- */
+
+.perforation {
+    position: relative;
+    flex: 0 0 0;
+    border-left: 2px dashed var(--border-strong);
+    margin: var(--spacing-6) 0;
+}
+
+/* Punch-hole notches — circles of the overlay scrim "biting" the ticket edge */
+.notchTop,
+.notchBottom {
+    position: absolute;
+    left: -11px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--overlay-scrim);
+}
+
+.notchTop { top: calc(var(--spacing-6) * -1 - 10px); }
+.notchBottom { bottom: calc(var(--spacing-6) * -1 - 10px); }
+
+/* ---------- Stub — the form you tear off ---------- */
+
+.stub {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--spacing-4);
+    padding: var(--spacing-8) var(--spacing-10);
+    background: var(--bg-primary);
+}
+
+.close {
+    position: absolute;
+    top: var(--spacing-4);
+    right: var(--spacing-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color var(--transition-fast), background var(--transition-fast),
+        transform var(--transition-base);
+}
+
+.close:hover {
+    background: var(--accent-secondary);
+    color: var(--text-on-accent);
+    transform: rotate(90deg);
+}
+
+/* ---------- Mode flip tabs ---------- */
+
+.modeTabs {
+    display: inline-flex;
+    align-self: flex-start;
+    gap: 2px;
+    padding: 3px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+}
+
+.modeTab {
+    position: relative;
+    isolation: isolate;
+    padding: 7px 18px;
+    border: none;
+    border-radius: var(--radius-full);
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.modeTab:hover {
+    color: var(--text-primary);
+}
+
+.modeTabActive,
+.modeTabActive:hover {
+    color: var(--accent-primary);
+}
+
+/* Shared-layout pill glides between the two tabs — flipping the ticket */
+.modeTabPill {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: var(--radius-full);
+    background: var(--bg-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.modeTabLabel {
+    position: relative;
+}
+
+/* ---------- Stub copy ---------- */
+
+.stubTitle {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: var(--tracking-tighter);
+    color: var(--text-primary);
+    margin: var(--spacing-2) 0 2px;
+}
+
+.stubSub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 var(--spacing-5);
+}
+
+/* ---------- Floating-label fields ---------- */
 
 .form {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-5);
 }
 
-.inputGroup {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xs);
+.field {
+    position: relative;
+    padding-top: 14px;
 }
 
-.inputGroup label {
-    font-size: 14px;
-    font-weight: 600;
+.field input {
+    width: 100%;
+    padding: 8px 2px 10px;
+    border: none;
+    border-bottom: 1.5px solid var(--border-color);
+    border-radius: 0;
+    background: transparent;
     color: var(--text-primary);
-}
-
-.inputGroup input {
-    padding: 12px 16px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: 14px;
-    transition: var(--transition-fast);
-}
-
-.inputGroup input:focus {
+    font-size: 15px;
     outline: none;
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.1);
+    transition: border-color var(--transition-base);
 }
+
+.field input::placeholder {
+    color: transparent;
+}
+
+/* Floating label — rests as placeholder, rises on focus/fill */
+.field label {
+    position: absolute;
+    left: 2px;
+    top: 22px;
+    font-size: 15px;
+    color: var(--text-tertiary);
+    pointer-events: none;
+    transform-origin: left top;
+    transition: transform var(--transition-base), color var(--transition-base);
+}
+
+.fieldRaised label {
+    transform: translateY(-20px) scale(0.72);
+    color: var(--accent-secondary);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.field input:focus {
+    border-bottom-color: transparent;
+}
+
+/* Gradient underline draws in from the left on focus —
+   the stub's one accent, echoing the navbar's hairline language */
+.fieldLine {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1.5px;
+    background: var(--gradient-cta);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--transition-smooth);
+    pointer-events: none;
+}
+
+.field input:focus ~ .fieldLine {
+    transform: scaleX(1);
+}
+
+/* Show real placeholder text only once the label has risen */
+.fieldRaised input::placeholder {
+    color: var(--text-tertiary);
+    opacity: 0.6;
+}
+
+/* ---------- Error ---------- */
 
 .error {
-    color: #ef4444;
-    font-size: 14px;
-    text-align: center;
-    padding: var(--spacing-sm);
-    background: rgba(239, 68, 68, 0.1);
-    border-radius: var(--radius-sm);
     margin: 0;
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: 13px;
+    color: var(--error-text);
+    background: var(--color-danger-bg);
+    border-left: 2px solid var(--error-text);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    overflow: hidden;
 }
 
-.toggle {
-    margin-top: var(--spacing-lg);
-    text-align: center;
-}
+/* ---------- Submit ---------- */
 
-.toggle p {
-    font-size: 14px;
-    color: var(--text-secondary);
-}
-
-.toggleBtn {
-    background: none;
+.submit {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    width: 100%;
+    height: 48px;
+    margin-top: var(--spacing-2);
     border: none;
-    color: var(--accent-primary);
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: underline;
+    border-radius: var(--radius-full);
+    background: var(--gradient-cta);
+    color: var(--text-on-accent);
     font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: var(--shadow-color-glow);
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
 }
 
-.toggleBtn:hover {
-    color: var(--accent-secondary);
+.submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 48px -10px rgba(var(--accent-primary-rgb), 0.5);
 }
 
-.demo {
-    margin-top: var(--spacing-lg);
-    padding: var(--spacing-md);
-    background: var(--bg-secondary);
-    border-radius: var(--radius-sm);
-    border: 1px dashed var(--border-color);
+.submit:disabled {
+    opacity: 0.7;
+    cursor: wait;
 }
 
-.demoText {
-    font-size: 12px;
-    color: var(--text-secondary);
+/* Shimmer sweep across the button on hover */
+.submit::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -60%;
+    width: 45%;
+    background: linear-gradient(100deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+    transform: skewX(-20deg);
+    transition: left 0.55s ease;
+    pointer-events: none;
+}
+
+.submit:hover:not(:disabled)::after {
+    left: 120%;
+}
+
+/* Arrow slides on hover — "step through the door" */
+.submitArrow {
+    transition: transform var(--transition-base);
+}
+
+.submit:hover:not(:disabled) .submitArrow {
+    transform: translateX(4px);
+}
+
+/* ---------- Demo note ---------- */
+
+.demoNote {
+    margin: var(--spacing-4) 0 0;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary);
     text-align: center;
-    margin: 0;
 }
 
-.demoText strong {
-    color: var(--accent-primary);
-}
+/* ---------- Responsive ---------- */
 
-@media (max-width: 768px) {
-    .loginModal {
-        padding: var(--spacing-xl);
+@media (max-width: 640px) {
+    .pass {
+        flex-direction: column;
+        width: min(440px, 92vw);
+        min-height: 0;
     }
 
-    .title {
+    /* Cover collapses to a slim masthead strip */
+    .cover {
+        flex: none;
+        flex-direction: row;
+        align-items: center;
+        gap: var(--spacing-4);
+        padding: var(--spacing-5) var(--spacing-6);
+    }
+
+    .coverTitle {
         font-size: 24px;
+    }
+
+    .coverTitleThin {
+        display: inline;
+        margin-left: 6px;
+    }
+
+    .coverCopy,
+    .masthead,
+    .barcode {
+        display: none;
+    }
+
+    .ticketMeta {
+        margin: 0 0 0 auto;
+    }
+
+    /* Perforation runs horizontally between strip and stub */
+    .perforation {
+        border-left: none;
+        border-top: 2px dashed var(--border-strong);
+        margin: 0 var(--spacing-6);
+    }
+
+    .notchTop,
+    .notchBottom {
+        left: auto;
+        top: -11px;
+    }
+
+    .notchTop { left: calc(var(--spacing-6) * -1 - 10px); }
+    .notchBottom {
+        left: auto;
+        right: calc(var(--spacing-6) * -1 - 10px);
+        bottom: auto;
+    }
+
+    .stub {
+        padding: var(--spacing-6);
+    }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    .close,
+    .modeTab,
+    .field label,
+    .fieldLine,
+    .field input,
+    .submit,
+    .submit::after,
+    .submitArrow {
+        transition: none;
+    }
+
+    .ember,
+    .barcode {
+        animation: none;
     }
 }

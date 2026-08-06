@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
 import styles from './page.module.css';
 import Button from '@/components/ui/Button';
 import ProductCard from '@/components/ui/ProductCard';
+import Tilt from '@/components/motion/Tilt';
 import QuickView from '@/components/ui/QuickView';
 import { useCart } from '@/lib/CartContext';
 import { useAuth } from '@/lib/AuthContext';
@@ -11,6 +14,15 @@ import LoginModal from '@/components/ui/LoginModal';
 import ProductDistort from '@/components/three/scenes/ProductDistort';
 import type { Product } from '@/lib/data';
 import { useParams } from 'next/navigation';
+import SplitTextReveal from '@/components/motion/SplitTextReveal';
+import ScrollReveal from '@/components/motion/ScrollReveal';
+import { Check, Heart } from 'lucide-react';
+
+/** Kowalski springs — every interactive element presses and lifts through physics. */
+const spring = {
+    snappy: { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 },
+    gentle: { type: 'spring', stiffness: 380, damping: 26, mass: 0.7 },
+} as const;
 
 export default function ProductDetail() {
     const params = useParams();
@@ -98,46 +110,62 @@ export default function ProductDetail() {
             <div className={styles.productLayout}>
                 {/* Gallery Section */}
                 <section className={styles.gallery}>
-                    <div className={styles.mainImage}>
-                        <ProductDistort
-                            src={product.images?.[activeImage] || '/product-tee.png'}
-                            alt={product.name}
-                        />
-                    </div>
+                    <Tilt max={3} className={styles.mainTilt}>
+                        <motion.div
+                            className={styles.mainImage}
+                            whileHover={{ scale: 1.02 }}
+                            transition={spring.gentle}
+                        >
+                            <ProductDistort
+                                src={product.images?.[activeImage] || '/product-tee-premium.png'}
+                                alt={product.name}
+                            />
+                        </motion.div>
+                    </Tilt>
                     <div className={styles.thumbnails}>
                         {(product.images || []).map((img: string, idx: number) => (
-                            <button
+                            <motion.button
                                 key={idx}
                                 className={`${styles.thumb} ${activeImage === idx ? styles.activeThumb : ''}`}
                                 onClick={() => setActiveImage(idx)}
+                                whileHover={{ y: -3 }}
+                                whileTap={{ scale: 0.92 }}
+                                transition={spring.snappy}
                             >
-                                <img src={img} alt={`${product.name} thumbnail ${idx}`} />
-                            </button>
+                                <Image src={img} alt={`${product.name} thumbnail ${idx}`} width={80} height={107} />
+                            </motion.button>
                         ))}
                     </div>
                 </section>
 
                 {/* Info Section */}
                 <section className={styles.info}>
-                    <p className={styles.category}>{product.category}</p>
-                    <h1 className={styles.name}>{product.name}</h1>
-                    <div className={styles.priceRow}>
-                        <span className={styles.price}>₹{product.price}</span>
-                        <span className={styles.oldPrice}>₹{product.originalPrice}</span>
-                        <span className={styles.discount}>Save ₹{product.originalPrice - product.price}</span>
-                    </div>
+                    <ScrollReveal direction="up" delay={80}>
+                        <p className={styles.category}>{product.category}</p>
+                    </ScrollReveal>
+                    <h1 className={styles.name}><SplitTextReveal text={product.name} /></h1>
+                    <ScrollReveal direction="up" delay={150}>
+                        <div className={styles.priceRow}>
+                            <span className={styles.price}>₹{product.price}</span>
+                            <span className={styles.oldPrice}>₹{product.originalPrice}</span>
+                            <span className={styles.discount}>Save ₹{product.originalPrice - product.price}</span>
+                        </div>
+                    </ScrollReveal>
 
                     <div className={styles.selector}>
                         <h3>Select Size</h3>
                         <div className={styles.sizeGrid}>
                             {(product.sizes || []).map((size: string) => (
-                                <button
+                                <motion.button
                                     key={size}
                                     className={`${styles.sizeBtn} ${selectedSize === size ? styles.activeSize : ''}`}
                                     onClick={() => setSelectedSize(size)}
+                                    whileHover={{ y: -2 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    transition={spring.snappy}
                                 >
                                     {size}
-                                </button>
+                                </motion.button>
                             ))}
                         </div>
                         <button className={styles.sizeGuide}>View Size Guide</button>
@@ -145,9 +173,9 @@ export default function ProductDetail() {
 
                     <div className={styles.actions}>
                         <Button variant="primary" size="lg" className={styles.addToCart} onClick={handleAddToCart}>
-                            {addedToCart ? '✓ Added to Cart!' : 'Add to Cart'}
+                            {addedToCart ? <><Check size={18} strokeWidth={2.5} style={{ marginRight: 6, verticalAlign: '-3px' }} />Added to Cart</> : 'Add to Cart'}
                         </Button>
-                        <Button variant="outline" size="lg" className={styles.wishlist}>♡</Button>
+                        <Button variant="outline" size="lg" className={styles.wishlist} aria-label="Add to wishlist"><Heart size={20} strokeWidth={1.75} /></Button>
                     </div>
 
                     <div className={styles.details}>
@@ -169,11 +197,16 @@ export default function ProductDetail() {
                 <h2>What Students Say</h2>
                 <div className={styles.reviewsGrid}>
                     {(product.reviews || []).map((review) => (
-                        <div key={review.id} className={styles.reviewCard}>
+                        <motion.div
+                            key={review.id}
+                            className={styles.reviewCard}
+                            whileHover={{ y: -4 }}
+                            transition={spring.gentle}
+                        >
                             <div className={styles.rating}>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</div>
                             <p className={styles.comment}>&quot;{review.comment}&quot;</p>
                             <p className={styles.user}>- {review.user}</p>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             </section>

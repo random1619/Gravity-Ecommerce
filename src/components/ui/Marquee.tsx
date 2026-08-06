@@ -10,7 +10,9 @@ const Marquee: React.FC<MarqueeProps> = ({ texts }) => {
         <div className={styles.marqueeContainer}>
             <div className={styles.marqueeTrack}>
                 {[...Array(4)].map((_, groupIdx) => (
-                    <div key={groupIdx} className={styles.marqueeGroup}>
+                    // Only the first group is exposed to AT; the rest are visual
+                    // duplicates that keep the loop seamless.
+                    <div key={groupIdx} className={styles.marqueeGroup} aria-hidden={groupIdx === 0 ? undefined : true}>
                         {texts.map((text, idx) => (
                             <React.Fragment key={idx}>
                                 <span className={styles.text}>{text}</span>

@@ -3,8 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './ReelModal.module.css';
-import { Heart, MessageCircle, Share2, Play, Pause, ShoppingBag } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Play, Pause, ShoppingBag, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface ReelModalProps {
     isOpen: boolean;
@@ -12,11 +13,13 @@ interface ReelModalProps {
     reelId: number | null;
     imageUrl: string;
     caption: string;
+    onNavigate?: (dir: number) => void;
+    position?: { index: number; total: number } | null;
 }
 
 const mockCommentsByReel: Record<number, { user: string; text: string }[]> = {
     1: [
-        { user: 'drip_king', text: 'This graffiti tee is absolutely insane 🔥. Heavy cotton is the truth!' },
+        { user: 'drip_king', text: 'This graffiti tee is absolutely insane. Heavy cotton is the truth!' },
         { user: 'sneha_10', text: 'Does it shrink after washing?' },
         { user: 'gravity_drops', text: '@sneha_10 No! It is pre-shrunk premium heavy combed cotton.' }
     ],
@@ -34,7 +37,7 @@ const mockCommentsByReel: Record<number, { user: string; text: string }[]> = {
     ]
 };
 
-const ReelModal: React.FC<ReelModalProps> = ({ isOpen, onClose, reelId, imageUrl, caption }) => {
+const ReelModal: React.FC<ReelModalProps> = ({ isOpen, onClose, reelId, imageUrl, caption, onNavigate, position }) => {
     const [isPlaying, setIsPlaying] = useState(true);
     const [progress, setProgress] = useState(0);
     const [isLiked, setIsLiked] = useState(false);
@@ -82,16 +85,19 @@ const ReelModal: React.FC<ReelModalProps> = ({ isOpen, onClose, reelId, imageUrl
         };
     }, [isOpen, isPlaying]);
 
-    // Handle escape key
+    // Handle escape + arrow navigation keys
     useEffect(() => {
-        const handleEscape = (e: KeyboardEvent) => {
+        const handleKeys = (e: KeyboardEvent) => {
             if (e.key === 'Escape') onClose();
+            if (!onNavigate) return;
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') onNavigate(1);
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') onNavigate(-1);
         };
         if (isOpen) {
-            document.addEventListener('keydown', handleEscape);
+            document.addEventListener('keydown', handleKeys);
         }
-        return () => document.removeEventListener('keydown', handleEscape);
-    }, [isOpen, onClose]);
+        return () => document.removeEventListener('keydown', handleKeys);
+    }, [isOpen, onClose, onNavigate]);
 
     if (!isOpen || typeof document === 'undefined') return null;
 
@@ -122,23 +128,23 @@ const ReelModal: React.FC<ReelModalProps> = ({ isOpen, onClose, reelId, imageUrl
         <div className={styles.overlay} onClick={onClose}>
             <div className={styles.container} onClick={(e) => e.stopPropagation()}>
                 <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
-                    ✕
+                    <X size={18} strokeWidth={2} />
                 </button>
 
                 {/* Left Side: Video Player simulation */}
                 <div className={styles.playerFrame} onClick={handleTogglePlay}>
-                    <img src={imageUrl} alt="Reel video frame" className={styles.reelImage} />
+                    <Image src={imageUrl} alt="Reel video frame" fill sizes="(max-width: 768px) 100vw, 40vw" className={styles.reelImage} />
                     
                     {/* Immersive player controls & branding */}
                     <div className={styles.playerOverlay}>
                         <div className={styles.topBar}>
                             <span className={styles.liveBadge}>Gravity TV</span>
-                            <span style={{ fontSize: '12px', opacity: 0.8 }}>⚡ Simulation Active</span>
+                            <span style={{ fontSize: '12px', opacity: 0.8 }}>Simulation Active</span>
                         </div>
 
                         <div className={styles.bottomInfo}>
                             <div className={styles.brandInfo}>
-                                <img src="/favicon.ico" alt="Gravity" className={styles.avatar} />
+                                <Image src="/favicon.ico" alt="Gravity" width={32} height={32} className={styles.avatar} />
                                 <span className={styles.handle}>gravity.drops</span>
                                 <span style={{ fontSize: '10px', background: 'rgba(255,255,255,0.2)', padding: '2px 6px', borderRadius: '4px' }}>Follow</span>
                             </div>
@@ -155,6 +161,29 @@ const ReelModal: React.FC<ReelModalProps> = ({ isOpen, onClose, reelId, imageUrl
                     <div className={styles.progressBarWrap}>
                         <div className={styles.progressBar} style={{ width: `${progress}%` }} />
                     </div>
+
+                    {/* Prev / Next reel navigation */}
+                    {onNavigate && (
+                        <>
+                            <button
+                                className={`${styles.reelNav} ${styles.reelNavPrev}`}
+                                onClick={(e) => { e.stopPropagation(); onNavigate(-1); }}
+                                aria-label="Previous reel"
+                            >
+                                <ChevronLeft size={20} />
+                            </button>
+                            <button
+                                className={`${styles.reelNav} ${styles.reelNavNext}`}
+                                onClick={(e) => { e.stopPropagation(); onNavigate(1); }}
+                                aria-label="Next reel"
+                            >
+                                <ChevronRight size={20} />
+                            </button>
+                        </>
+                    )}
+                    {position && (
+                        <span className={styles.reelCounter}>{position.index} / {position.total}</span>
+                    )}
                 </div>
 
                 {/* Right Side: Sidebar stats, details, and interactive comments */}

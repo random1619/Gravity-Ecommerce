@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import styles from './ProductReviews.module.css'
-import { Star } from 'lucide-react'
+import { Star, BadgeCheck } from 'lucide-react'
 
 
 interface Review {
@@ -152,7 +152,7 @@ export default function ProductReviews({ reviews }: ProductReviewsProps) {
                   <div className={styles.authorName}>
                     {review.author}
                     {review.verified && (
-                      <span className={styles.verified}>✓ Verified Purchase</span>
+                      <span className={styles.verified}><BadgeCheck size={13} strokeWidth={2.5} style={{ marginRight: 4, verticalAlign: '-2px' }} />Verified Purchase</span>
                     )}
                   </div>
                   <div className={styles.reviewDate}>{review.date}</div>

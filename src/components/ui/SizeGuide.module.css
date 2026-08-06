@@ -42,7 +42,7 @@
 
 .categoryBtn.active {
     background: var(--gradient-cta);
-    color: white;
+    color: var(--text-on-accent);
     border-color: transparent;
 }
 
@@ -61,7 +61,7 @@
 
 .sizeTable thead {
     background: var(--gradient-hero);
-    color: white;
+    color: var(--text-on-accent);
 }
 
 .sizeTable th {

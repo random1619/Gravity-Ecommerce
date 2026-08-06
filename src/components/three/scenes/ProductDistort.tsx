@@ -1,6 +1,7 @@
 'use client';
 
 import React, { Suspense, useRef, useMemo } from 'react';
+import Image from 'next/image';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
 import * as THREE from 'three';
@@ -31,7 +32,15 @@ export default function ProductDistort({ src, alt, className }: ProductDistortPr
   const tier = useDeviceTier();
 
   if (reduced || !supported || !productDistortEnabled(tier)) {
-    return <img src={src} alt={alt} className={className} />;
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="(max-width: 900px) 100vw, 50vw"
+        className={className}
+      />
+    );
   }
 
   return (

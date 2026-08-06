@@ -12,6 +12,8 @@ interface ScrollStoryProps {
   className?: string;
   /** Class on the inner horizontal track. */
   trackClassName?: string;
+  /** Fires with scroll progress 0→1 while the section is pinned (GSAP onUpdate). */
+  onProgress?: (progress: number) => void;
 }
 
 /**
@@ -24,10 +26,13 @@ interface ScrollStoryProps {
  * Integrates with Lenis via ScrollTrigger's scrollerProxy-free default (Lenis
  * already drives window scroll, which ScrollTrigger listens to).
  */
-export default function ScrollStory({ children, className, trackClassName }: ScrollStoryProps) {
+export default function ScrollStory({ children, className, trackClassName, onProgress }: ScrollStoryProps) {
   const outerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  // Keep the latest callback without re-running the GSAP effect
+  const onProgressRef = useRef(onProgress);
+  onProgressRef.current = onProgress;
 
   useEffect(() => {
     if (reduced) return;
@@ -51,6 +56,7 @@ export default function ScrollStory({ children, className, trackClassName }: Scr
           pin: true,
           invalidateOnRefresh: true,
           anticipatePin: 1,
+          onUpdate: (self) => onProgressRef.current?.(self.progress),
         },
       });
       return () => {

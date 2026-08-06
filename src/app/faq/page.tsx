@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import styles from './page.module.css'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
+import SplitTextReveal from '@/components/motion/SplitTextReveal'
+import StaggerGrid from '@/components/motion/StaggerGrid'
 
 interface FAQItem {
   question: string
@@ -106,7 +108,7 @@ export default function FAQPage() {
       <Breadcrumbs />
 
       <div className={styles.hero}>
-        <h1>Frequently Asked Questions</h1>
+        <h1><SplitTextReveal text="Frequently Asked Questions" /></h1>
         <p>Find answers to common questions about orders, shipping, returns, and more</p>
       </div>
 
@@ -123,7 +125,7 @@ export default function FAQPage() {
           ))}
         </div>
 
-        <div className={styles.faqList}>
+        <StaggerGrid className={styles.faqList} batchSize={6}>
           {filteredFAQs.map((faq, index) => (
             <div key={index} className={styles.faqItem}>
               <button
@@ -154,7 +156,7 @@ export default function FAQPage() {
               )}
             </div>
           ))}
-        </div>
+        </StaggerGrid>
 
         <div className={styles.contactSection}>
           <h2>Still have questions?</h2>

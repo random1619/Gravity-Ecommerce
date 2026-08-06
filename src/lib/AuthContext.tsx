@@ -1,6 +1,13 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { readStorage } from '@/lib/storage';
+
+/** Valid stored user shape — anything else falls back to logged-out. */
+const isUser = (v: unknown): v is User =>
+    typeof v === 'object' && v !== null &&
+    typeof (v as User).name === 'string' &&
+    typeof (v as User).email === 'string';
 
 interface User {
     name: string;
@@ -21,17 +28,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<User | null>(null);
     const [isInitialized, setIsInitialized] = useState(false);
 
-    // Load user from localStorage on mount
+    // Load user from localStorage on mount. Shape-validated: a malformed
+    // value falls back to logged-out rather than a truthy garbage "user".
     useEffect(() => {
-        const savedUser = localStorage.getItem('gravity-user');
-        if (savedUser) {
-            try {
-                // eslint-disable-next-line react-hooks/set-state-in-effect
-                setUser(JSON.parse(savedUser));
-            } catch (error) {
-                console.error('Failed to parse user from localStorage', error);
-            }
-        }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setUser(readStorage<User | null>('gravity-user', null, isUser));
         setIsInitialized(true);
     }, []);
 

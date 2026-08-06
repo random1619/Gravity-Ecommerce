@@ -4,6 +4,9 @@ import React from 'react';
 import styles from './page.module.css';
 import { useAuth } from '@/lib/AuthContext';
 import Link from 'next/link';
+import SplitTextReveal from '@/components/motion/SplitTextReveal';
+import ScrollReveal from '@/components/motion/ScrollReveal';
+import StaggerGrid from '@/components/motion/StaggerGrid';
 
 export default function OrdersPage() {
     const { isAuthenticated } = useAuth();
@@ -36,7 +39,7 @@ export default function OrdersPage() {
         return (
             <div className={styles.container}>
                 <div className={styles.emptyState}>
-                    <h1>📦 My Orders</h1>
+                    <h1>My Orders</h1>
                     <p>Please login to view your orders</p>
                     <Link href="/" className={styles.button}>
                         Go to Home
@@ -48,10 +51,12 @@ export default function OrdersPage() {
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>📦 My Orders</h1>
-            <p className={styles.subtitle}>Track and manage your orders</p>
+            <h1 className={styles.title}><SplitTextReveal text="My Orders" /></h1>
+            <ScrollReveal direction="up" delay={150}>
+                <p className={styles.subtitle}>Track and manage your orders</p>
+            </ScrollReveal>
 
-            <div className={styles.ordersList}>
+            <StaggerGrid className={styles.ordersList}>
                 {orders.map((order) => (
                     <div key={order.id} className={styles.orderCard}>
                         <div className={styles.orderHeader}>
@@ -79,7 +84,7 @@ export default function OrdersPage() {
                         </div>
                     </div>
                 ))}
-            </div>
+            </StaggerGrid>
         </div>
     );
 }

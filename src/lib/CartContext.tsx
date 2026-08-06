@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { readStorage, isArray } from '@/lib/storage';
 
 export interface CartItem {
     id: string;
@@ -35,17 +36,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const openCart = () => setIsCartOpen(true);
     const closeCart = () => setIsCartOpen(false);
 
-    // Load cart from localStorage on mount
+    // Load cart from localStorage on mount. Validated: a corrupted or
+    // wrong-shaped value falls back to an empty cart instead of crashing
+    // the `.reduce` calls below.
     useEffect(() => {
-        const savedCart = localStorage.getItem('gravity-cart');
-        if (savedCart) {
-            try {
-                // eslint-disable-next-line react-hooks/set-state-in-effect
-                setItems(JSON.parse(savedCart));
-            } catch (error) {
-                console.error('Failed to parse cart from localStorage', error);
-            }
-        }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setItems(readStorage<CartItem[]>('gravity-cart', [], isArray as (v: unknown) => v is CartItem[]));
         setIsInitialized(true);
     }, []);
 

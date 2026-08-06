@@ -1,0 +1,193 @@
+.page {
+  min-height: 100vh;
+  padding: calc(var(--spacing-16) + 24px) 0 var(--spacing-24);
+  overflow-x: hidden;
+}
+
+.header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto var(--spacing-12);
+  padding-top: var(--spacing-6);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  font-family: var(--font-accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--accent-secondary);
+  margin-bottom: var(--spacing-4);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  font-weight: var(--font-extrabold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  margin-bottom: var(--spacing-4);
+}
+.title em { font-style: italic; color: var(--accent-secondary); }
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 54ch;
+  margin: 0 auto var(--spacing-6);
+  line-height: var(--leading-relaxed);
+}
+
+/* Scroll hint */
+.hint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  font-family: var(--font-accent);
+}
+
+/* === PHONE-FRAME REEL RAIL ===
+   Horizontal scroll; each reel sits inside a phone bezel. */
+.rail {
+  display: flex;
+  gap: var(--spacing-8);
+  overflow-x: auto;
+  padding: var(--spacing-6) var(--spacing-4) var(--spacing-10);
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* hide native scrollbar, drag feel */
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.rail::-webkit-scrollbar { display: none; }
+
+.phone {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+  width: 260px;
+  aspect-ratio: 9 / 19;
+  border-radius: 36px;
+  padding: 12px;
+  background: var(--accent-primary);
+  box-shadow: var(--shadow-2xl);
+  position: relative;
+  transition: transform var(--transition-smooth);
+}
+.phone:hover { transform: translateY(-8px) rotate(-1deg); }
+
+/* Notch */
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 22px;
+  background: var(--accent-primary);
+  border-radius: var(--radius-full);
+  z-index: 3;
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 26px;
+  overflow: hidden;
+  background: var(--bg-tertiary);
+}
+
+.screen img { object-fit: cover; }
+
+/* Right-side action column (like TikTok) */
+.actions {
+  position: absolute;
+  right: 10px;
+  bottom: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  z-index: 2;
+  align-items: center;
+}
+.actionBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--on-dark-text);
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.actionCircle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.16);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+.phone:hover .actionCircle { background: rgba(255,255,255,0.26); }
+.actionBtn:hover .actionCircle { transform: scale(1.12); }
+
+/* Bottom caption + view count */
+.captionBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--spacing-4);
+  background: linear-gradient(to top, rgba(10, 9, 8, 0.85), transparent);
+  z-index: 2;
+}
+.viewCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--on-dark-text);
+  background: rgba(255,255,255,0.16);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--spacing-2);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.caption {
+  color: var(--on-dark-text);
+  font-size: 0.8rem;
+  line-height: var(--leading-normal);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+/* Marquee divider under rail */
+.marqueeWrap {
+  margin-top: var(--spacing-16);
+}
+
+/* Responsive: 2 phones peek on mobile */
+@media (max-width: 640px) {
+  .phone { width: 200px; }
+  .rail { gap: var(--spacing-5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone, .actionCircle { transition: none; }
+}

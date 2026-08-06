@@ -17,7 +17,7 @@ class Particle {
     this.size = Math.random() * 2 + 1;
     this.speedX = (Math.random() - 0.5) * 0.4;
     this.speedY = (Math.random() - 0.5) * 0.4;
-    this.color = theme === 'dark' ? 'rgba(0, 229, 255, 0.12)' : 'rgba(200, 90, 60, 0.08)';
+    this.color = theme === 'dark' ? 'rgba(201, 169, 97, 0.12)' : 'rgba(200, 90, 60, 0.08)';
   }
 
   update(width: number, height: number, mouse: { x: number; y: number; radius: number }) {

@@ -12,15 +12,15 @@ export interface ThemePalette {
 }
 
 const LIGHT: ThemePalette = {
-  c1: new THREE.Color('#c85a3c'), // terracotta clay
-  c2: new THREE.Color('#b47c3c'), // ochre gold
-  c3: new THREE.Color('#485ea6'), // soft navy
+  c1: new THREE.Color('#3f6b5c'), // deep sage (protagonist)
+  c2: new THREE.Color('#5d7a6d'), // muted sage
+  c3: new THREE.Color('#7e988c'), // pale sage
 };
 
 const DARK: ThemePalette = {
-  c1: new THREE.Color('#00e5ff'), // electric cyan
-  c2: new THREE.Color('#8b2cff'), // ultraviolet
-  c3: new THREE.Color('#ff007f'), // neon pink
+  c1: new THREE.Color('#7fa396'), // luminous sage (protagonist)
+  c2: new THREE.Color('#57705f'), // deep sage
+  c3: new THREE.Color('#93b3a7'), // pale sage-glow
 };
 
 /** Frozen palette table keyed by theme name. */

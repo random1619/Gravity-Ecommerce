@@ -1,12 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import styles from './page.module.css';
+
+/** Kowalski press spring for the row actions. */
+const spring = { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 } as const;
 import { useAuth } from '@/lib/AuthContext';
+import { readStorage, isArray } from '@/lib/storage';
 import Link from 'next/link';
 import ProductCard from '@/components/ui/ProductCard';
 import QuickView from '@/components/ui/QuickView';
 import LoginModal from '@/components/ui/LoginModal';
+import SplitTextReveal from '@/components/motion/SplitTextReveal';
+import ScrollReveal from '@/components/motion/ScrollReveal';
+import StaggerGrid from '@/components/motion/StaggerGrid';
 
 interface Product {
     id: string;
@@ -27,11 +35,12 @@ export default function WishlistPage() {
     const [showLoginModal, setShowLoginModal] = useState(false);
 
     useEffect(() => {
-        // Load wishlist from localStorage
-        const saved = localStorage.getItem('gravity-wishlist');
+        // Load wishlist from localStorage (shape-validated — was the only
+        // unguarded JSON.parse in the app; a corrupted value crashed the page).
+        const saved = readStorage<Product[] | null>('gravity-wishlist', null, isArray as (v: unknown) => v is Product[]);
         if (saved) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            setWishlistItems(JSON.parse(saved));
+            setWishlistItems(saved);
         } else {
             // Add some demo items if empty
             const demoItems: Product[] = [
@@ -40,7 +49,7 @@ export default function WishlistPage() {
                     name: 'Oversized Graffiti Tee',
                     price: 699,
                     originalPrice: 1299,
-                    imageUrl: '/product1.png',
+                    imageUrl: '/product-tee-premium.png',
                     category: 'T-SHIRTS',
                 },
                 {
@@ -48,7 +57,7 @@ export default function WishlistPage() {
                     name: 'Classic Logo Hoodie',
                     price: 1199,
                     originalPrice: 1999,
-                    imageUrl: '/product3.png',
+                    imageUrl: '/product-hoodie-premium.png',
                     category: 'HOODIES',
                 },
             ];
@@ -66,7 +75,7 @@ export default function WishlistPage() {
         return (
             <div className={styles.container}>
                 <div className={styles.emptyState}>
-                    <h1>❤️ My Wishlist</h1>
+                    <h1>My Wishlist</h1>
                     <p>Please login to view your wishlist</p>
                     <Link href="/" className={styles.button}>
                         Go to Home
@@ -86,8 +95,10 @@ export default function WishlistPage() {
             />
             <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
 
-            <h1 className={styles.title}>❤️ My Wishlist</h1>
-            <p className={styles.subtitle}>{wishlistItems.length} items saved for later</p>
+            <h1 className={styles.title}><SplitTextReveal text="My Wishlist" /></h1>
+            <ScrollReveal direction="up" delay={150}>
+                <p className={styles.subtitle}>{wishlistItems.length} items saved for later</p>
+            </ScrollReveal>
 
             {wishlistItems.length === 0 ? (
                 <div className={styles.emptyState}>
@@ -97,22 +108,25 @@ export default function WishlistPage() {
                     </Link>
                 </div>
             ) : (
-                <div className={styles.grid}>
+                <StaggerGrid className={styles.grid}>
                     {wishlistItems.map((item) => (
                         <div key={item.id} className={styles.wishlistItem}>
                             <ProductCard
                                 {...item}
                                 onQuickView={() => setQuickViewProduct(item)}
                             />
-                            <button
+                            <motion.button
                                 className={styles.removeBtn}
                                 onClick={() => removeFromWishlist(item.id)}
+                                whileHover={{ y: -2 }}
+                                whileTap={{ scale: 0.94 }}
+                                transition={spring}
                             >
-                                Remove ✕
-                            </button>
+                                Remove
+                            </motion.button>
                         </div>
                     ))}
-                </div>
+                </StaggerGrid>
             )}
         </div>
     );

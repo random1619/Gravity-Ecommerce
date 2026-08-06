@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import './globals.css';
-import { Inter } from 'next/font/google';
+import { Inter, Playfair_Display, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import DemoWarning from '@/components/ui/DemoWarning';
@@ -16,7 +16,26 @@ import { DeviceTierProvider } from '@/hooks/useDeviceTier';
 import ClientWebGLCanvas from '@/components/three/ClientWebGLCanvas';
 import ErrorBoundary from '@/components/ui/ErrorBoundary';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['500', '600', '700', '800', '900'],
+  style: ['normal', 'italic'],
+  variable: '--font-playfair',
+  display: 'swap',
+});
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-space-grotesk',
+  display: 'swap',
+});
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'GRAVITY - Streetwear for Students (DEMO)',
@@ -32,7 +51,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${playfairDisplay.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${inter.className}`}>
         <ThemeProvider>
           <DeviceTierProvider>
             <AuthProvider>

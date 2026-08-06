@@ -65,7 +65,7 @@ Every interaction — from the **magnetic custom cursor** to the **cinematic pag
 <td width="50%" valign="top">
 
 ### 🎨 Immersive Design System
-- 🌗 **Dual Aesthetic Theming** — *Parchment & Charcoal* ⇄ *Obsidian Noir & Gold*
+- 🌗 **Dual Aesthetic Theming** — *Organic Earth (parchment & terracotta)* ⇄ *Obsidian Noir & Warm Gold*
 - 🌐 **WebGL Background Canvas** — R3F scenes, custom shaders, post-processing
 - 📊 **Adaptive Performance Tiers** — device detection locks 60fps everywhere
 - 🎬 **Lenis Smooth Scroll + Page Transitions** — physics-based cinematic navigation
@@ -223,7 +223,7 @@ npm run dev
 
 | | 🌞 Light Mode | 🌙 Dark Mode |
 | :-- | :-- | :-- |
-| **Mood** | Parchment & Charcoal | Obsidian Noir & Warm Gold |
+| **Mood** | Organic Earth — parchment & terracotta | Obsidian Noir & Warm Gold |
 | **Feel** | Editorial · Airy · Warm | Cinematic · Moody · Luxe |
 
 *Toggle seamlessly — CSS custom properties + `[data-theme='dark']` on `<html>`. Every component, shadow & gradient is dual-born.*
@@ -261,7 +261,7 @@ GRAVITY ships with **active protective measures** — rate limiting (100 req/min
 ✅ **Perfect for:** portfolios · UI/UX demos · education · design showcases
 ❌ **Not for:** real transactions · real user data · production business
 
-➡️ Read [SECURITY.md](SECURITY.md) · [PRODUCTION_WARNING.md](PRODUCTION_WARNING.md) · [DEPLOYMENT.md](DEPLOYMENT.md)
+➡️ Read [PRODUCTION_WARNING.md](PRODUCTION_WARNING.md) — security model, deployment notes & production-readiness (consolidates the former `SECURITY.md` and `DEPLOYMENT.md`).
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 

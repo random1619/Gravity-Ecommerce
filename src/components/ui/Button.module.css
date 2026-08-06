@@ -15,10 +15,8 @@
     will-change: transform, box-shadow;
 }
 
-.button:hover:not(:disabled) {
-    transform: translateY(-2px);
-}
-
+/* Hover lift & press are owned by framer (spring) in Button.tsx — CSS keeps
+   only the native :active fallback for reduced-motion users (framer off). */
 .button:active:not(:disabled) {
     transform: translateY(0);
 }
@@ -55,7 +53,7 @@
 /* === PRIMARY VARIANT (Electric Blue) === */
 .primary {
     background: var(--accent-primary);
-    color: #ffffff;
+    color: var(--text-on-accent);
     box-shadow: var(--shadow-md);
     border: none;
 }
@@ -73,7 +71,7 @@
 /* === SECONDARY VARIANT (Hot Pink Gradient) === */
 .secondary {
     background: var(--gradient-cta);
-    color: #ffffff;
+    color: var(--text-on-accent);
     box-shadow: var(--shadow-md);
     border: none;
     position: relative;
@@ -84,7 +82,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, #ff4081 0%, #ff80ab 100%);
+    background: var(--gradient-cta);
     opacity: 0;
     transition: opacity var(--transition-base);
 }

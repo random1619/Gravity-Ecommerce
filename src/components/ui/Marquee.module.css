@@ -53,3 +53,12 @@
         transform: translateX(-50%);
     }
 }
+
+/* Motion-sensitive users: freeze the strip. It stays readable, just still. */
+@media (prefers-reduced-motion: reduce) {
+    .marqueeTrack {
+        animation: none;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+}

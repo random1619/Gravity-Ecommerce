@@ -45,6 +45,12 @@ const nextConfig: NextConfig = {
   },
   // Disable powered by header
   poweredByHeader: false,
+  experimental: {
+    // Rewrite barrel imports (e.g. `import { X } from 'lucide-react'`) into
+    // per-module imports at compile time — avoids loading the whole package
+    // index (~1600 icon modules) through the compiler for every file.
+    optimizePackageImports: ['lucide-react'],
+  },
   turbopack: {
     root: __dirname,
   },

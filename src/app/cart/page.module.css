@@ -23,6 +23,12 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-6);
+    /* compositor containment: springing rows never repaint siblings */
+    contain: layout paint;
+}
+
+.itemsList > * {
+    will-change: transform, opacity;
 }
 
 .item {
@@ -32,13 +38,14 @@
     border: 1px solid transparent;
     border-radius: var(--radius-xl);
     background: var(--bg-primary);
-    transition: all var(--transition-base);
+    /* framer owns transform/opacity; CSS keeps color + shadow */
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+    will-change: transform;
 }
 
 .item:hover {
     border-color: var(--border-color);
     box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
 }
 
 .itemImage {
@@ -106,7 +113,7 @@
 }
 
 .studentOffer {
-    background: linear-gradient(135deg, rgba(0, 200, 83, 0.1) 0%, rgba(0, 230, 118, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(var(--accent-success-rgb), 0.1) 0%, rgba(var(--accent-success-rgb), 0.16) 100%);
     border: 2px solid var(--success-border);
     padding: var(--spacing-6);
     border-radius: var(--radius-xl);
@@ -314,7 +321,7 @@
 }
 
 .studentBanner {
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(var(--accent-gold-rgb), 0.1) 0%, rgba(var(--accent-secondary-rgb), 0.1) 100%);
     border: 1px solid var(--border-color);
     padding: var(--spacing-4);
     border-radius: var(--radius-xl);

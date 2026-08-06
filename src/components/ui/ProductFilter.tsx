@@ -129,7 +129,7 @@ export default function ProductFilter({ onFilterChange, categories }: ProductFil
               onChange={(e) => handlePriceChange(Number(e.target.value), priceRange.max)}
               className={styles.priceInput}
             />
-            <span>—</span>
+            <span aria-hidden="true">-</span>
             <input
               type="number"
               placeholder="Max"

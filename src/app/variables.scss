@@ -1,21 +1,21 @@
 // Font Families
 $font-body: 'Inter', system-ui, -apple-system, sans-serif;
-$font-display: 'Poppins', 'Inter', system-ui, sans-serif;
+$font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
 $font-accent: 'Space Grotesk', 'Inter', sans-serif;
 $font-mono: 'JetBrains Mono', 'SF Mono', monospace;
 
 // Brand Colors (Light Mode defaults, mapped from CSS variables for flexibility)
-$bg-primary: var(--bg-primary, #faf9f5);
-$bg-secondary: var(--bg-secondary, #f4f1eb);
-$bg-tertiary: var(--bg-tertiary, #e5e2da);
+$bg-primary: var(--bg-primary, #f6f5f2);
+$bg-secondary: var(--bg-secondary, #edebe5);
+$bg-tertiary: var(--bg-tertiary, #e0ddd3);
 
-$text-primary: var(--text-primary, #1c1a17);
-$text-secondary: var(--text-secondary, #5c5952);
-$text-tertiary: var(--text-tertiary, #8f8b80);
+$text-primary: var(--text-primary, #1a1a18);
+$text-secondary: var(--text-secondary, #565a52);
+$text-tertiary: var(--text-tertiary, #676c61);
 
-$accent-primary: var(--accent-primary, #1c1a17);
-$accent-secondary: var(--accent-secondary, #c85a3c);
-$accent-success: var(--accent-success, #2b5c3d);
+$accent-primary: var(--accent-primary, #3f6b5c);
+$accent-secondary: var(--accent-secondary, #3f6b5c);
+$accent-success: var(--accent-success, #3b7355);
 
 // Transitions
 $transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -57,14 +57,14 @@ $breakpoint-xl: 1280px;
 
 // Glassmorphism effect
 @mixin glass-card($blur: 16px, $bg-opacity: 0.85, $border-opacity: 0.08) {
-  background: rgba(250, 249, 245, $bg-opacity);
+  background: rgba(246, 245, 242, $bg-opacity);
   backdrop-filter: blur($blur);
   -webkit-backdrop-filter: blur($blur);
-  border: 1px solid rgba(28, 26, 23, $border-opacity);
-  
+  border: 1px solid rgba(26, 26, 24, $border-opacity);
+
   [data-theme='dark'] & {
-    background: rgba(13, 13, 21, $bg-opacity - 0.05);
-    border-color: rgba(0, 229, 255, $border-opacity * 2);
+    background: rgba(21, 23, 15, $bg-opacity - 0.05);
+    border-color: rgba(127, 163, 150, $border-opacity * 2);
   }
 }
 
