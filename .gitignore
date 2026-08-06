@@ -60,6 +60,9 @@ start.bat
 # Superpowers brainstorm mockups & temporary screenshots
 /.superpowers/
 .shot*
+shot*
+_shots/
 .tmp_*
 *.tmp_*
+
 
