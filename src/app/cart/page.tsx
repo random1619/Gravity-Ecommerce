@@ -4,10 +4,15 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import styles from './page.module.css';
 
-/** Kowalski springs — entrances, re-flow, and press all move through physics. */
+/**
+ * Kowalski springs — every press, entrance, stepper, and re-flow moves through
+ * physics (interruptible, velocity-aware), never fixed durations.
+ * Damping 1.0 → critically damped, no overshoot, the Apple default for UI.
+ */
 const spring = {
     press: { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 },
     layout: { type: 'spring', stiffness: 350, damping: 32, mass: 0.8 },
+    gentle: { type: 'spring', stiffness: 380, damping: 26, mass: 0.7 },
 } as const;
 
 const listVariants: Variants = {
@@ -20,6 +25,7 @@ const rowVariants: Variants = {
     show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 380, damping: 26, mass: 0.7 } },
     exit: { opacity: 0, x: -24, scale: 0.97, transition: { duration: 0.18 } },
 };
+
 import Button from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -32,7 +38,9 @@ import {
     normalizePromoCode,
     studentDiscount,
 } from '@/lib/discount';
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, Minus, Plus, Trash2, ArrowRight, ShoppingBag, Truck } from 'lucide-react';
+
+const FREE_SHIPPING_THRESHOLD = 1500;
 
 export default function Cart() {
     const { items: cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
@@ -83,16 +91,47 @@ export default function Cart() {
     const discount = studentDiscount(subtotal, isVerified, appliedPromo);
     const total = subtotal - discount;
 
+    const shippingProgress = Math.min(1, subtotal / FREE_SHIPPING_THRESHOLD);
+    const neededForShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+
+    /* ----- Empty state: a calm editorial void, not a dead end ----- */
     if (cartItems.length === 0) {
         return (
             <div className={`container ${styles.cartPage}`}>
-                <h1 className={styles.title}><SplitTextReveal text="YOUR BAG" /></h1>
-                <div style={{ textAlign: 'center', padding: '100px 20px' }}>
-                    <h2>Your cart is empty</h2>
-                    <p style={{ marginTop: '20px', marginBottom: '30px' }}>Add some items to get started!</p>
-                    <Link href="/shop">
-                        <Button variant="primary" size="lg">Shop Now</Button>
-                    </Link>
+                <div className={styles.emptyWrap}>
+                    <motion.div
+                        className={styles.emptyIconRing}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={spring.gentle}
+                    >
+                        <ShoppingBag size={40} strokeWidth={1.25} />
+                    </motion.div>
+                    <motion.h1
+                        className={styles.emptyTitle}
+                        initial={{ opacity: 0, y: 14 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ ...spring.gentle, delay: 0.08 }}
+                    >
+                        Your bag is empty
+                    </motion.h1>
+                    <motion.p
+                        className={styles.emptySub}
+                        initial={{ opacity: 0, y: 14 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ ...spring.gentle, delay: 0.16 }}
+                    >
+                        Nothing here yet. The latest drop won&apos;t wait.
+                    </motion.p>
+                    <motion.div
+                        initial={{ opacity: 0, y: 14 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ ...spring.gentle, delay: 0.24 }}
+                    >
+                        <Link href="/shop">
+                            <Button variant="primary" size="lg">Shop the Drop</Button>
+                        </Link>
+                    </motion.div>
                 </div>
             </div>
         );
@@ -100,13 +139,44 @@ export default function Cart() {
 
     return (
         <div className={`container ${styles.cartPage}`}>
-            <h1 className={styles.title}><SplitTextReveal text="YOUR BAG" /></h1>
+            {/* Header — editorial masthead */}
+            <header className={styles.masthead}>
+                <h1 className={styles.title}><SplitTextReveal text="YOUR BAG" /></h1>
+                <p className={styles.mastheadMeta}>
+                    {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}
+                </p>
+            </header>
+
+            {/* Free-shipping progress — a real, honest meter (no fake progress) */}
+            <motion.div
+                className={styles.shippingHero}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={spring.gentle}
+            >
+                <div className={styles.shippingText}>
+                    <Truck size={18} strokeWidth={1.75} className={styles.shippingIcon} />
+                    {neededForShipping > 0 ? (
+                        <p>Add <strong>₹{neededForShipping}</strong> more to unlock <strong>free shipping</strong>.</p>
+                    ) : (
+                        <p><strong>Free shipping unlocked.</strong> Nice.</p>
+                    )}
+                </div>
+                <div className={styles.shippingTrack} role="progressbar" aria-valuenow={Math.round(shippingProgress * 100)} aria-valuemin={0} aria-valuemax={100} aria-label="Progress toward free shipping">
+                    <motion.div
+                        className={styles.shippingFill}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${shippingProgress * 100}%` }}
+                        transition={{ ...spring.gentle, delay: 0.2 }}
+                    />
+                </div>
+            </motion.div>
 
             <div className={styles.cartLayout}>
                 <motion.main className={styles.itemsList} variants={listVariants} initial="hidden" animate="show">
                     <AnimatePresence initial={false}>
                     {cartItems.map(item => (
-                        <motion.div
+                        <motion.article
                             key={`${item.id}-${item.size}`}
                             className={styles.item}
                             variants={rowVariants}
@@ -123,105 +193,108 @@ export default function Cart() {
                                     <h3>{item.name}</h3>
                                     <p className={styles.itemPrice}>₹{item.price * item.quantity}</p>
                                 </div>
-                                <p className={styles.itemMeta}>Size: {item.size} | Qty: {item.quantity}</p>
+                                <p className={styles.itemMeta}>Size {item.size}</p>
                                 <div className={styles.itemActions}>
-                                    <motion.button
-                                        className={styles.actionBtn}
-                                        onClick={() => removeFromCart(item.id, item.size)}
-                                        whileHover={{ y: -1 }}
-                                        whileTap={{ scale: 0.94 }}
-                                        transition={spring.press}
-                                    >
-                                        Remove
-                                    </motion.button>
-                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                    {/* Quantity stepper — direct manipulation, press on pointer-down */}
+                                    <div className={styles.stepper} role="group" aria-label={`Quantity for ${item.name}`}>
                                         <motion.button
-                                            className={styles.actionBtn}
+                                            className={styles.stepBtn}
                                             onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
-                                            whileTap={{ scale: 0.9 }}
+                                            whileTap={{ scale: 0.85 }}
                                             transition={spring.press}
                                             aria-label="Decrease quantity"
                                         >
-                                            -
+                                            <Minus size={14} strokeWidth={2.25} />
                                         </motion.button>
-                                        <span>{item.quantity}</span>
+                                        <span className={styles.stepVal} aria-live="polite">{item.quantity}</span>
                                         <motion.button
-                                            className={styles.actionBtn}
+                                            className={styles.stepBtn}
                                             onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
-                                            whileTap={{ scale: 0.9 }}
+                                            whileTap={{ scale: 0.85 }}
                                             transition={spring.press}
                                             aria-label="Increase quantity"
                                         >
-                                            +
+                                            <Plus size={14} strokeWidth={2.25} />
                                         </motion.button>
                                     </div>
+                                    <motion.button
+                                        className={styles.removeBtn}
+                                        onClick={() => removeFromCart(item.id, item.size)}
+                                        whileHover={{ y: -1 }}
+                                        whileTap={{ scale: 0.9 }}
+                                        transition={spring.press}
+                                        aria-label={`Remove ${item.name} from bag`}
+                                    >
+                                        <Trash2 size={14} strokeWidth={2} />
+                                        <span>Remove</span>
+                                    </motion.button>
                                 </div>
                             </div>
-                        </motion.div>
+                        </motion.article>
                     ))}
                     </AnimatePresence>
 
                     {discountEligible ? (
-                        <div className={styles.studentOffer}>
-                            <div className={styles.offerIcon}><GraduationCap size={28} strokeWidth={1.5} /></div>
-                            <div>
-                                <h4>Discount Applied</h4>
+                        <motion.div className={styles.studentOffer} layout>
+                            <div className={styles.offerIcon}><GraduationCap size={26} strokeWidth={1.5} /></div>
+                            <div className={styles.offerBody}>
+                                <h4>Discount applied</h4>
                                 <p>
-                                    You&apos;ve saved extra ₹{discount} using {isVerified ? 'your verified student status' : `promo code ${appliedPromo}`}.
+                                    You saved an extra ₹{discount} with {isVerified ? 'your verified student status' : `promo code ${appliedPromo}`}.
                                     {!isVerified && (
-                                        <button onClick={handleRemovePromo} style={{ marginLeft: '10px', textDecoration: 'underline', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontWeight: 'bold' }}>
-                                            Remove Promo
+                                        <button onClick={handleRemovePromo} className={styles.removePromoBtn}>
+                                            Remove promo
                                         </button>
                                     )}
                                 </p>
                             </div>
-                        </div>
+                        </motion.div>
                     ) : (
-                        <div className={styles.studentBanner}>
+                        <motion.div className={styles.studentBanner} layout>
                             <div className={styles.bannerText}>
                                 <h4>Are you a student?</h4>
-                                <p>Verify your student status to get an extra 20% discount on all drops.</p>
+                                <p>Verify your student status for an extra 20% off every drop.</p>
                             </div>
                             <Link href="/discount" className={styles.bannerLink}>
-                                Verify Now &rarr;
+                                Verify now <ArrowRight size={14} strokeWidth={2.25} />
                             </Link>
-                        </div>
+                        </motion.div>
                     )}
                 </motion.main>
 
+                {/* Order summary — a floating material panel */}
                 <aside className={styles.summary}>
-                    <h3>ORDER SUMMARY</h3>
+                    <h3 className={styles.summaryTitle}>Order summary</h3>
                     <div className={styles.summaryLine}>
                         <span>Subtotal</span>
                         <span>₹{subtotal}</span>
                     </div>
                     {discount > 0 && (
                         <div className={`${styles.summaryLine} ${styles.discountLine}`}>
-                            <span>Discount (20%)</span>
-                            <span>-₹{discount}</span>
+                            <span>Student discount (20%)</span>
+                            <span>−₹{discount}</span>
                         </div>
                     )}
                     <div className={styles.summaryLine}>
                         <span>Shipping</span>
-                        <span className={styles.free}>FREE</span>
+                        <span className={styles.free}>{neededForShipping > 0 ? 'Calculated at checkout' : 'FREE'}</span>
                     </div>
                     <div className={`${styles.summaryLine} ${styles.totalLine}`}>
-                        <span>TOTAL</span>
+                        <span>Total</span>
                         <span>₹{total}</span>
                     </div>
 
-                    <Link href="/checkout">
+                    <Link href="/checkout" className={styles.checkoutLink}>
                         <Button variant="primary" size="full" className={styles.checkoutBtn}>
-                            CHECKOUT NOW
+                            Checkout
                         </Button>
                     </Link>
 
                     <div className={styles.promoSection}>
-                        <label style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--font-bold)', color: 'var(--text-secondary)' }}>
-                            HAVE A PROMO CODE?
-                        </label>
+                        <label htmlFor="promo-input" className={styles.promoLabel}>Have a promo code?</label>
                         <form onSubmit={handleApplyPromo} className={styles.promoForm}>
                             <input
+                                id="promo-input"
                                 type="text"
                                 placeholder="e.g. STUDENT20"
                                 value={promoInput}
@@ -237,8 +310,8 @@ export default function Cart() {
                         )}
                     </div>
 
-                    <div className={styles.paymentMethods} style={{ marginTop: '20px' }}>
-                        <p>WE ACCEPT</p>
+                    <div className={styles.paymentMethods}>
+                        <p>We accept</p>
                         <div className={styles.icons}>
                             <span>UPI</span>
                             <span>Cards</span>
@@ -246,7 +319,7 @@ export default function Cart() {
                         </div>
                     </div>
 
-                    <Link href="/shop" className={styles.continue}>← Continue Shopping</Link>
+                    <Link href="/shop" className={styles.continue}>← Continue shopping</Link>
                 </aside>
             </div>
         </div>

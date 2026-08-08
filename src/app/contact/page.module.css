@@ -70,7 +70,7 @@
     color: var(--text-primary);
     font-size: var(--text-base);
     font-family: inherit;
-    transition: all var(--transition-base);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
 }
 
 .input:focus,
@@ -88,6 +88,10 @@
 }
 
 .submitBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
     padding: var(--spacing-4) var(--spacing-6);
     height: 52px;
     background: var(--gradient-cta);
@@ -97,12 +101,14 @@
     font-size: var(--text-base);
     font-weight: var(--font-bold);
     cursor: pointer;
-    transition: all var(--transition-base);
+    transition: filter var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.submitBtn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-xl);
+@media (hover: hover) {
+    .submitBtn:hover:not(:disabled) {
+        filter: brightness(1.06);
+        box-shadow: var(--shadow-xl);
+    }
 }
 
 .submitBtn:disabled {
@@ -110,24 +116,44 @@
     cursor: not-allowed;
 }
 
-.successMessage {
+.spinner {
+    animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .spinner {
+        animation-duration: 2s;
+    }
+}
+
+.successMessage,
+.errorMessage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
     padding: var(--spacing-4);
-    background: rgba(var(--accent-success-rgb), 0.12);
-    border: 2px solid var(--accent-success);
     border-radius: var(--radius-lg);
-    color: var(--accent-success);
     font-weight: var(--font-semibold);
     text-align: center;
 }
 
+.successMessage {
+    background: rgba(var(--accent-success-rgb), 0.12);
+    border: 2px solid var(--accent-success);
+    color: var(--accent-success);
+}
+
 .errorMessage {
-    padding: var(--spacing-4);
     background: rgba(var(--accent-secondary-rgb), 0.1);
     border: 2px solid var(--accent-secondary);
-    border-radius: var(--radius-lg);
     color: var(--accent-secondary);
-    font-weight: var(--font-semibold);
-    text-align: center;
 }
 
 .infoSection {
@@ -142,13 +168,15 @@
     border-radius: var(--radius-xl);
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-sm);
-    transition: all var(--transition-base);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
-.infoCard:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--accent-primary);
+@media (hover: hover) {
+    .infoCard:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--accent-primary);
+    }
 }
 
 .iconWrapper {
@@ -188,8 +216,16 @@
     transition: color var(--transition-fast);
 }
 
-.link:hover {
-    color: var(--accent-primary-hover);
+.link:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+@media (hover: hover) {
+    .link:hover {
+        color: var(--accent-primary-hover);
+    }
 }
 
 @media (max-width: 1024px) {

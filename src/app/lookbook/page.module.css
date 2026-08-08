@@ -310,7 +310,10 @@
   box-shadow: var(--shadow-lg);
   opacity: 0;
   pointer-events: none;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
 }
 
@@ -481,18 +484,23 @@
   padding: var(--spacing-3) var(--spacing-5);
   border-radius: var(--radius-full);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    transform var(--transition-base);
 }
 
 .shopBtnIcon {
   transition: transform var(--transition-base);
 }
 
-.panel:hover .shopBtn,
-.overlay:hover .shopBtn {
-  background: var(--accent-secondary);
-  border-color: var(--accent-secondary);
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .panel:hover .shopBtn,
+  .overlay:hover .shopBtn {
+    background: var(--accent-secondary);
+    border-color: var(--accent-secondary);
+    transform: translateY(-2px);
+  }
 }
 
 .panel:hover .shopBtnIcon,
@@ -554,13 +562,27 @@
   color: var(--text-primary);
   font-weight: var(--font-bold);
   font-size: 1rem;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    background-color var(--transition-base);
   box-shadow: var(--shadow-xl);
 }
 
-.endCta:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: var(--shadow-2xl);
+@media (hover: hover) {
+  .endCta:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: var(--shadow-2xl);
+  }
+}
+
+.endCta:active {
+  transform: scale(0.97);
+}
+
+.endCta:focus-visible {
+  outline: 2px solid var(--text-on-accent);
+  outline-offset: 3px;
 }
 
 .endSecondary {
@@ -653,12 +675,22 @@
   border: 1px solid var(--border-color);
   background: transparent;
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition:
+    color var(--transition-base),
+    border-color var(--transition-base),
+    background-color var(--transition-base);
 }
 
-.railChapter:hover {
-  color: var(--accent-primary);
-  border-color: var(--accent-primary);
+@media (hover: hover) {
+  .railChapter:hover {
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+  }
+}
+
+.railChapter:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .railChapterActive {

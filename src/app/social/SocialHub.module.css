@@ -67,7 +67,17 @@
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease;
 }
 
-.platformCard:hover,
+.platformCard:active { transform: translateY(-2px) scale(0.99); }
+
+@media (hover: hover) and (pointer: fine) {
+  .platformCard:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent, var(--accent-secondary));
+  }
+}
+
+/* Keyboard focus always lifts (no hover required). */
 .platformCard:focus-visible {
   transform: translateY(-6px);
   box-shadow: var(--shadow-lg);
@@ -85,10 +95,10 @@
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.platformCard:hover .platformImg,
-.platformCard:focus-visible .platformImg {
-  transform: scale(1.06);
+@media (hover: hover) and (pointer: fine) {
+  .platformCard:hover .platformImg { transform: scale(1.06); }
 }
+.platformCard:focus-visible .platformImg { transform: scale(1.06); }
 
 .platformIcon {
   position: absolute;
@@ -140,7 +150,12 @@
   transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.platformCard:hover .platformArrow,
+@media (hover: hover) and (pointer: fine) {
+  .platformCard:hover .platformArrow {
+    transform: translate(3px, -3px);
+    color: var(--accent, var(--accent-secondary));
+  }
+}
 .platformCard:focus-visible .platformArrow {
   transform: translate(3px, -3px);
   color: var(--accent, var(--accent-secondary));
@@ -227,8 +242,8 @@
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.communityCard:hover .communityImg {
-  transform: scale(1.07);
+@media (hover: hover) and (pointer: fine) {
+  .communityCard:hover .communityImg { transform: scale(1.07); }
 }
 
 .communityOverlay {
@@ -247,6 +262,11 @@
   backdrop-filter: blur(2px);
 }
 
-.communityCard:hover .communityOverlay {
-  opacity: 1;
+@media (hover: hover) and (pointer: fine) {
+  .communityCard:hover .communityOverlay { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .platformCard, .platformImg, .platformArrow,
+  .communityImg, .communityOverlay { transition: none; }
 }

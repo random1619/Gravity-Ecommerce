@@ -11,12 +11,12 @@ import QuickView from '@/components/ui/QuickView';
 import { useCart } from '@/lib/CartContext';
 import { useAuth } from '@/lib/AuthContext';
 import LoginModal from '@/components/ui/LoginModal';
-import ProductDistort from '@/components/three/scenes/ProductDistort';
 import type { Product } from '@/lib/data';
 import { useParams } from 'next/navigation';
 import SplitTextReveal from '@/components/motion/SplitTextReveal';
 import ScrollReveal from '@/components/motion/ScrollReveal';
-import { Check, Heart } from 'lucide-react';
+import StaggerGrid from '@/components/motion/StaggerGrid';
+import { Check, Heart, Star } from 'lucide-react';
 
 /** Kowalski springs — every interactive element presses and lifts through physics. */
 const spring = {
@@ -94,7 +94,30 @@ export default function ProductDetail() {
         setTimeout(() => setAddedToCart(false), 2000);
     };
 
-    if (loading) return <div className="container" style={{ padding: '100px', textAlign: 'center' }}>Loading product details...</div>;
+    // Client-fetched page: the loading state must occupy the SAME layout box as the
+    // loaded page, or hydration swaps a one-liner for the full grid and the entire
+    // viewport (footer included) shifts — measured CLS 0.56 on mobile. The skeleton
+    // below mirrors .productLayout (gallery + info) so the swap is dimension-neutral.
+    if (loading) return (
+        <div className={`container ${styles.productPage}`} aria-busy="true" aria-label="Loading product details">
+            <div className={styles.productLayout}>
+                <section className={styles.gallery} aria-hidden="true">
+                    <div className={`${styles.mainImage} skeleton`} />
+                    <div className={styles.thumbnails}>
+                        {[0, 1, 2].map(i => <div key={i} className={`${styles.thumb} skeleton`} />)}
+                    </div>
+                </section>
+                <section className={styles.info} aria-hidden="true">
+                    <div className="skeleton" style={{ height: 14, width: '30%', borderRadius: 4 }} />
+                    <div className="skeleton" style={{ height: 40, width: '75%', borderRadius: 4 }} />
+                    <div className="skeleton" style={{ height: 30, width: '45%', borderRadius: 4 }} />
+                    <div className="skeleton" style={{ height: 64, width: '100%', borderRadius: 8, marginTop: 12 }} />
+                    <div className="skeleton" style={{ height: 52, width: '100%', borderRadius: 8, marginTop: 12 }} />
+                </section>
+            </div>
+            <p className="sr-only" role="status">Loading product details…</p>
+        </div>
+    );
     if (!product) return <div className="container" style={{ padding: '100px', textAlign: 'center' }}>Product not found.</div>;
 
     return (
@@ -116,9 +139,13 @@ export default function ProductDetail() {
                             whileHover={{ scale: 1.02 }}
                             transition={spring.gentle}
                         >
-                            <ProductDistort
+                            <Image
                                 src={product.images?.[activeImage] || '/product-tee-premium.png'}
                                 alt={product.name}
+                                fill
+                                sizes="(max-width: 900px) 100vw, 50vw"
+                                priority={activeImage === 0}
+                                style={{ objectFit: 'cover' }}
                             />
                         </motion.div>
                     </Tilt>
@@ -153,7 +180,9 @@ export default function ProductDetail() {
                     </ScrollReveal>
 
                     <div className={styles.selector}>
-                        <h3>Select Size</h3>
+                        {/* Not a document heading — labels the size control group.
+                            h3 here would skip a level (h1 → h3) and break heading order. */}
+                        <p className={styles.selectorLabel}>Select Size</p>
                         <div className={styles.sizeGrid}>
                             {(product.sizes || []).map((size: string) => (
                                 <motion.button
@@ -180,42 +209,63 @@ export default function ProductDetail() {
 
                     <div className={styles.details}>
                         <div className={styles.detailItem}>
-                            <h4>Fabric & Care</h4>
+                            <h2 className={styles.detailLabel}>Fabric & Care</h2>
                             <p>{product.fabric}</p>
                             <p>{product.care}</p>
                         </div>
                         <div className={styles.detailItem}>
-                            <h4>Product Description</h4>
+                            <h2 className={styles.detailLabel}>Product Description</h2>
                             <p>{product.description}</p>
                         </div>
                     </div>
                 </section>
             </div>
 
-            {/* Reviews Section */}
+            {/* Reviews — editorial header + lucide stars, matching the homepage testimonials system */}
             <section className={styles.reviewsSection}>
-                <h2>What Students Say</h2>
-                <div className={styles.reviewsGrid}>
+                <ScrollReveal direction="up" duration={800}>
+                    <div className={styles.sectionHeader}>
+                        <span className={styles.eyebrow}>Reviews</span>
+                        <h2 className={styles.sectionTitle}>
+                            <SplitTextReveal text="What students" />{' '}
+                            <em>actually say.</em>
+                        </h2>
+                    </div>
+                </ScrollReveal>
+                <StaggerGrid className={styles.reviewsGrid}>
                     {(product.reviews || []).map((review) => (
-                        <motion.div
+                        <motion.figure
                             key={review.id}
                             className={styles.reviewCard}
                             whileHover={{ y: -4 }}
-                            transition={spring.gentle}
+                            whileTap={{ scale: 0.985 }}
+                            transition={spring.snappy}
                         >
-                            <div className={styles.rating}>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</div>
-                            <p className={styles.comment}>&quot;{review.comment}&quot;</p>
-                            <p className={styles.user}>- {review.user}</p>
-                        </motion.div>
+                            <div className={styles.rating} role="img" aria-label={`${review.rating} out of 5 stars`}>
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <Star key={i} size={14} fill={i < review.rating ? 'currentColor' : 'none'} strokeWidth={i < review.rating ? 0 : 1.5} />
+                                ))}
+                            </div>
+                            <blockquote className={styles.comment}>&ldquo;{review.comment}&rdquo;</blockquote>
+                            <figcaption className={styles.user}>{review.user}</figcaption>
+                        </motion.figure>
                     ))}
-                </div>
+                </StaggerGrid>
             </section>
 
-            {/* Related Products */}
+            {/* Related Products — editorial header, same rail cadence as the homepage grid */}
             {relatedProducts.length > 0 && (
                 <section className={styles.relatedSection}>
-                    <h2>You Might Also Like</h2>
-                    <div className={styles.relatedGrid}>
+                    <ScrollReveal direction="up" duration={800}>
+                        <div className={styles.sectionHeader}>
+                            <span className={styles.eyebrow}>Complete the fit</span>
+                            <h2 className={styles.sectionTitle}>
+                                <SplitTextReveal text="You might also" />{' '}
+                                <em>like these.</em>
+                            </h2>
+                        </div>
+                    </ScrollReveal>
+                    <StaggerGrid className={styles.relatedGrid}>
                         {relatedProducts.map(p => (
                             <ProductCard
                                 key={p.id}
@@ -223,7 +273,7 @@ export default function ProductDetail() {
                                 onQuickView={() => setQuickViewProduct(p)}
                             />
                         ))}
-                    </div>
+                    </StaggerGrid>
                 </section>
             )}
         </div>

@@ -1,11 +1,16 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, Heart, LogIn } from 'lucide-react';
 import styles from './page.module.css';
 
-/** Kowalski press spring for the row actions. */
-const spring = { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 } as const;
+/** Kowalski spring presets — snappy press, gentle entrances. */
+const spring = {
+    press: { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 },
+    gentle: { type: 'spring', stiffness: 380, damping: 26, mass: 0.7 },
+    seal: { type: 'spring', stiffness: 380, damping: 17, mass: 0.7 },
+} as const;
 import { useAuth } from '@/lib/AuthContext';
 import { readStorage, isArray } from '@/lib/storage';
 import Link from 'next/link';
@@ -74,13 +79,34 @@ export default function WishlistPage() {
     if (!isAuthenticated) {
         return (
             <div className={styles.container}>
-                <div className={styles.emptyState}>
-                    <h1>My Wishlist</h1>
-                    <p>Please login to view your wishlist</p>
-                    <Link href="/" className={styles.button}>
-                        Go to Home
-                    </Link>
-                </div>
+                <motion.div
+                    className={styles.emptyState}
+                    initial={{ opacity: 0, y: 24, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={spring.gentle}
+                >
+                    <motion.span
+                        className={styles.emptyIcon}
+                        initial={{ scale: 0.6, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ ...spring.seal, delay: 0.1 }}
+                        aria-hidden="true"
+                    >
+                        <Heart size={28} strokeWidth={1.8} />
+                    </motion.span>
+                    <h1 className={styles.emptyTitle}>
+                        <SplitTextReveal text="My Wishlist" delay={0.15} />
+                    </h1>
+                    <p className={styles.emptyText}>
+                        Sign in to save the pieces you love and pick up where you left off, on any device.
+                    </p>
+                    <motion.div whileTap={{ scale: 0.97 }} transition={spring.press}>
+                        <Link href="/" className={styles.button}>
+                            <LogIn size={16} aria-hidden="true" />
+                            Sign In
+                        </Link>
+                    </motion.div>
+                </motion.div>
             </div>
         );
     }
@@ -97,37 +123,73 @@ export default function WishlistPage() {
 
             <h1 className={styles.title}><SplitTextReveal text="My Wishlist" /></h1>
             <ScrollReveal direction="up" delay={150}>
-                <p className={styles.subtitle}>{wishlistItems.length} items saved for later</p>
+                <p className={styles.subtitle}>
+                    {wishlistItems.length === 0
+                        ? 'Nothing saved yet'
+                        : `${wishlistItems.length} ${wishlistItems.length === 1 ? 'piece' : 'pieces'} saved for later`}
+                </p>
             </ScrollReveal>
 
-            {wishlistItems.length === 0 ? (
-                <div className={styles.emptyState}>
-                    <p>Your wishlist is empty</p>
-                    <Link href="/shop" className={styles.button}>
-                        Start Shopping
-                    </Link>
-                </div>
-            ) : (
-                <StaggerGrid className={styles.grid}>
-                    {wishlistItems.map((item) => (
-                        <div key={item.id} className={styles.wishlistItem}>
-                            <ProductCard
-                                {...item}
-                                onQuickView={() => setQuickViewProduct(item)}
-                            />
-                            <motion.button
-                                className={styles.removeBtn}
-                                onClick={() => removeFromWishlist(item.id)}
-                                whileHover={{ y: -2 }}
-                                whileTap={{ scale: 0.94 }}
-                                transition={spring}
-                            >
-                                Remove
-                            </motion.button>
-                        </div>
-                    ))}
-                </StaggerGrid>
-            )}
+            <AnimatePresence mode="wait">
+                {wishlistItems.length === 0 ? (
+                    <motion.div
+                        key="empty"
+                        className={styles.emptyState}
+                        initial={{ opacity: 0, y: 24, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -12 }}
+                        transition={spring.gentle}
+                    >
+                        <motion.span
+                            className={styles.emptyIcon}
+                            initial={{ scale: 0.6, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ ...spring.seal, delay: 0.1 }}
+                            aria-hidden="true"
+                        >
+                            <Heart size={28} strokeWidth={1.8} />
+                        </motion.span>
+                        <h2 className={styles.emptyTitle}>Your wishlist is empty</h2>
+                        <p className={styles.emptyText}>
+                            Tap the heart on any product to keep it here for later.
+                        </p>
+                        <motion.div whileTap={{ scale: 0.97 }} transition={spring.press}>
+                            <Link href="/shop" className={styles.button}>
+                                Start Shopping
+                                <ArrowRight size={16} aria-hidden="true" />
+                            </Link>
+                        </motion.div>
+                    </motion.div>
+                ) : (
+                    <StaggerGrid key="grid" className={styles.grid}>
+                        <AnimatePresence initial={false}>
+                            {wishlistItems.map((item) => (
+                                <motion.div
+                                    key={item.id}
+                                    className={styles.wishlistItem}
+                                    layout
+                                    exit={{ opacity: 0, scale: 0.92, y: 12 }}
+                                    transition={spring.gentle}
+                                >
+                                    <ProductCard
+                                        {...item}
+                                        onQuickView={() => setQuickViewProduct(item)}
+                                    />
+                                    <motion.button
+                                        className={styles.removeBtn}
+                                        onClick={() => removeFromWishlist(item.id)}
+                                        whileTap={{ scale: 0.96 }}
+                                        transition={spring.press}
+                                        aria-label={`Remove ${item.name} from wishlist`}
+                                    >
+                                        Remove
+                                    </motion.button>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </StaggerGrid>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

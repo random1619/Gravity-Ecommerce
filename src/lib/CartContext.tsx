@@ -21,9 +21,6 @@ interface CartContextType {
     clearCart: () => void;
     cartCount: number;
     cartTotal: number;
-    isCartOpen: boolean;
-    openCart: () => void;
-    closeCart: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -31,10 +28,6 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [items, setItems] = useState<CartItem[]>([]);
     const [isInitialized, setIsInitialized] = useState(false);
-    const [isCartOpen, setIsCartOpen] = useState(false);
-
-    const openCart = () => setIsCartOpen(true);
-    const closeCart = () => setIsCartOpen(false);
 
     // Load cart from localStorage on mount. Validated: a corrupted or
     // wrong-shaped value falls back to an empty cart instead of crashing
@@ -69,7 +62,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 return [...currentItems, { ...item, quantity: 1 }];
             }
         });
-        openCart();
     };
 
     const removeFromCart = (id: string, size: string) => {
@@ -110,9 +102,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 clearCart,
                 cartCount,
                 cartTotal,
-                isCartOpen,
-                openCart,
-                closeCart,
             }}
         >
             {children}

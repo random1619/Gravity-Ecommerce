@@ -1,151 +1,208 @@
 /* ============================================================
-   Hero Slider — editorial curtain
-   Full-bleed cinematic frame. Angled clip-path wipes, masked
-   title lines, gradient-on-text accent (the one warm moment),
-   hairline chapter markers with countdown fill, ring timer.
-   Motion: weightless — long eases, nothing snaps.
+   Hero Slider — a deck of cards
+   The old frame was a cinematic rectangle you watched; this is a
+   physical stack you touch. Front card drags with your pointer,
+   rotates like paper, and the card behind rises to take its place.
+   One progress track (not three indicators). transform/opacity only.
    ============================================================ */
 
-.sliderContainer {
+.deck {
     position: relative;
-    width: 100vw;
-    height: 80vh;
-    min-height: 600px;
-    max-height: 900px;
-    margin-left: calc(-50vw + 50%);
-    overflow: hidden;
-    box-shadow: var(--shadow-2xl);
-    border-radius: 0;
-    cursor: grab;
+    /* Pull back from the old 100vw bleed into the editorial column —
+       the deck is an object on the page, not the page itself. */
+    width: 100%;
+    max-width: 1200px;
+    margin: var(--spacing-8) auto var(--spacing-10);
+    padding: 0 var(--spacing-4);
 }
 
-.sliderContainer:focus-visible {
+/* ── The stack ────────────────────────────────────────────────── */
+
+.stack {
+    position: relative;
+    width: 100%;
+    height: clamp(420px, 62vh, 640px);
+    outline: none;
+}
+
+.stack:focus-visible {
     outline: 2px solid var(--accent-primary);
-    outline-offset: -2px;
+    outline-offset: 6px;
+    border-radius: var(--radius-xl);
 }
 
-.dragging {
+/* Every card (front + ghosts) shares the same absolute frame. */
+.cardGhost,
+.cardFront {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transform-origin: 50% 90%; /* rotation pivots near the base, like a card on a table */
+}
+
+.cardGhost {
+    pointer-events: none;
+    box-shadow: var(--shadow-xl);
+    /* hairline rim so each sheet in the stack reads as a separate card */
+    border: 1px solid var(--border-color);
+}
+
+.cardFront {
+    cursor: grab;
+    box-shadow: var(--shadow-2xl);
+    border: 1px solid var(--border-color);
+    touch-action: pan-y; /* vertical page scroll wins, horizontal drag is ours */
+    will-change: transform;
+}
+
+.cardFront:active {
     cursor: grabbing;
 }
 
-.slider {
+/* ── Card face ────────────────────────────────────────────────── */
+
+.face {
     position: relative;
     width: 100%;
     height: 100%;
+    display: flex;
+    align-items: flex-end; /* copy anchored low — the image breathes up top */
 }
 
-.slide {
+.faceMedia {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
+    z-index: 0;
 }
 
-.slideImage {
+.faceImg {
     object-fit: cover;
-    object-position: center center;
-    width: 100%;
-    height: 100%;
-    background-color: var(--bg-secondary);
+    object-position: center;
     user-select: none;
     -webkit-user-drag: none;
+    background-color: var(--bg-secondary);
 }
 
-/* Cinematic grade — deeper on the copy side, plus a floor vignette
-   so the chapter markers never sit on busy pixels */
-.overlay {
+/* Parallax wrapper — the image drifts vertically inside the card as the
+   page scrolls. Oversized a touch so the drift never exposes an edge. */
+.faceParallax {
+    position: absolute;
+    inset: -8% 0;
+    will-change: transform;
+}
+
+/* Grade: floor vignette so the copy column never sits on busy pixels.
+   Lighter than the old cinematic overlay — the card is brighter, airier. */
+.faceScrim {
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(0deg, rgba(0, 0, 0, 0.55) 0%, transparent 28%),
-        linear-gradient(105deg, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.42) 45%, rgba(0, 0, 0, 0.12) 72%, transparent 90%);
+        linear-gradient(0deg, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.18) 34%, transparent 58%);
     z-index: 1;
 }
 
-.content {
-    position: absolute;
-    inset: 0;
+.faceDim .faceScrim {
+    /* Ghost cards get an extra dim so the stack reads as depth, not noise. */
+    background:
+        linear-gradient(0deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.28) 60%, rgba(0, 0, 0, 0.18) 100%);
+}
+
+.faceCopy {
+    position: relative;
     z-index: 2;
-    display: flex;
-    align-items: center;
-}
-
-.contentInner {
-    max-width: 720px;
-    padding: 0 clamp(24px, 8vw, 120px);
-    /* --on-dark-text is theme-stable (always light) — the overlay is always dark,
-       so copy must not follow --text-on-accent which flips per theme */
-    color: var(--on-dark-text);
+    padding: clamp(22px, 4.5vw, 48px);
+    max-width: 620px;
     display: grid;
-    gap: var(--spacing-6);
+    gap: var(--spacing-4);
+    /* over dark photography — theme-stable tokens, not theme-flipping ones */
+    color: var(--on-dark-text);
 }
 
-/* Kicker — hairline-outlined glass chip, quiet not loud */
+.faceDim .faceCopy {
+    /* Only the front card carries readable copy; ghosts hint at it. */
+    visibility: hidden;
+}
+
+/* Kicker — hairline glass chip, the quiet label */
 .kicker {
     font-family: var(--font-mono);
     font-size: 11px;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.22em;
     color: var(--on-dark-accent);
-    font-weight: 700;
     background: rgba(var(--on-dark-accent-rgb), 0.14);
     border: 1px solid rgba(var(--on-dark-accent-rgb), 0.32);
     backdrop-filter: blur(10px);
-    padding: 7px 14px;
+    padding: 6px 13px;
     border-radius: var(--radius-full);
-    display: inline-block;
     width: fit-content;
 }
 
 .title {
-    font-size: clamp(40px, 7vw, 80px);
-    line-height: 1.05;
-    font-family: var(--font-display);
-    font-weight: var(--font-semibold); /* serif reads luxury at 600, shouty at 900 */
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    letter-spacing: var(--tracking-tight);
     margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--font-semibold);
+    font-size: clamp(30px, 4.6vw, 56px);
+    line-height: 1.06;
+    letter-spacing: var(--tracking-tight);
+    text-shadow: 0 3px 16px rgba(0, 0, 0, 0.45);
+}
+
+/* The one warm moment — gradient text on the accent line only */
+.titleAccent {
+    font-style: italic;
+    background: var(--gradient-premium);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+}
+
+/* Title line masks — each line rises out of an overflow-hidden slot */
+.titleLine {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.09em; /* protect descenders inside the mask */
+    margin-bottom: -0.09em; /* …without adding visual line-height */
+}
+
+.titleLine > span {
+    display: inline-block;
+    will-change: transform;
 }
 
 .subtitle {
-    font-size: var(--text-xl);
-    color: var(--on-dark-muted);
-    line-height: var(--leading-relaxed);
-    max-width: 600px;
     margin: 0;
+    font-size: 1rem;
+    line-height: var(--leading-relaxed);
+    color: var(--on-dark-muted);
+    max-width: 46ch;
 }
 
-/* ---------- CTA row ---------- */
-
-.ctaRow {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-4);
-    margin-top: var(--spacing-4);
-}
-
-/* Primary — gradient hairline ring that appears on hover.
-   Same signature as the navbar search trigger and the pass submit. */
-.ctaLink {
+/* CTA — pill on the card face with the gradient hairline ring that
+   appears on hover (same signature as the navbar + pass submit). */
+.cta {
     position: relative;
+    isolation: isolate;
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-3);
-    padding: var(--spacing-4) var(--spacing-8);
+    gap: var(--spacing-2);
+    width: fit-content;
+    margin-top: var(--spacing-2);
+    padding: var(--spacing-3) var(--spacing-6);
     border-radius: var(--radius-full);
     background: var(--surface-elevated);
     color: var(--text-primary);
     font-weight: var(--font-bold);
-    transition: transform var(--transition-base), box-shadow var(--transition-base),
-        background var(--transition-base), color var(--transition-base);
-    font-size: var(--text-base);
+    font-size: 1rem;
     box-shadow: var(--shadow-xl);
-    isolation: isolate;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
 /* Masked gradient hairline around the pill */
-.ctaLink::before {
+.cta::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -162,18 +219,29 @@
     z-index: 1;
 }
 
-.ctaLink:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-2xl);
-}
-
-.ctaLink:hover::before {
-    opacity: 1;
-}
-
 .ctaLabel {
     position: relative;
     z-index: 2;
+}
+
+@media (hover: hover) {
+    .cta:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-2xl);
+    }
+
+    .cta:hover::before {
+        opacity: 1;
+    }
+
+    .cta:hover .ctaIcon {
+        transform: translate(2px, -2px);
+    }
+}
+
+.cta:active {
+    transform: scale(0.97);
+    transition-duration: 80ms;
 }
 
 .ctaIcon {
@@ -182,390 +250,200 @@
     transition: transform var(--transition-base);
 }
 
-.ctaLink:hover .ctaIcon {
-    transform: translateX(4px);
-}
-
-/* Secondary — ghost glass, gains the gradient fill on hover */
-.ctaSecondary {
-    position: relative;
+/* "drag" hint — bottom-right of the front card, quiet mono chip */
+.dragHint {
+    position: absolute;
+    right: 18px;
+    bottom: 16px;
+    z-index: 3;
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-2);
-    padding: var(--spacing-4) var(--spacing-6);
-    border-radius: var(--radius-full);
-    background: transparent;
-    border: 1px solid rgba(253, 251, 247, 0.28);
-    color: rgba(253, 251, 247, 0.85);
-    font-weight: 600;
-    transition: color var(--transition-base), border-color var(--transition-base),
-        background var(--transition-base), transform var(--transition-base);
-    backdrop-filter: blur(10px);
-}
-
-.ctaSecondary:hover {
-    color: var(--text-on-accent);
-    border-color: transparent;
-    background: var(--gradient-cta);
-    transform: translateY(-2px);
-}
-
-/* ---------- Navigation arrows — quiet glass discs ---------- */
-
-.nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10;
-    background: var(--on-dark-glass);
-    border: 1px solid var(--on-dark-glass-border);
-    color: var(--on-dark-text);
-    backdrop-filter: blur(8px);
-    opacity: 0;
-    transition: opacity var(--transition-base), background var(--transition-fast),
-        transform var(--transition-base), border-color var(--transition-fast);
-}
-
-/* Arrows reveal when the frame is approached — they serve, they don't shout */
-.sliderContainer:hover .nav,
-.sliderContainer:focus-within .nav {
-    opacity: 1;
-}
-
-.nav:hover {
-    background: var(--accent-primary);
-    border-color: transparent;
-    transform: translateY(-50%) scale(1.08);
-}
-
-.navIcon {
-    transition: transform var(--transition-base);
-}
-
-.navPrev:hover .navIcon { transform: translateX(-2px); }
-.navNext:hover .navIcon { transform: translateX(2px); }
-
-.navPrev { left: 24px; }
-.navNext { right: 24px; }
-
-/* ---------- Chapter markers ---------- */
-
-.indicators {
-    position: absolute;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 14px;
-    z-index: 10;
-    align-items: center;
-}
-
-.chapter {
-    display: flex;
-    align-items: baseline;
     gap: 6px;
-    /* WCAG 2.5.8: keep the hit area at or above the 24px floor even when
-       only the two-digit number is showing */
-    min-width: 24px;
-    min-height: 24px;
-    padding: 6px 4px 8px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.6);
-    transition: color var(--transition-base);
-    position: relative;
-}
-
-.chapter:hover {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.chapterActive {
-    color: var(--on-dark-text);
-}
-
-.chapterNum {
     font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.08em;
-}
-
-.chapterTag {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    opacity: 0;
-    max-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    transition: opacity var(--transition-base), max-width var(--transition-base);
+    color: var(--on-dark-muted);
+    background: var(--on-dark-glass);
+    border: 1px solid var(--on-dark-glass-border);
+    backdrop-filter: blur(8px);
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    pointer-events: none;
 }
 
-.chapterActive .chapterTag,
-.chapter:hover .chapterTag {
-    opacity: 1;
-    max-width: 120px;
+/* ── Controls row — dots · track · arrows ─────────────────────── */
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-5);
+    margin-top: var(--spacing-5);
+    padding: 0 var(--spacing-1);
 }
 
-/* Hairline under each chapter; active one fills with the gradient
-   in sync with autoplay — the countdown lives where the choice is */
-.chapterLine {
+.dots {
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    background: var(--border-strong);
+    transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+/* WCAG 2.5.8 — grow the hit area without growing the dot */
+.dot::after {
+    content: '';
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 1.5px;
-    background: rgba(255, 255, 255, 0.3);
+    inset: -8px;
+}
+
+@media (hover: hover) {
+    .dot:hover {
+        background: var(--accent-primary);
+        transform: scale(1.25);
+    }
+}
+
+.dot:active {
+    transform: scale(0.97);
+}
+
+.dotActive {
+    background: var(--accent-primary);
+    transform: scale(1.25);
+}
+
+.dot:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 3px;
+}
+
+/* The single progress indicator — a hairline track that fills and,
+   on pause, visibly freezes. Filled from JS via transform only. */
+.track {
+    position: relative;
+    flex: 1;
+    height: 2px;
+    background: var(--border-strong);
     border-radius: 999px;
     overflow: hidden;
 }
 
-.chapterActive .chapterLine {
-    background: rgba(255, 255, 255, 0.22);
-}
-
-.chapterFill {
+.trackFill {
     position: absolute;
     inset: 0;
-    background: var(--gradient-cta);
+    background: var(--accent-primary);
+    transform: scaleX(0);
     transform-origin: left center;
-    animation: chapterFillAnim linear forwards;
 }
 
-@keyframes chapterFillAnim {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
+.trackPaused .trackFill {
+    /* frozen state reads as "held" — muted, not vanished */
+    opacity: 0.45;
 }
 
-/* ---------- Watermark — the giant folio number ---------- */
-
-.watermark {
-    position: absolute;
-    right: clamp(16px, 6vw, 96px);
-    bottom: clamp(64px, 12vh, 140px);
-    z-index: 2;
-    font-family: var(--font-display);
-    font-size: clamp(9rem, 22vw, 20rem);
-    font-weight: var(--font-bold);
-    line-height: 1;
-    color: transparent;
-    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.22);
-    pointer-events: none;
-    user-select: none;
+.arrows {
+    display: flex;
+    gap: 8px;
 }
 
-/* ---------- Title line masks ---------- */
-
-.titleLine {
-    display: block;
-    overflow: hidden;
-    padding-bottom: 0.08em; /* protect descenders inside the mask */
-}
-
-.titleLine > span {
-    display: inline-block;
-    will-change: transform;
-}
-
-/* The one warm moment on the frame — gradient text, not a flat hex.
-   Same --gradient-premium clip as the login pass cover and logo hover. */
-.titleAccent {
-    font-style: italic;
-    background: var(--gradient-premium);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    /* restore legibility over busy photography — the clip kills text-shadow */
-    filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.45));
-}
-
-/* ---------- Index chip + countdown ring ---------- */
-
-.slideCounter {
-    position: absolute;
-    bottom: 20px;
-    left: 32px;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 14px 6px 8px;
-    border-radius: var(--radius-full);
-    background: var(--on-dark-glass);
-    border: 1px solid var(--on-dark-glass-border);
-    backdrop-filter: blur(10px);
-    color: var(--on-dark-text);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.18em;
-    z-index: 10;
-}
-
-.ring {
-    width: 26px;
-    height: 26px;
-    transform: rotate(-90deg);
-    flex: none;
-}
-
-.ringTrack {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.25);
-    stroke-width: 2;
-}
-
-.ringProgress {
-    fill: none;
-    stroke: var(--on-dark-accent);
-    stroke-width: 2;
-    stroke-linecap: round;
-    animation: ringDrain linear forwards;
-}
-
-@keyframes ringDrain {
-    from { stroke-dashoffset: 0; }
-    to { stroke-dashoffset: 97.4; }
-}
-
-.counterDivider {
-    width: 18px;
-    height: 1px;
-    background: rgba(253, 251, 247, 0.5);
-}
-
-/* ---------- Pause / play toggle (WCAG 2.2.2) ----------
-   Mirrors the index chip: quiet glass disc, bottom-right. Unlike the nav
-   arrows it never hides — a control that stops motion must stay visible. */
-.pauseToggle {
-    position: absolute;
-    bottom: 20px;
-    right: 32px;
-    width: 34px;
-    height: 34px;
+/* Always visible (no hover-reveal) — quiet circles, pointer-down feedback */
+.arrow {
+    position: relative;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 10;
-    background: var(--on-dark-glass);
-    border: 1px solid var(--on-dark-glass-border);
-    color: var(--on-dark-text);
-    backdrop-filter: blur(10px);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-strong);
+    color: var(--text-primary);
     transition: background var(--transition-fast), border-color var(--transition-fast),
-        transform var(--transition-base);
+        color var(--transition-fast), transform var(--transition-fast);
 }
 
-.pauseToggle:hover {
-    background: var(--accent-primary);
-    border-color: transparent;
-    transform: scale(1.08);
+@media (hover: hover) {
+    .arrow:hover {
+        background: var(--accent-primary);
+        border-color: transparent;
+        color: var(--text-on-accent);
+    }
 }
 
-.pauseToggle:focus-visible {
-    outline: 2px solid var(--on-dark-accent, #fff);
+.arrow:active {
+    transform: scale(0.97);
+    transition-duration: 80ms;
+}
+
+.arrow:focus-visible {
+    outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
 }
 
-/* ---------- Responsive ---------- */
+/* ── Responsive ───────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
-    .sliderContainer {
-        height: 50vh;
-        min-height: 400px;
-        max-height: 500px;
+    .deck {
+        margin: var(--spacing-6) auto var(--spacing-8);
+        padding: 0 var(--spacing-3);
     }
 
-    .nav {
-        width: 40px;
-        height: 40px;
-        opacity: 1; /* no hover on touch — arrows stay visible */
+    .stack {
+        height: clamp(360px, 52vh, 480px);
     }
 
-    .navPrev { left: 10px; }
-    .navNext { right: 10px; }
-
-    .indicators {
-        bottom: 15px;
-        gap: 8px;
+    .controls {
+        gap: var(--spacing-3);
+        margin-top: var(--spacing-4);
     }
 
-    .contentInner {
-        padding: 0 20px;
-    }
-
-    .subtitle {
-        font-size: 16px;
-    }
-
-    .slideCounter {
-        left: 16px;
-    }
-
-    .pauseToggle {
-        right: 16px;
-        bottom: 15px;
-        width: 32px;
-        height: 32px;
-    }
-
-    .watermark {
-        font-size: clamp(6rem, 18vw, 10rem);
-        bottom: 80px;
+    .dragHint {
+        display: none; /* touch users feel the drag; the label is noise */
     }
 }
 
 @media (max-width: 480px) {
-    .sliderContainer {
-        height: 40vh;
-        min-height: 300px;
-        max-height: 400px;
-    }
-
-    .chapterTag {
-        display: none;
-    }
-
-    .ctaRow {
-        flex-wrap: wrap;
+    .faceCopy {
         gap: var(--spacing-3);
+    }
+
+    .subtitle {
+        font-size: 0.875rem;
     }
 }
 
-/* ---------- Reduced motion ---------- */
+/* ── Reduced motion ───────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-    .sliderContainer {
+    .cardFront {
         cursor: default;
     }
 
-    .chapterFill,
-    .ringProgress {
-        animation: none;
-    }
-
-    .nav,
-    .navIcon,
-    .ctaLink,
-    .ctaLink::before,
+    .cta,
     .ctaIcon,
-    .ctaSecondary,
-    .chapter,
-    .chapterTag {
+    .dot,
+    .arrow {
         transition: none;
     }
 
-    .nav {
-        opacity: 1; /* don't hide controls behind a hover reveal */
+    /* no sweep, no pulse — calm frame */
+    .sheen {
+        display: none;
+    }
+
+    .kickerDot {
+        animation: none;
     }
 }

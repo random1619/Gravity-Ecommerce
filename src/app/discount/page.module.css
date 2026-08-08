@@ -1,6 +1,8 @@
 .studentPage {
-  padding-top: calc(var(--spacing-2xl) + 24px);
-  padding-bottom: var(--spacing-2xl);
+  /* Local press token — consistent with cart/checkout/profile modules. */
+  --press: 120ms cubic-bezier(0.2, 0, 0.2, 1);
+  padding-top: calc(var(--spacing-16) + var(--spacing-4));
+  padding-bottom: var(--spacing-20);
   min-height: 100vh;
   background: var(--bg-primary);
   background-image: var(--page-gradient);
@@ -14,7 +16,9 @@
   gap: var(--spacing-24);
 }
 
-/* --- Shared buttons --- */
+/* ============================================================
+   Shared buttons
+   ============================================================ */
 .btnPrimary,
 .btnGhost {
   display: inline-flex;
@@ -30,39 +34,44 @@
   border-radius: var(--radius-full);
   cursor: pointer;
   white-space: nowrap;
-  transition: transform var(--transition-base), box-shadow var(--transition-base),
-    background var(--transition-base), color var(--transition-base),
+  text-decoration: none;
+  transition:
+    transform var(--press),
+    box-shadow var(--transition-base),
+    background-color var(--transition-base),
+    color var(--transition-base),
     border-color var(--transition-base);
 }
 .btnPrimary {
   background: var(--gradient-cta);
   color: var(--text-on-accent);
   border: 1px solid transparent;
-  box-shadow: var(--shadow-md);
-  text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), var(--shadow-md);
 }
 .btnPrimary:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-color-glow);
-  color: var(--text-on-accent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), var(--shadow-color-glow);
 }
+.btnPrimary:active { transform: translateY(0) scale(0.97); }
 .btnPrimary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
-.btnPrimary:active { transform: translateY(0) scale(0.99); }
 .btnGhost {
   background: transparent;
   color: var(--text-secondary);
   border: 1px solid var(--border-strong);
-  text-decoration: none;
 }
 .btnGhost:hover {
   color: var(--accent-secondary);
   border-color: var(--accent-secondary);
-  background: rgba(var(--accent-secondary-rgb), 0.06);
+  background-color: rgba(var(--accent-secondary-rgb), 0.06);
   transform: translateY(-2px);
 }
+.btnGhost:active { transform: translateY(0) scale(0.97); }
 
-/* --- Hero --- */
+/* ============================================================
+   Hero
+   ============================================================ */
 .hero {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -71,6 +80,23 @@
   padding-top: var(--spacing-8);
   max-width: 880px;
   margin: 0 auto;
+}
+/* Ambient sage wash behind the masthead — the page's one atmospheric move. */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(720px, 90vw);
+  height: 420px;
+  background: radial-gradient(
+    closest-side,
+    rgba(var(--accent-secondary-rgb), 0.1),
+    transparent
+  );
+  pointer-events: none;
+  z-index: -1;
 }
 .eyebrow {
   display: inline-flex;
@@ -85,7 +111,8 @@
   padding: 0.4rem 1rem;
   border: 1px solid rgba(var(--accent-secondary-rgb), 0.3);
   border-radius: var(--radius-full);
-  background: rgba(var(--accent-secondary-rgb), 0.06);
+  background-color: rgba(var(--accent-secondary-rgb), 0.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 .eyebrowIcon { flex-shrink: 0; }
 .heroTitle {
@@ -123,7 +150,9 @@
   margin-top: var(--spacing-2);
 }
 
-/* --- Marquee --- */
+/* ============================================================
+   Marquee — edge-faded, never a hard crop
+   ============================================================ */
 .marquee {
   position: relative;
   width: 100vw;
@@ -134,6 +163,20 @@
   background: var(--bg-secondary);
   overflow: hidden;
   padding: var(--spacing-4) 0;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 12%,
+    black 88%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 12%,
+    black 88%,
+    transparent
+  );
 }
 .marqueeTrack {
   display: flex;
@@ -160,7 +203,9 @@
   to { transform: translateX(-50%); }
 }
 
-/* --- Verify section: pass + flow --- */
+/* ============================================================
+   Verify section: pass + flow
+   ============================================================ */
 .verifySection {
   display: grid;
   grid-template-columns: 1fr;
@@ -185,6 +230,8 @@
   .passWrap { position: sticky; top: 110px; }
 }
 
+/* The Student Pass — transform is driven by framer-motion (spring),
+   so CSS only owns the material. */
 .pass {
   position: relative;
   width: 100%;
@@ -198,11 +245,10 @@
   color: var(--on-dark-text);
   background: var(--gradient-banner);
   border: 1px solid var(--border-strong);
-  box-shadow: var(--shadow-2xl);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), var(--shadow-2xl);
   overflow: hidden;
-  transform: rotate(-3deg);
-  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
   isolation: isolate;
+  transition: box-shadow var(--transition-smooth);
 }
 .pass::before {
   content: '';
@@ -213,10 +259,7 @@
     radial-gradient(circle at 10% 90%, rgba(var(--accent-secondary-rgb), 0.2), transparent 50%);
   opacity: 0.8;
 }
-.pass:hover {
-  transform: rotate(0deg) translateY(-6px);
-  box-shadow: var(--shadow-2xl), var(--shadow-color-glow);
-}
+.pass:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), var(--shadow-2xl), var(--shadow-color-glow); }
 .passVerified { border-color: rgba(var(--accent-gold-rgb), 0.6); }
 .passVerified::after {
   content: 'VERIFIED';
@@ -293,17 +336,21 @@
   margin: 0;
 }
 
-/* --- Verification card / flow --- */
+/* ============================================================
+   Verification card / flow
+   ============================================================ */
 .verifyCard {
   background: var(--surface-elevated);
   background-image: var(--surface-glow);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   padding: var(--spacing-8);
-  box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-8);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 0 1px var(--border-color),
+    var(--shadow-lg);
 }
 .stepsBar {
   list-style: none;
@@ -347,7 +394,11 @@
   background: var(--bg-secondary);
   color: var(--text-tertiary);
   border: 1px solid var(--border-strong);
-  transition: all var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 .stepLabel {
   font-family: var(--font-accent);
@@ -387,6 +438,7 @@
   justify-content: center;
   gap: var(--spacing-2);
   padding: 0.7rem 1rem;
+  border: 1px solid transparent;
   border-radius: var(--radius-full);
   font-family: var(--font-accent);
   font-size: 12px;
@@ -394,13 +446,21 @@
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--text-secondary);
-  transition: all var(--transition-base);
+  cursor: pointer;
+  background: transparent;
+  transition:
+    transform var(--press),
+    background-color var(--transition-base),
+    color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
+.methodTab:active { transform: scale(0.97); }
 .methodTabActive {
   background: var(--surface-elevated);
   color: var(--accent-secondary);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-color);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), var(--shadow-sm);
+  border-color: var(--border-color);
 }
 
 .field { display: flex; flex-direction: column; gap: var(--spacing-2); }
@@ -421,8 +481,10 @@
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  transition: border-color var(--transition-base), box-shadow var(--transition-base),
-    background var(--transition-base);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background-color var(--transition-base);
 }
 .fieldInput::placeholder { color: var(--text-tertiary); }
 .fieldInput:hover { border-color: var(--border-strong); }
@@ -430,8 +492,9 @@
   outline: none;
   border-color: var(--accent-secondary);
   background: var(--surface-elevated);
-  box-shadow: 0 0 0 4px rgba(var(--accent-secondary-rgb), 0.12);
+  box-shadow: var(--shadow-focus);
 }
+.fieldInput:disabled { opacity: 0.6; cursor: not-allowed; }
 .fieldNote {
   font-size: 12px;
   color: var(--text-tertiary);
@@ -452,11 +515,18 @@
   border: 1.5px dashed var(--border-strong);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition:
+    border-color var(--transition-base),
+    background-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 .dropzone:hover {
   border-color: var(--accent-secondary);
-  background: rgba(var(--accent-secondary-rgb), 0.05);
+  background-color: rgba(var(--accent-secondary-rgb), 0.05);
+}
+.dropzone:focus-within {
+  border-color: var(--accent-secondary);
+  box-shadow: var(--shadow-focus);
 }
 .dropzoneInput { display: none; }
 .dropzoneIcon { color: var(--text-tertiary); transition: color var(--transition-base); }
@@ -478,6 +548,7 @@
 .spinner { animation: spin 1s linear infinite; }
 @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
 
+/* Success — rare moment, earns a short ease-out entrance. */
 .successPanel {
   display: flex;
   flex-direction: column;
@@ -485,7 +556,11 @@
   text-align: center;
   gap: var(--spacing-4);
   padding: var(--spacing-4) 0;
-  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: successIn 320ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+@keyframes successIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .successBadge {
   width: 64px;
@@ -497,12 +572,15 @@
   color: var(--accent-success);
   background: var(--success-bg);
   border: 1px solid var(--success-border);
-  box-shadow: 0 0 0 6px rgba(var(--accent-success-rgb), 0.08);
+  box-shadow:
+    0 0 0 6px rgba(var(--accent-success-rgb), 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 .successTitle {
   font-family: var(--font-display);
   font-size: 26px;
   font-weight: var(--font-bold);
+  letter-spacing: var(--tracking-tight);
   color: var(--text-primary);
   margin: 0;
 }
@@ -541,21 +619,26 @@
   padding: var(--spacing-2);
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
-  transition: all var(--transition-base);
+  cursor: pointer;
+  transition:
+    transform var(--press),
+    color var(--transition-base),
+    background-color var(--transition-base);
 }
 .copyBtn:hover {
   color: var(--accent-secondary);
-  background: rgba(var(--accent-secondary-rgb), 0.1);
+  background-color: rgba(var(--accent-secondary-rgb), 0.1);
 }
+.copyBtn:active { transform: scale(0.9); }
 
-/* --- Section wrappers (spacing comes from .pageInner gap) --- */
+/* ============================================================
+   Sections & headers
+   ============================================================ */
 .perksSection,
 .tiersSection,
 .faqSection {
   display: block;
 }
-
-/* --- Section headers --- */
 .sectionHead {
   display: flex;
   flex-direction: column;
@@ -563,12 +646,21 @@
   margin-bottom: var(--spacing-12);
 }
 .sectionEyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
   font-family: var(--font-accent);
   font-size: 12px;
   font-weight: var(--font-semibold);
   letter-spacing: var(--tracking-widest);
   text-transform: uppercase;
   color: var(--accent-secondary);
+}
+.sectionEyebrow::after {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: rgba(var(--accent-secondary-rgb), 0.4);
 }
 .sectionTitle {
   font-family: var(--font-display);
@@ -580,7 +672,9 @@
   text-wrap: balance;
 }
 
-/* --- Perks --- */
+/* ============================================================
+   Perks — entrance motion owned by StaggerGrid (springs)
+   ============================================================ */
 .perksGrid {
   display: grid;
   grid-template-columns: 1fr;
@@ -595,29 +689,21 @@
   gap: var(--spacing-3);
   padding: var(--spacing-6);
   background: var(--surface-elevated);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth),
-    border-color var(--transition-smooth);
-  opacity: 0;
-  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: calc(var(--i, 0) * 90ms);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 0 1px var(--border-color),
+    var(--shadow-xs);
+  transition:
+    transform var(--transition-smooth),
+    box-shadow var(--transition-smooth);
 }
 .perkCard:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-xl);
-  border-color: var(--border-strong);
-}
-.perkIndex {
-  position: absolute;
-  top: var(--spacing-5);
-  right: var(--spacing-5);
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-style: italic;
-  color: var(--text-tertiary);
-  opacity: 0.7;
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 0 1px var(--border-strong),
+    var(--shadow-md);
 }
 .perkIcon {
   width: 48px;
@@ -626,20 +712,22 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-md);
-  color: var(--accent-secondary);
-  background: rgba(var(--accent-secondary-rgb), 0.1);
-  border: 1px solid rgba(var(--accent-secondary-rgb), 0.18);
-  transition: all var(--transition-base);
+  color: var(--text-on-accent);
+  background: var(--gradient-cta);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
 }
 .perkCard:hover .perkIcon {
-  background: var(--accent-secondary);
-  color: var(--text-on-accent);
-  transform: scale(1.05);
+  transform: scale(1.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), var(--shadow-color-glow);
 }
 .perkTitle {
   font-family: var(--font-display);
   font-size: 19px;
   font-weight: var(--font-bold);
+  letter-spacing: var(--tracking-tight);
   color: var(--text-primary);
   margin: var(--spacing-2) 0 0 0;
 }
@@ -651,7 +739,9 @@
   margin: 0;
 }
 
-/* --- Stats band --- */
+/* ============================================================
+   Stats band
+   ============================================================ */
 .statsBand {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -672,6 +762,7 @@
   font-family: var(--font-display);
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: var(--font-extrabold);
+  font-variant-numeric: tabular-nums;
   background: var(--gradient-text);
   -webkit-background-clip: text;
   background-clip: text;
@@ -687,7 +778,9 @@
   color: var(--text-tertiary);
 }
 
-/* --- Tiers --- */
+/* ============================================================
+   Tiers
+   ============================================================ */
 .tiersGrid {
   display: grid;
   grid-template-columns: 1fr;
@@ -701,16 +794,29 @@
   gap: var(--spacing-3);
   padding: var(--spacing-8) var(--spacing-6);
   background: var(--surface-elevated);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 0 1px var(--border-color),
+    var(--shadow-xs);
+  transition:
+    transform var(--transition-smooth),
+    box-shadow var(--transition-smooth);
 }
-.tierCard:hover { transform: translateY(-6px); box-shadow: var(--shadow-xl); }
+.tierCard:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 0 1px var(--border-strong),
+    var(--shadow-md);
+}
 .tierCardNow {
   background: var(--gradient-banner);
   color: var(--on-dark-text);
-  border-color: var(--border-strong);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 0 0 1px var(--border-strong),
+    var(--shadow-lg);
 }
 .tierCardNow .tierName,
 .tierCardNow .tierItem { color: var(--on-dark-text); }
@@ -735,6 +841,7 @@
   font-family: var(--font-display);
   font-size: 24px;
   font-weight: var(--font-bold);
+  letter-spacing: var(--tracking-tight);
   color: var(--text-primary);
   margin: 0;
 }
@@ -762,7 +869,9 @@
 }
 .tierCheck { color: var(--accent-success); flex-shrink: 0; }
 
-/* --- FAQ --- */
+/* ============================================================
+   FAQ
+   ============================================================ */
 .faqList {
   display: flex;
   flex-direction: column;
@@ -777,9 +886,13 @@
   gap: var(--spacing-4);
   padding: var(--spacing-5) var(--spacing-2);
   text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
   font-family: var(--font-display);
   font-size: clamp(16px, 1.6vw, 19px);
   font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-tight);
   color: var(--text-primary);
   transition: color var(--transition-base);
 }
@@ -787,7 +900,9 @@
 .faqChevron {
   flex-shrink: 0;
   color: var(--text-tertiary);
-  transition: transform var(--transition-base), color var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    color var(--transition-base);
 }
 .faqOpen .faqChevron { transform: rotate(45deg); color: var(--accent-secondary); }
 .faqAnswerWrap {
@@ -808,7 +923,9 @@
 }
 .faqOpen .faqAnswer { padding-bottom: var(--spacing-5); }
 
-/* --- Closing CTA --- */
+/* ============================================================
+   Closing CTA
+   ============================================================ */
 .ctaBand {
   display: flex;
   flex-direction: column;
@@ -821,6 +938,7 @@
   color: var(--on-dark-text);
   position: relative;
   overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), var(--shadow-xl);
 }
 .ctaBand::before {
   content: '';
@@ -834,14 +952,19 @@
   font-family: var(--font-display);
   font-size: clamp(1.9rem, 4vw, 3rem);
   font-weight: var(--font-bold);
+  letter-spacing: var(--tracking-tight);
   color: var(--on-dark-text);
   margin: 0 0 var(--spacing-2) 0;
+  position: relative;
+  z-index: 1;
 }
 .ctaSub {
   font-size: 16px;
   color: var(--on-dark-muted);
   font-weight: var(--font-light);
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 .ctaBand .btnPrimary { position: relative; z-index: 1; }
 @media (min-width: 768px) {
@@ -852,9 +975,63 @@
   }
 }
 
-/* --- Motion preferences --- */
+/* ============================================================
+   Focus — one ring system, pointer reset
+   ============================================================ */
+.btnPrimary:focus-visible,
+.btnGhost:focus-visible,
+.methodTab:focus-visible,
+.copyBtn:focus-visible,
+.faqQuestion:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.btnPrimary:focus:not(:focus-visible),
+.btnGhost:focus:not(:focus-visible),
+.methodTab:focus:not(:focus-visible),
+.copyBtn:focus:not(:focus-visible),
+.faqQuestion:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+/* ============================================================
+   Preferences
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .marqueeTrack { animation: none; }
-  .pass { transform: none; }
-  .perkCard { animation: none; opacity: 1; }
+  .spinner { animation-duration: 2s; }
+  .successPanel { animation: none; }
+  .btnPrimary,
+  .btnGhost,
+  .methodTab,
+  .copyBtn,
+  .perkCard,
+  .perkIcon,
+  .tierCard,
+  .faqChevron,
+  .faqAnswerWrap,
+  .faqAnswer,
+  .stepBubble,
+  .pass {
+    transition: none;
+  }
+  .btnPrimary:hover,
+  .btnGhost:hover,
+  .perkCard:hover,
+  .tierCard:hover,
+  .perkCard:hover .perkIcon {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .hero::before { display: none; }
+  .verifyCard { background-image: none; }
+  .statNumber,
+  .heroItalic {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: var(--accent-secondary);
+  }
 }

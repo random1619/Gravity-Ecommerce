@@ -3,7 +3,6 @@ export const distortFragmentShader = /* glsl */ `
 
   uniform sampler2D uTexture;
   uniform float uTime;
-  uniform vec2  uMouse;
   uniform float uAmplitude;
 
   varying vec2 vUv;
@@ -30,8 +29,13 @@ export const distortFragmentShader = /* glsl */ `
     float ny = noise(uv * 3.0 + uTime * 0.2 + 5.0) - 0.5;
     uv += vec2(nx, ny) * uAmplitude;
 
-    // mouse-reactive ripple centered on pointer
-    float d = distance(uv, uMouse);
+    // auto-rippling wave — the center slowly orbits the image so ripples
+    // emanate and travel on their own, no pointer input required.
+    vec2 center = vec2(
+      0.5 + 0.28 * cos(uTime * 0.5),
+      0.5 + 0.28 * sin(uTime * 0.4)
+    );
+    float d = distance(uv, center);
     float wave = sin(d * 30.0 - uTime * 3.0) * exp(-d * 4.0);
     uv += wave * uAmplitude * 0.5;
 

@@ -1,0 +1,58 @@
+/* ============================================================
+   SkillMeter — labeled discipline meter
+   Quiet editorial: mono small-caps label, sage fill sweeping
+   via scaleX (transform-only, GPU). Track reads as a hairline
+   rule, not a chrome progress bar.
+   ============================================================ */
+
+.meter {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-3);
+}
+
+.label {
+    font-family: var(--font-accent);
+    font-size: var(--text-sm);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--text-primary);
+}
+
+.note {
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+}
+
+/* The honest number, right-aligned, tabular so it never jitters. */
+.pct {
+    margin-left: auto;
+    font-family: var(--font-accent);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-primary);
+}
+
+.track {
+    position: relative;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--bg-secondary);
+    overflow: hidden;
+}
+
+.fill {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-full);
+    background: var(--gradient-cta);
+    /* scaleX origin set inline (originX: 0) so it sweeps from the left. */
+}

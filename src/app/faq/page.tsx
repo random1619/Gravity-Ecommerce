@@ -1,7 +1,16 @@
 'use client'
 
 import { useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronDown, Mail, MessageCircle } from 'lucide-react'
 import styles from './page.module.css'
+
+/** Kowalski spring presets — snappy press, gentle expansion. */
+const spring = {
+  press: { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 },
+  gentle: { type: 'spring', stiffness: 380, damping: 26, mass: 0.7 },
+  expand: { type: 'spring', stiffness: 320, damping: 30, mass: 0.8 },
+} as const
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import SplitTextReveal from '@/components/motion/SplitTextReveal'
 import StaggerGrid from '@/components/motion/StaggerGrid'
@@ -113,61 +122,95 @@ export default function FAQPage() {
       </div>
 
       <div className={styles.content}>
-        <div className={styles.categories}>
+        <div className={styles.categories} role="group" aria-label="FAQ categories">
           {categories.map(category => (
-            <button
+            <motion.button
               key={category}
               className={`${styles.categoryBtn} ${selectedCategory === category ? styles.active : ''}`}
-              onClick={() => setSelectedCategory(category)}
+              onClick={() => {
+                setSelectedCategory(category)
+                setOpenIndex(null)
+              }}
+              aria-pressed={selectedCategory === category}
+              whileTap={{ scale: 0.95 }}
+              transition={spring.press}
             >
               {category === 'all' ? 'All Questions' : category}
-            </button>
+            </motion.button>
           ))}
         </div>
 
         <StaggerGrid className={styles.faqList} batchSize={6}>
-          {filteredFAQs.map((faq, index) => (
-            <div key={index} className={styles.faqItem}>
-              <button
-                className={`${styles.question} ${openIndex === index ? styles.open : ''}`}
-                onClick={() => toggleFAQ(index)}
-              >
-                <span>{faq.question}</span>
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  className={styles.icon}
+          {filteredFAQs.map((faq, index) => {
+            const open = openIndex === index
+            const panelId = `faq-panel-${index}`
+            const buttonId = `faq-button-${index}`
+            return (
+              <div key={`${selectedCategory}-${index}`} className={styles.faqItem}>
+                <button
+                  id={buttonId}
+                  className={`${styles.question} ${open ? styles.open : ''}`}
+                  onClick={() => toggleFAQ(index)}
+                  aria-expanded={open}
+                  aria-controls={panelId}
                 >
-                  <path
-                    d="M5 7.5L10 12.5L15 7.5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-              {openIndex === index && (
-                <div className={styles.answer}>
-                  <p>{faq.answer}</p>
-                </div>
-              )}
-            </div>
-          ))}
+                  <span>{faq.question}</span>
+                  <motion.span
+                    className={styles.icon}
+                    initial={false}
+                    animate={{ rotate: open ? 180 : 0 }}
+                    transition={spring.gentle}
+                    aria-hidden="true"
+                  >
+                    <ChevronDown size={20} strokeWidth={2} />
+                  </motion.span>
+                </button>
+                <AnimatePresence initial={false}>
+                  {open && (
+                    <motion.div
+                      key="answer"
+                      id={panelId}
+                      role="region"
+                      aria-labelledby={buttonId}
+                      className={styles.answer}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={spring.expand}
+                    >
+                      <div className={styles.answerInner}>
+                        <p>{faq.answer}</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )
+          })}
         </StaggerGrid>
 
         <div className={styles.contactSection}>
           <h2>Still have questions?</h2>
           <p>Our support team is here to help!</p>
           <div className={styles.contactButtons}>
-            <a href="/contact" className={styles.primaryBtn}>
+            <motion.a
+              href="/contact"
+              className={styles.primaryBtn}
+              whileTap={{ scale: 0.97 }}
+              transition={spring.press}
+            >
+              <MessageCircle size={16} aria-hidden="true" />
               Contact Support
-            </a>
-            <a href="mailto:support@gravity.com" className={styles.secondaryBtn}>
+            </motion.a>
+            <motion.a
+              href="mailto:support@gravity.com"
+              className={styles.secondaryBtn}
+              whileTap={{ scale: 0.97 }}
+              transition={spring.press}
+            >
+              <Mail size={16} aria-hidden="true" />
               Email Us
-            </a>
+            </motion.a>
           </div>
         </div>
       </div>

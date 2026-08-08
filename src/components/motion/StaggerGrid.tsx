@@ -10,6 +10,12 @@ interface StaggerGridProps {
   style?: React.CSSProperties;
   /** Max children to animate per batch; the rest render without delay. */
   batchSize?: number;
+  /**
+   * Class applied to each item wrapper (the actual grid/flex child). Lets the
+   * parent's grid span and rhythm live on the wrapper instead of the child.
+   * Receives the item index so spans/alternation can vary per item.
+   */
+  itemClassName?: (index: number) => string;
 }
 
 /**
@@ -52,11 +58,23 @@ const layoutSpring = { type: 'spring', stiffness: 350, damping: 32, mass: 0.8 } 
  * grids don't delay items far down the list. Fully disabled under
  * prefers-reduced-motion (children render instantly).
  */
-export default function StaggerGrid({ children, className, style, batchSize = 8 }: StaggerGridProps) {
+export default function StaggerGrid({ children, className, style, batchSize = 8, itemClassName }: StaggerGridProps) {
   const reduced = useReducedMotion();
 
   if (reduced) {
-    return <div className={className} style={style}>{children}</div>;
+    if (!itemClassName) {
+      return <div className={className} style={style}>{children}</div>;
+    }
+    // Mirror the wrapper structure so grid spans/rhythm survive reduced motion.
+    return (
+      <div className={className} style={style}>
+        {React.Children.toArray(children).map((child, i) => (
+          <div key={(child as React.ReactElement)?.key ?? i} className={itemClassName(i)}>
+            {child}
+          </div>
+        ))}
+      </div>
+    );
   }
 
   const items = React.Children.toArray(children);
@@ -74,6 +92,7 @@ export default function StaggerGrid({ children, className, style, batchSize = 8 
         i < batchSize ? (
           <motion.div
             key={(child as React.ReactElement)?.key ?? i}
+            className={itemClassName ? itemClassName(i) : undefined}
             variants={itemVariants}
             layout
             transition={layoutSpring}
@@ -82,7 +101,13 @@ export default function StaggerGrid({ children, className, style, batchSize = 8 
           </motion.div>
         ) : (
           // Beyond the batch: render statically (no wrapper animation).
-          <React.Fragment key={(child as React.ReactElement)?.key ?? i}>{child}</React.Fragment>
+          itemClassName ? (
+            <div key={(child as React.ReactElement)?.key ?? i} className={itemClassName(i)}>
+              {child}
+            </div>
+          ) : (
+            <React.Fragment key={(child as React.ReactElement)?.key ?? i}>{child}</React.Fragment>
+          )
         )
       )}
     </motion.div>

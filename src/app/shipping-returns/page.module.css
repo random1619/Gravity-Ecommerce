@@ -1,7 +1,14 @@
+/* Shipping & Returns — Porcelain & Sage quiet-luxury pass.
+   House rules: named transition properties only, hovers gated behind
+   (hover: hover), 44px touch targets, :focus-visible rings, no
+   translateY on button hover (brightness + shadow instead). */
+
 .policyPage {
     padding: var(--spacing-4);
     min-height: 100vh;
 }
+
+/* ── Hero ─────────────────────────────────────────── */
 
 .hero {
     text-align: center;
@@ -14,6 +21,7 @@
     font-family: var(--font-display);
     font-weight: var(--font-extrabold);
     margin-bottom: var(--spacing-3);
+    color: var(--text-primary);
 }
 
 .hero p {
@@ -21,6 +29,7 @@
     color: var(--text-secondary);
     max-width: 700px;
     margin: 0 auto;
+    line-height: var(--leading-relaxed);
 }
 
 .content {
@@ -47,6 +56,8 @@
     margin-bottom: var(--spacing-4);
 }
 
+/* ── Shipping option cards ────────────────────────── */
+
 .shippingOptions {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -58,20 +69,27 @@
     background: var(--bg-primary);
     padding: var(--spacing-6);
     border-radius: var(--radius-2xl);
-    border: 2px solid var(--border-color);
-    transition: all var(--transition-base);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition:
+        transform var(--transition-base),
+        box-shadow var(--transition-base),
+        border-color var(--transition-base);
 }
 
-.optionCard:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--accent-primary);
+@media (hover: hover) {
+    .optionCard:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: rgba(var(--accent-primary-rgb, 63 107 92), 0.5);
+    }
 }
 
 .optionHeader {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
+    gap: var(--spacing-3);
     margin-bottom: var(--spacing-3);
 }
 
@@ -86,6 +104,7 @@
     font-weight: var(--font-extrabold);
     font-family: var(--font-display);
     color: var(--accent-primary);
+    white-space: nowrap;
 }
 
 .optionCard > p {
@@ -116,20 +135,25 @@
     font-weight: var(--font-bold);
 }
 
+/* ── Processing note ──────────────────────────────── */
+
 .infoBox {
-    background: rgba(var(--accent-indigo-rgb), 0.1);
+    background: rgba(var(--accent-primary-rgb, 63 107 92), 0.08);
     border-left: 4px solid var(--accent-primary);
-    padding: var(--spacing-4);
+    padding: var(--spacing-4) var(--spacing-5);
     border-radius: var(--radius-md);
     margin-top: var(--spacing-6);
     font-size: var(--text-base);
     color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
 }
 
 .infoBox strong {
     color: var(--accent-primary);
     font-weight: var(--font-bold);
 }
+
+/* ── Return steps ─────────────────────────────────── */
 
 .returnSteps {
     display: grid;
@@ -141,6 +165,15 @@
 .step {
     display: flex;
     gap: var(--spacing-4);
+    padding: var(--spacing-4);
+    border-radius: var(--radius-xl);
+    transition: background-color var(--transition-fast);
+}
+
+@media (hover: hover) {
+    .step:hover {
+        background: var(--bg-secondary);
+    }
 }
 
 .stepNumber {
@@ -156,6 +189,7 @@
     font-weight: var(--font-extrabold);
     font-family: var(--font-display);
     flex-shrink: 0;
+    box-shadow: 0 0 0 6px rgba(var(--accent-primary-rgb, 63 107 92), 0.08);
 }
 
 .stepContent h3 {
@@ -172,6 +206,8 @@
     margin: 0;
 }
 
+/* ── Return requirements ──────────────────────────── */
+
 .requirements {
     display: flex;
     flex-direction: column;
@@ -186,6 +222,13 @@
     background: var(--bg-secondary);
     border-radius: var(--radius-xl);
     border: 1px solid var(--border-color);
+    transition: border-color var(--transition-fast);
+}
+
+@media (hover: hover) {
+    .requirement:hover {
+        border-color: rgba(var(--accent-primary-rgb, 63 107 92), 0.4);
+    }
 }
 
 .icon {
@@ -197,7 +240,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: var(--font-bold);
     flex-shrink: 0;
 }
 
@@ -213,6 +255,8 @@
     color: var(--text-secondary);
     margin: 0;
 }
+
+/* ── Non-returnable list ──────────────────────────── */
 
 .list {
     list-style: none;
@@ -238,10 +282,13 @@
     line-height: 1;
 }
 
+/* ── CTA ──────────────────────────────────────────── */
+
 .ctaSection {
     text-align: center;
-    padding: var(--spacing-12);
+    padding: var(--spacing-12) var(--spacing-6);
     background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-2xl);
     margin-top: var(--spacing-16);
 }
@@ -249,6 +296,7 @@
 .ctaSection h2 {
     font-size: var(--text-3xl);
     margin-bottom: var(--spacing-3);
+    color: var(--text-primary);
 }
 
 .ctaSection p {
@@ -265,41 +313,85 @@
 
 .primaryBtn,
 .secondaryBtn {
-    padding: var(--spacing-4) var(--spacing-8);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: var(--spacing-3) var(--spacing-8);
     border-radius: var(--radius-lg);
     font-size: var(--text-base);
     font-weight: var(--font-bold);
     text-decoration: none;
-    transition: all var(--transition-base);
+    transition:
+        background-color var(--transition-base),
+        color var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base),
+        filter var(--transition-base),
+        transform var(--transition-fast);
 }
 
 .primaryBtn {
     background: var(--gradient-cta);
     color: var(--text-on-accent);
+    box-shadow: var(--shadow-sm);
 }
 
-.primaryBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-xl);
+@media (hover: hover) {
+    .primaryBtn:hover {
+        filter: brightness(1.06);
+        box-shadow: var(--shadow-lg);
+    }
+}
+
+.primaryBtn:active {
+    transform: scale(0.97);
 }
 
 .secondaryBtn {
-    background: white;
+    background: var(--bg-primary);
     color: var(--accent-primary);
     border: 2px solid var(--accent-primary);
 }
 
-.secondaryBtn:hover {
-    background: var(--accent-primary);
-    color: var(--text-on-accent);
+@media (hover: hover) {
+    .secondaryBtn:hover {
+        background: rgba(var(--accent-primary-rgb, 63 107 92), 0.08);
+        border-color: var(--accent-primary);
+    }
 }
 
+.secondaryBtn:active {
+    transform: scale(0.97);
+}
+
+.primaryBtn:focus-visible,
+.secondaryBtn:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 3px;
+}
+
+/* ── Mobile ───────────────────────────────────────── */
+
 @media (max-width: 768px) {
+    .hero {
+        padding: var(--spacing-8) var(--spacing-4);
+        margin-bottom: var(--spacing-8);
+    }
+
     .hero h1 {
         font-size: var(--text-3xl);
     }
 
     .hero p {
+        font-size: var(--text-base);
+    }
+
+    .section {
+        margin-bottom: var(--spacing-12);
+    }
+
+    .section p {
         font-size: var(--text-base);
     }
 
@@ -311,6 +403,14 @@
         grid-template-columns: 1fr;
     }
 
+    .ctaSection {
+        padding: var(--spacing-8) var(--spacing-4);
+    }
+
+    .ctaSection h2 {
+        font-size: var(--text-2xl);
+    }
+
     .ctaButtons {
         flex-direction: column;
     }
@@ -318,5 +418,9 @@
     .primaryBtn,
     .secondaryBtn {
         width: 100%;
+    }
+
+    .list li {
+        font-size: var(--text-base);
     }
 }

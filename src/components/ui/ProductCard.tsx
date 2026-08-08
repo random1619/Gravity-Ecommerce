@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Check, Eye } from 'lucide-react';
@@ -36,12 +37,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
     onQuickView,
 }) => {
     const { isAuthenticated } = useAuth();
-    const { addToCart, openCart } = useCart();
+    const { addToCart } = useCart();
+    const router = useRouter();
     const [added, setAdded] = useState(false);
     const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : null;
 
     // Quick add: one tap, default size M (the cart merges same-id+size lines),
-    // bag drawer opens as the confirmation. Sizing stays on the product page.
+    // then route to the bag page — the bag is a page, not an overlay.
     const handleQuickAdd = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -52,7 +54,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         addToCart({ id, name, price, imageUrl, size: 'M', category });
         setAdded(true);
         window.setTimeout(() => setAdded(false), 1600);
-        openCart();
+        router.push('/cart');
     };
 
     return (

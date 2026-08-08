@@ -32,7 +32,7 @@ const platforms: Platform[] = [
     statLabel: 'followers',
     icon: <Camera size={22} />,
     preview: '/look1.png',
-    accent: '#E1306C',
+    accent: 'var(--accent-primary)',
   },
   {
     id: 'tiktok',
@@ -44,7 +44,7 @@ const platforms: Platform[] = [
     statLabel: 'likes',
     icon: <Music2 size={22} />,
     preview: '/reel-2.png',
-    accent: '#25F4EE',
+    accent: 'var(--accent-secondary)',
   },
   {
     id: 'x',
@@ -56,7 +56,7 @@ const platforms: Platform[] = [
     statLabel: 'followers',
     icon: <AtSign size={22} />,
     preview: '/look3.png',
-    accent: '#1DA1F2',
+    accent: 'var(--accent-gold)',
   },
 ];
 

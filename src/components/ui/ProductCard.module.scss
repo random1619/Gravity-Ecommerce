@@ -15,16 +15,37 @@
   height: 100%;
   will-change: transform;
 
-  &:hover,
-  &:focus-within {
-    .imageWrapper {
-      box-shadow: var(--shadow-xl), 0 0 0 1px rgba(var(--accent-secondary-rgb), 0.35);
+  /* Hover reveal is gated to devices that actually hover with a fine pointer —
+     on touch/coarse devices :hover sticks after tap and the state lies. Keyboard
+     focus (focus-within) reveals it everywhere, so a11y never depends on hover. */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover,
+    &:focus-within {
+      .imageWrapper {
+        box-shadow: var(--shadow-xl), 0 0 0 1px rgba(var(--accent-secondary-rgb), 0.35);
 
-      .image {
-        transform: scale(1.06);
+        .image {
+          transform: scale(1.06);
+        }
+      }
+
+      .quickAdd {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .overlay {
+        opacity: 1;
+      }
+
+      .name {
+        color: $accent-secondary;
       }
     }
+  }
 
+  /* Keyboard reveals the action on every device class. */
+  &:focus-within {
     .quickAdd {
       transform: translateY(0);
       opacity: 1;
@@ -39,8 +60,8 @@
     }
   }
 
-  /* Touch devices: no hover — keep the overlay action reachable via tap */
-  @media (hover: none) {
+  /* Touch/coarse devices: no hover — keep the overlay action reachable via tap */
+  @media (hover: none), (pointer: coarse) {
     .overlay {
       opacity: 1;
       background: linear-gradient(to top, rgba(28, 26, 23, 0.55), transparent 55%);
@@ -61,6 +82,15 @@
   border-radius: var(--radius-lg);
   background: $bg-secondary;
   transition: box-shadow $transition-base;
+
+  // The Link wrapping the `fill` Image must be a positioned block — Next/Image
+  // resolves a fill image against its immediate parent, and an inline static <a>
+  // triggers the "invalid position: static" warning and can collapse the image.
+  > a {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
 }
 
 /* === IMAGE === */

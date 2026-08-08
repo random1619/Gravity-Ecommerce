@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { Heart, MessageCircle, ArrowUpRight } from 'lucide-react';
 import styles from './InstagramGrid.module.css';
@@ -27,6 +27,59 @@ const tiles: Tile[] = [
 ];
 
 const community = ['/reel-1.png', '/reel-5.png', '/reel-3.png', '/reel-6.png', '/look1.png', '/look4.png'];
+
+function TileCard({ tile, index }: { tile: Tile; index: number }) {
+  const [liked, setLiked] = useState(false);
+  const [burstKey, setBurstKey] = useState(0);
+
+  const onSheen = (e: React.MouseEvent<HTMLElement>) => {
+    const el = e.currentTarget;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
+    el.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
+  };
+
+  const toggleLike = () => {
+    setLiked((v) => !v);
+    if (!liked) setBurstKey((k) => k + 1);
+  };
+
+  return (
+    <article
+      className={`${styles.tile} ${styles[tile.span]} stagger`}
+      style={{ ['--i' as string]: index }}
+      tabIndex={0}
+      onMouseMove={onSheen}
+    >
+      {tile.tag && <span className={styles.tagChip}>{tile.tag}</span>}
+      <Image
+        src={tile.image}
+        alt={tile.caption}
+        fill
+        sizes="(max-width: 1024px) 50vw, 40vw"
+      />
+      <div className={styles.sheen} aria-hidden="true" />
+      <div className={styles.tileOverlay}>
+        <p className={styles.tileCaption}>{tile.caption}</p>
+        <div className={styles.tileMeta}>
+          <button
+            type="button"
+            className={`${styles.metaBtn} ${liked ? styles.liked : ''}`}
+            onClick={toggleLike}
+            aria-pressed={liked}
+            aria-label={liked ? 'Unlike post' : 'Like post'}
+          >
+            <Heart key={burstKey} size={14} fill={liked ? 'currentColor' : 'none'} />
+            {tile.likes}
+          </button>
+          <span className={styles.metaStat}>
+            <MessageCircle size={14} /> {tile.comments}
+          </span>
+        </div>
+      </div>
+    </article>
+  );
+}
 
 export default function InstagramPage() {
   return (
@@ -60,27 +113,7 @@ export default function InstagramPage() {
 
         <div className={styles.collage}>
           {tiles.map((tile, i) => (
-            <article
-              key={tile.id}
-              className={`${styles.tile} ${styles[tile.span]} stagger`}
-              style={{ ['--i' as string]: i }}
-              tabIndex={0}
-            >
-              {tile.tag && <span className={styles.tagChip}>{tile.tag}</span>}
-              <Image
-                src={tile.image}
-                alt={tile.caption}
-                fill
-                sizes="(max-width: 1024px) 50vw, 40vw"
-              />
-              <div className={styles.tileOverlay}>
-                <p className={styles.tileCaption}>{tile.caption}</p>
-                <div className={styles.tileMeta}>
-                  <span><Heart size={14} /> {tile.likes}</span>
-                  <span><MessageCircle size={14} /> {tile.comments}</span>
-                </div>
-              </div>
-            </article>
+            <TileCard key={tile.id} tile={tile} index={i} />
           ))}
         </div>
 

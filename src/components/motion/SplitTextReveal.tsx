@@ -40,15 +40,19 @@ export default function SplitTextReveal({ text, className = '', delay = 0 }: Spl
       viewport={{ once: true, amount: 0.2 }}
       className={`inline-flex flex-wrap ${className}`}
       style={{ display: 'inline-flex', overflow: 'hidden' }}
-      aria-label={text}
     >
+      {/* Accessible name: a visually-hidden plain-text node carries the real
+          string for assistive tech. The animated per-char layer is aria-hidden.
+          `aria-label` on the wrapper would be prohibited — a plain span has the
+          generic role, which may not be named (axe aria-prohibited-attr). */}
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true" style={{ display: 'contents' }}>
       {words.map((word, wordIndex) => (
         <motion.span
           key={wordIndex}
           variants={wordVariants}
           className="inline-flex mr-[0.25em]"
           style={{ display: 'inline-flex', overflow: 'hidden' }}
-          aria-hidden="true"
         >
           {word.split('').map((char, charIndex) => (
             <motion.span
@@ -62,6 +66,7 @@ export default function SplitTextReveal({ text, className = '', delay = 0 }: Spl
           ))}
         </motion.span>
       ))}
+      </span>
     </motion.span>
   );
 }

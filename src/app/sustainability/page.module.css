@@ -133,17 +133,35 @@
   border-radius: var(--radius-2xl);
   border: 1px solid var(--border-color);
   text-align: left;
-  transition: all var(--transition-base);
+  transition:
+    transform var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
-.pillarCard:hover {
-  transform: translateY(-5px);
-  border-color: var(--accent-success);
-  box-shadow: var(--shadow-lg);
+@media (hover: hover) {
+  .pillarCard:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-success);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+.pillarCard:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 3px;
 }
 
 .icon {
-  font-size: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-xl);
+  color: var(--accent-success);
+  background: rgba(var(--accent-success-rgb), 0.12);
+  box-shadow: 0 0 0 6px rgba(var(--accent-success-rgb), 0.06);
   margin-bottom: var(--spacing-4);
 }
 

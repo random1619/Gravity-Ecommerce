@@ -1,433 +1,352 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import Link from 'next/link';
+import React, {
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import {
+    motion,
+    AnimatePresence,
+    useReducedMotion,
+} from 'framer-motion';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import styles from './HeroSlider.module.css';
-import { ChevronLeft, ChevronRight, ArrowRight, Pause, Play } from 'lucide-react';
-import { motion, AnimatePresence, useReducedMotion, usePresence } from 'framer-motion';
 
-const AUTOPLAY_MS = 6000;
+/* ── Slide data ─────────────────────────────────────────────────── */
+interface Slide {
+    id: string;
+    image: string;
+    kicker: string;
+    title: string;
+    accent: string;
+    subtitle: string;
+    cta: string;
+    link: string;
+}
 
-const slides = [
+const SLIDES: Slide[] = [
     {
-        id: 1,
+        id: 'new-arrivals',
         image: '/slider/slide1_v2.png',
+        kicker: 'Drop 04 · Winter ’26',
         title: 'New arrivals,',
         accent: 'quietly loud.',
-        subtitle: 'Fresh styles for campus life.',
-        cta: 'Shop Now',
-        link: '/shop?category=new',
-        tag: 'Just Dropped',
+        subtitle: 'Heavyweight fabrics, garment-dyed, built to outlast the semester.',
+        cta: 'Shop the drop',
+        link: '/shop',
     },
     {
-        id: 2,
+        id: 'under-999',
         image: '/slider/slide2_v2.png',
+        kicker: 'The value edit',
         title: 'Under ₹999,',
         accent: 'no compromise.',
-        subtitle: 'Budget fits with premium energy.',
-        cta: 'Explore Deals',
-        link: '/shop?maxPrice=999',
-        tag: 'Best Value',
+        subtitle: 'Everyday staples engineered for rotation, priced for a student budget.',
+        cta: 'Shop under ₹999',
+        link: '/shop?filter=under-999',
     },
     {
-        id: 3,
+        id: 'student-discount',
         image: '/slider/slide3_v2.png',
+        kicker: 'Student programme',
         title: 'Students take',
         accent: '20% off.',
-        subtitle: 'Verify once, save on every drop.',
-        cta: 'Verify Now',
+        subtitle: 'Verify once with your institution email and save on every order.',
+        cta: 'Get verified',
         link: '/discount',
-        tag: 'Exclusive',
     },
 ];
 
-// Copy choreography — staggered rise on enter, quick upward lift on exit,
-// so text leaves *with* the curtain instead of being cut by it.
-const copyStagger = {
-    show: {
-        transition: { staggerChildren: 0.09, delayChildren: 0.45 },
-    },
-    exit: {
-        transition: { staggerChildren: 0.045, staggerDirection: -1 },
-    },
+const COUNT = SLIDES.length;
+const AUTOPLAY_MS = 6500;
+
+/* Peek offsets for the cards stacked behind the front one. */
+const STACK = [
+    { scale: 0.94, y: 18, opacity: 0.9 },
+    { scale: 0.88, y: 34, opacity: 0.6 },
+];
+
+/* Springs — stiffness/damping tuned to feel physical, not bouncy. */
+const springSnappy = { type: 'spring', stiffness: 380, damping: 30, mass: 0.8 } as const;
+const springReturn = { type: 'spring', stiffness: 320, damping: 28, mass: 0.9 } as const;
+
+/* Entrance — one idea, done once. The card lifts 12px and settles; the copy
+   fades up with it. No staggered masks, no sweep, no pulse: restraint reads
+   as confidence. Soft tween, not a spring, so it doesn't overshoot. */
+const enterEase = [0.22, 1, 0.36, 1] as const;
+const cardEnter = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { duration: 0.4, ease: enterEase } },
+};
+const copyEnter = {
+    hidden: { opacity: 0, y: 8 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: enterEase, delay: 0.08 } },
 };
 
-const copyItem = {
-    hidden: { opacity: 0, y: 26 },
-    show: {
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] as const },
-    },
-    exit: {
-        opacity: 0,
-        y: -16,
-        transition: { duration: 0.32, ease: [0.4, 0, 1, 1] as const },
-    },
-};
-
-const titleLineReveal = {
-    hidden: { y: '110%' },
-    show: {
-        y: 0,
-        transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const },
-    },
-    exit: {
-        y: '-110%',
-        transition: { duration: 0.4, ease: [0.4, 0, 1, 1] as const },
-    },
-};
-
-interface SlideContentProps {
-    slide: (typeof slides)[number];
-    shouldReduceMotion: boolean | null;
-}
-
-// Slide copy block. `usePresence` tells us when AnimatePresence is unmounting
-// this slide; while exiting we pull it out of the a11y tree and tab order so
-// its CTAs aren't reachable or announced while the curtain is wiping it away.
-const SlideContent: React.FC<SlideContentProps> = ({ slide, shouldReduceMotion }) => {
-    const [isPresent] = usePresence();
-    const heading = (
-        <>
-            <span className={styles.titleLine}>
-                <motion.span variants={shouldReduceMotion ? undefined : titleLineReveal}>
-                    {slide.title}
-                </motion.span>
-            </span>
-            <span className={`${styles.titleLine} ${styles.titleAccent}`}>
-                <motion.span variants={shouldReduceMotion ? undefined : titleLineReveal}>
-                    {slide.accent}
-                </motion.span>
-            </span>
-        </>
-    );
-
-    return (
-        <motion.div
-            className={styles.contentInner}
-            variants={shouldReduceMotion ? undefined : copyStagger}
-            initial="hidden"
-            animate="show"
-            exit="exit"
-            aria-hidden={!isPresent}
-            // inert removes links/buttons from tab order + AT while exiting.
-            // Cast: React types lag the `inert` attribute.
-            {...({ inert: isPresent ? undefined : '' } as Record<string, unknown>)}
-        >
-            <motion.span
-                variants={shouldReduceMotion ? undefined : copyItem}
-                className={styles.kicker}
-                aria-hidden="true"
-            >
-                {slide.tag}
-            </motion.span>
-            {/* Only one slide is mounted as present at a time, so a single h1
-                exists in the DOM — the visible slide IS the page's headline. */}
-            <h1 className={styles.title}>{heading}</h1>
-            <motion.p
-                variants={shouldReduceMotion ? undefined : copyItem}
-                className={styles.subtitle}
-            >
-                {slide.subtitle}
-            </motion.p>
-            <motion.div
-                variants={shouldReduceMotion ? undefined : copyItem}
-                className={styles.ctaRow}
-            >
-                <Link className={styles.ctaLink} href={slide.link}>
-                    <span className={styles.ctaLabel}>{slide.cta}</span>
-                    <ArrowRight size={16} className={styles.ctaIcon} />
-                </Link>
-                <Link className={styles.ctaSecondary} href="/shop">
-                    Browse All
-                </Link>
-            </motion.div>
-        </motion.div>
-    );
-};
-
+/* ════════════════════════════════════════════════════════════════ */
 const HeroSlider: React.FC = () => {
     const shouldReduceMotion = useReducedMotion();
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
-    const [direction, setDirection] = useState(1); // 1 = next, -1 = prev
-    const [dragging, setDragging] = useState(false);
+    const [hasMounted, setHasMounted] = useState(false);
+    useEffect(() => setHasMounted(true), []);
+    /* useReducedMotion() is null on the server — gate motion until mounted so
+       SSR and the first client render are identical. */
+    const motionOn = hasMounted && !shouldReduceMotion;
+
+    const [index, setIndex] = useState(0);
+    const [paused, setPaused] = useState(false);
     const [inView, setInView] = useState(true);
-    const [userPaused, setUserPaused] = useState(false);
-    const pointerStart = useRef<number | null>(null);
-    const pointerDelta = useRef(0);
-    const containerRef = useRef<HTMLDivElement>(null);
 
-    // Pause autoplay when the carousel scrolls out of view — no point animating
-    // (and announcing slide changes) for a frame nobody is looking at.
+    const rootRef = useRef<HTMLElement | null>(null);
+    const progressRef = useRef(0);
+    const rafRef = useRef<number | null>(null);
+    const lastTsRef = useRef(0);
+    const trackFillRef = useRef<HTMLSpanElement | null>(null);
+
+
+    const goTo = useCallback((next: number) => {
+        setIndex((prev) => {
+            const n = ((next % COUNT) + COUNT) % COUNT;
+            if (n !== prev) progressRef.current = 0;
+            return n;
+        });
+    }, []);
+
+    /* ── Autoplay: rAF loop so the single track fills in real time ── */
+    const autoplayActive = motionOn && !paused && inView;
+
     useEffect(() => {
-        const el = containerRef.current;
+        if (!autoplayActive) {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
+            return;
+        }
+        lastTsRef.current = 0;
+        const tick = (ts: number) => {
+            if (!lastTsRef.current) lastTsRef.current = ts;
+            const dt = ts - lastTsRef.current;
+            lastTsRef.current = ts;
+            progressRef.current += dt / AUTOPLAY_MS;
+            if (trackFillRef.current) {
+                trackFillRef.current.style.transform = `scaleX(${Math.min(progressRef.current, 1)})`;
+            }
+            if (progressRef.current >= 1) {
+                progressRef.current = 0;
+                setIndex((i) => (i + 1) % COUNT);
+                return; // effect re-runs when index changes
+            }
+            rafRef.current = requestAnimationFrame(tick);
+        };
+        rafRef.current = requestAnimationFrame(tick);
+        return () => {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
+        };
+    }, [autoplayActive, index]);
+
+    /* Pause when scrolled out of view. */
+    useEffect(() => {
+        const el = rootRef.current;
         if (!el || typeof IntersectionObserver === 'undefined') return;
-        const obs = new IntersectionObserver(
-            (entries) => setInView(entries[0].isIntersecting),
-            { threshold: 0.25 }
+        const io = new IntersectionObserver(
+            ([entry]) => setInView(entry.isIntersecting),
+            { threshold: 0.3 }
         );
-        obs.observe(el);
-        return () => obs.disconnect();
+        io.observe(el);
+        return () => io.disconnect();
     }, []);
 
-    const nextSlide = useCallback(() => {
-        setDirection(1);
-        setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, []);
+    /* Keyboard actions never animate — move instantly (emil-design-eng). */
+    const handleKey = useCallback(
+        (e: React.KeyboardEvent) => {
+            if (e.key === 'ArrowRight') { e.preventDefault(); goTo(index + 1); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(index - 1); }
+        },
+        [goTo, index]
+    );
 
-    const prevSlide = useCallback(() => {
-        setDirection(-1);
-        setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-    }, []);
-
-    const goToSlide = (index: number) => {
-        if (index === currentSlide) return;
-        setDirection(index > currentSlide ? 1 : -1);
-        setCurrentSlide(index);
-    };
-
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (event.key === 'ArrowRight') {
-            nextSlide();
-        }
-        if (event.key === 'ArrowLeft') {
-            prevSlide();
-        }
-        if (event.key === ' ') {
-            event.preventDefault();
-            setUserPaused((prev) => !prev);
-        }
-    };
-
-    // Pointer drag — horizontal swipe/drag scrubs direction, release decides.
-    // Skips drags that start on interactive controls (links, buttons).
-    const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-        if (shouldReduceMotion) return;
-        if ((e.target as HTMLElement).closest('a, button')) return;
-        pointerStart.current = e.clientX;
-        pointerDelta.current = 0;
-        setDragging(true);
-        setIsPaused(true);
-    };
-
-    const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-        if (pointerStart.current === null) return;
-        pointerDelta.current = e.clientX - pointerStart.current;
-    };
-
-    const endDrag = () => {
-        if (pointerStart.current === null) return;
-        const delta = pointerDelta.current;
-        pointerStart.current = null;
-        pointerDelta.current = 0;
-        setDragging(false);
-        setIsPaused(false);
-        if (Math.abs(delta) > 60) {
-            if (delta < 0) nextSlide();
-            else prevSlide();
-        }
-    };
-
-    // Auto-play — paused on hover/focus/drag, when scrolled out of view, when the
-    // user explicitly pauses, and fully off when reduced motion is requested.
-    useEffect(() => {
-        if (!isPaused && !userPaused && inView && !shouldReduceMotion) {
-            const interval = setInterval(nextSlide, AUTOPLAY_MS);
-            return () => clearInterval(interval);
-        }
-    }, [isPaused, userPaused, inView, shouldReduceMotion, nextSlide]);
-
-    // Editorial curtain reveal — angled clip-path wipe with slow Ken Burns settle.
-    // Reduced motion falls back to a plain crossfade (no geometry changes).
-    const slideVariants = shouldReduceMotion
-        ? {
-              enter: { opacity: 0 },
-              center: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' as const } },
-              exit: { opacity: 0, transition: { duration: 0.3, ease: 'easeIn' as const } },
-          }
-        : {
-              enter: (dir: number) => ({
-                  clipPath: dir > 0
-                      ? 'polygon(100% 0%, 100% 0%, 88% 100%, 88% 100%)'
-                      : 'polygon(0% 0%, 0% 0%, 12% 100%, 12% 100%)',
-                  scale: 1.12,
-              }),
-              center: {
-                  clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
-                  scale: 1,
-                  transition: {
-                      clipPath: { duration: 0.9, ease: [0.76, 0, 0.24, 1] as const },
-                      scale: { duration: 6, ease: 'linear' as const },
-                  },
-              },
-              exit: (dir: number) => ({
-                  clipPath: dir > 0
-                      ? 'polygon(0% 0%, 12% 0%, 0% 100%, 0% 100%)'
-                      : 'polygon(88% 0%, 100% 0%, 100% 100%, 88% 100%)',
-                  scale: 1.05,
-                  transition: {
-                      clipPath: { duration: 0.7, ease: [0.76, 0, 0.24, 1] as const },
-                      scale: { duration: 0.7, ease: 'easeIn' as const },
-                  },
-              }),
-          };
-
-    const slide = slides[currentSlide];
-    // Countdown ring geometry (r = 15.5 → circumference ≈ 97.4)
-    const RING_C = 97.4;
+    const front = SLIDES[index];
+    const behind1 = SLIDES[(index + 1) % COUNT];
+    const behind2 = SLIDES[(index + 2) % COUNT];
 
     return (
-        <div
-            ref={containerRef}
-            className={`${styles.sliderContainer} ${dragging ? styles.dragging : ''}`}
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-            onFocusCapture={() => setIsPaused(true)}
-            onBlurCapture={() => setIsPaused(false)}
-            onKeyDown={handleKeyDown}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={endDrag}
-            onPointerCancel={endDrag}
-            role="region"
+        <section
+            ref={rootRef}
+            className={styles.deck}
             aria-roledescription="carousel"
-            aria-label="Featured promotions"
-            tabIndex={0}
+            aria-label="Featured drops"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            onFocus={() => setPaused(true)}
+            onBlur={() => setPaused(false)}
         >
-            <div className={styles.slider}>
-                <AnimatePresence initial={false} custom={direction} mode="popLayout">
+            {/* ── Card stack ── */}
+            <div
+                className={styles.stack}
+                role="group"
+                tabIndex={0}
+                onKeyDown={handleKey}
+                aria-label={`Slide ${index + 1} of ${COUNT}: ${front.title} ${front.accent}`}
+            >
+                {/* back card */}
+                <div
+                    className={styles.cardGhost}
+                    style={{ transform: `translateY(${STACK[1].y}px) scale(${STACK[1].scale})`, opacity: STACK[1].opacity }}
+                    aria-hidden
+                >
+                    <CardFace slide={behind2} dim />
+                </div>
+
+                {/* middle card — sits just behind the front, static depth */}
+                <motion.div
+                    className={styles.cardGhost}
+                    style={{ scale: STACK[0].scale }}
+                    initial={false}
+                    animate={{ y: STACK[0].y, opacity: STACK[0].opacity }}
+                    transition={springReturn}
+                    aria-hidden
+                >
+                    <CardFace slide={behind1} dim />
+                </motion.div>
+
+                {/* front card — simple crossfade, no movement */}
+                <AnimatePresence mode="popLayout">
                     <motion.div
-                        key={currentSlide}
-                        custom={direction}
-                        variants={slideVariants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        className={styles.slide}
-                        drag={shouldReduceMotion ? false : 'x'}
-                        dragConstraints={{ left: 0, right: 0 }}
-                        dragElastic={0.12}
-                        dragMomentum={false}
-                        onDragStart={() => {
-                            setDragging(true);
-                            setIsPaused(true);
-                        }}
-                        onDragEnd={(_e, info) => {
-                            setDragging(false);
-                            setIsPaused(false);
-                            if (info.offset.x < -70) nextSlide();
-                            else if (info.offset.x > 70) prevSlide();
-                        }}
-                        style={{ touchAction: 'pan-y' }}
+                        key={front.id}
+                        className={styles.cardFront}
+                        variants={motionOn ? cardEnter : undefined}
+                        initial={motionOn ? 'hidden' : false}
+                        animate="show"
+                        exit={{ opacity: 0, transition: { duration: 0.28, ease: 'easeOut' } }}
                     >
-                        <Image
-                            src={slide.image}
-                            alt={slide.title}
-                            fill
-                            priority
-                            draggable={false}
-                            className={styles.slideImage}
-                        />
-                        <div className={styles.overlay} />
-                        <div className={styles.watermark} aria-hidden>
-                            {String(currentSlide + 1).padStart(2, '0')}
-                        </div>
-                        <div className={styles.content}>
-                            {/* Exactly one slide is present at a time, so the per-slide
-                                h1 is the page's single h1. Exiting slides go inert +
-                                aria-hidden (inside SlideContent) so their CTAs leave the
-                                tab order and the a11y tree while the curtain plays. */}
-                            <SlideContent slide={slide} shouldReduceMotion={shouldReduceMotion} />
-                        </div>
+                        <CardFace slide={front} motionOn={motionOn} />
                     </motion.div>
                 </AnimatePresence>
             </div>
 
-            {/* Navigation Arrows */}
-            <button
-                className={`${styles.nav} ${styles.navPrev}`}
-                onClick={prevSlide}
-                aria-label="Previous slide"
-            >
-                <ChevronLeft size={20} className={styles.navIcon} />
-            </button>
-            <button
-                className={`${styles.nav} ${styles.navNext}`}
-                onClick={nextSlide}
-                aria-label="Next slide"
-            >
-                <ChevronRight size={20} className={styles.navIcon} />
-            </button>
-
-            {/* Visible pause/play — WCAG 2.2.2 requires a way to stop auto-advancing
-                content. Hidden-pause-on-hover alone doesn't count for touch/keyboard. */}
-            {!shouldReduceMotion && (
-                <button
-                    type="button"
-                    className={styles.pauseToggle}
-                    onClick={() => setUserPaused((prev) => !prev)}
-                    aria-label={userPaused ? 'Play slide rotation' : 'Pause slide rotation'}
-                    aria-pressed={userPaused}
-                >
-                    {userPaused ? <Play size={14} /> : <Pause size={14} />}
-                </button>
-            )}
-
-            {/* Chapter markers — numbered editorial indicators with per-chapter fill.
-                Accessible name comes from the visible text ("01 Just Dropped"),
-                which voice control can then match verbatim. */}
-            <div className={styles.indicators}>
-                {slides.map((s, index) => (
-                    <button
-                        key={index}
-                        className={`${styles.chapter} ${index === currentSlide ? styles.chapterActive : ''}`}
-                        onClick={() => goToSlide(index)}
-                        aria-current={index === currentSlide ? 'true' : undefined}
-                    >
-                        <span className={styles.chapterNum}>{String(index + 1).padStart(2, '0')}</span>
-                        <span className={styles.chapterTag}>{s.tag}</span>
-                        <span className={styles.chapterLine} aria-hidden>
-                            {index === currentSlide && !shouldReduceMotion && (
-                                <span
-                                    key={`fill-${currentSlide}`}
-                                    className={styles.chapterFill}
-                                    style={{
-                                        animationDuration: `${AUTOPLAY_MS}ms`,
-                                        animationPlayState: isPaused || userPaused || !inView ? 'paused' : 'running',
-                                    }}
-                                />
-                            )}
-                        </span>
-                    </button>
-                ))}
-            </div>
-
-            {/* Index chip + countdown ring — the autoplay heartbeat */}
-            <div className={styles.slideCounter} aria-hidden>
-                <svg className={styles.ring} viewBox="0 0 40 40">
-                    <circle className={styles.ringTrack} cx="20" cy="20" r="15.5" />
-                    {!shouldReduceMotion && (
-                        <circle
-                            key={`ring-${currentSlide}`}
-                            className={styles.ringProgress}
-                            cx="20"
-                            cy="20"
-                            r="15.5"
-                            strokeDasharray={RING_C}
-                            style={{
-                                animationDuration: `${AUTOPLAY_MS}ms`,
-                                animationPlayState: isPaused || userPaused || !inView ? 'paused' : 'running',
-                            }}
+            {/* ── Controls: dots · one progress track · arrows ── */}
+            <div className={styles.controls}>
+                <div className={styles.dots} role="tablist" aria-label="Slides">
+                    {SLIDES.map((s, i) => (
+                        <button
+                            key={s.id}
+                            role="tab"
+                            aria-selected={i === index}
+                            aria-label={`Slide ${i + 1}: ${s.kicker}`}
+                            className={`${styles.dot} ${i === index ? styles.dotActive : ''}`}
+                            onClick={() => goTo(i)}
                         />
-                    )}
-                </svg>
-                <span>{String(currentSlide + 1).padStart(2, '0')}</span>
-                <span className={styles.counterDivider}></span>
-                <span>{String(slides.length).padStart(2, '0')}</span>
+                    ))}
+                </div>
+
+                {/* The single autoplay indicator — fills, freezes when paused. */}
+                <div
+                    className={`${styles.track} ${paused && motionOn ? styles.trackPaused : ''}`}
+                    role="progressbar"
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={Math.round(progressRef.current * 100)}
+                    aria-label="Autoplay progress"
+                >
+                    <span ref={trackFillRef} className={styles.trackFill} />
+                </div>
+
+                <div className={styles.arrows}>
+                    <button
+                        className={styles.arrow}
+                        onClick={() => goTo(index - 1)}
+                        aria-label="Previous slide"
+                    >
+                        <ArrowRight size={16} strokeWidth={2} style={{ transform: 'scaleX(-1)' }} />
+                    </button>
+                    <button
+                        className={styles.arrow}
+                        onClick={() => goTo(index + 1)}
+                        aria-label="Next slide"
+                    >
+                        <ArrowRight size={16} strokeWidth={2} />
+                    </button>
+                </div>
             </div>
+        </section>
+    );
+};
+
+/* ── Card face: image + copy travel as one physical object ───────
+   Front card (motionOn) gets parallax image, slow-settle zoom, a sheen
+   sweep, and staggered masked copy. Ghost cards stay static + dim. */
+interface CardFaceProps {
+    slide: Slide;
+    dim?: boolean;
+    motionOn?: boolean;
+}
+
+const CardFace: React.FC<CardFaceProps> = ({ slide, dim, motionOn = false }) => {
+    const image = (
+        <Image
+            src={slide.image}
+            alt=""
+            fill
+            priority={!dim}
+            sizes="(max-width: 768px) 92vw, 1080px"
+            className={styles.faceImg}
+            draggable={false}
+        />
+    );
+
+    return (
+        <div className={`${styles.face} ${dim ? styles.faceDim : ''}`}>
+            <div className={styles.faceMedia}>
+                {image}
+                <div className={styles.faceScrim} aria-hidden />
+            </div>
+
+            {dim ? (
+                <div className={styles.faceCopy}>
+                    <span className={styles.kicker}>{slide.kicker}</span>
+                    <h2 className={styles.title}>
+                        {slide.title}{' '}
+                        <span className={styles.titleAccent}>{slide.accent}</span>
+                    </h2>
+                    <p className={styles.subtitle}>{slide.subtitle}</p>
+                </div>
+            ) : motionOn ? (
+                <motion.div
+                    className={styles.faceCopy}
+                    variants={copyEnter}
+                    initial="hidden"
+                    animate="show"
+                >
+                    <span className={styles.kicker}>{slide.kicker}</span>
+                    <h2 className={styles.title}>
+                        {slide.title}{' '}
+                        <span className={styles.titleAccent}>{slide.accent}</span>
+                    </h2>
+                    <p className={styles.subtitle}>{slide.subtitle}</p>
+                    <div>
+                        <Link href={slide.link} className={styles.cta}>
+                            <span className={styles.ctaLabel}>{slide.cta}</span>
+                            <ArrowUpRight size={15} strokeWidth={2.2} className={styles.ctaIcon} />
+                        </Link>
+                    </div>
+                </motion.div>
+            ) : (
+                <div className={styles.faceCopy}>
+                    <span className={styles.kicker}>{slide.kicker}</span>
+                    <h2 className={styles.title}>
+                        {slide.title}{' '}
+                        <span className={styles.titleAccent}>{slide.accent}</span>
+                    </h2>
+                    <p className={styles.subtitle}>{slide.subtitle}</p>
+                    <Link href={slide.link} className={styles.cta}>
+                        {slide.cta}
+                        <ArrowUpRight size={15} strokeWidth={2.2} className={styles.ctaIcon} />
+                    </Link>
+                </div>
+            )}
         </div>
     );
 };

@@ -1,4 +1,6 @@
+/* Apple-design pass — pointer-down feedback, gradient seams, material depth, type sizing */
 .productPage {
+    --press: 120ms cubic-bezier(0.2, 0, 0.2, 1);
     padding: var(--spacing-16) var(--spacing-4);
     min-height: 100vh;
 }
@@ -62,6 +64,12 @@
     box-shadow: var(--shadow-md);
 }
 
+/* pointer-down: framer owns the press scale; CSS collapses the lift shadow */
+.thumb:active {
+    box-shadow: var(--shadow-xs);
+    transition-duration: 120ms;
+}
+
 .thumb img {
     object-fit: cover;
 }
@@ -90,6 +98,8 @@
     font-family: var(--font-display);
     font-weight: var(--font-extrabold);
     line-height: var(--leading-tight);
+    /* display size (~36px) reads tighter */
+    letter-spacing: -0.02em;
 }
 
 .priceRow {
@@ -102,6 +112,7 @@
     font-size: var(--text-3xl);
     font-weight: var(--font-extrabold);
     font-family: var(--font-display);
+    letter-spacing: -0.015em;
 }
 
 .oldPrice {
@@ -117,10 +128,16 @@
     border-radius: var(--radius-full);
     font-weight: var(--font-bold);
     font-size: var(--text-sm);
-    box-shadow: var(--shadow-md);
+    letter-spacing: 0.01em;
+    /* floating pill: bright top edge over the drop shadow */
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), var(--shadow-md);
 }
 
-.selector h3 {
+[data-theme='dark'] .discount {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), var(--shadow-md);
+}
+
+.selectorLabel {
     font-size: var(--text-base);
     font-weight: var(--font-bold);
     margin-bottom: var(--spacing-4);
@@ -168,13 +185,19 @@
 .sizeGuide {
     font-size: var(--text-sm);
     text-decoration: underline;
+    text-underline-offset: 3px;
     color: var(--accent-primary);
     cursor: pointer;
-    transition: color var(--transition-fast);
+    transition: color var(--transition-fast), transform var(--press);
 }
 
 .sizeGuide:hover {
     color: var(--accent-primary-hover);
+}
+
+.sizeGuide:active {
+    transform: scale(0.96);
+    transition-duration: 120ms;
 }
 
 .actions {
@@ -199,7 +222,13 @@
     gap: var(--spacing-6);
 }
 
-.detailItem h4 {
+/* Real headings now (h2) but styled as labels — keeps document outline valid
+   without inflating the visual hierarchy. */
+.detailLabel {
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    font-family: var(--font-body);
+    letter-spacing: 0;
     margin-bottom: var(--spacing-1);
 }
 
@@ -212,13 +241,42 @@
 .relatedSection {
     margin-top: var(--spacing-16);
     padding-top: var(--spacing-16);
-    border-top: 1px solid var(--border-color);
+    /* scroll-edge seam: gradient hairline that dissolves at the margins */
+    border-top: none;
+    background:
+        linear-gradient(90deg, transparent, var(--border-color) 18%, var(--border-color) 82%, transparent) top / 100% 1px no-repeat;
+    background-color: transparent;
 }
 
-.reviewsSection h2,
-.relatedSection h2 {
+/* Editorial section headers — eyebrow + display title with italic accent,
+   the same voice the homepage testimonials use (page.module.scss). */
+.sectionHeader {
     margin-bottom: var(--spacing-12);
+}
+
+.eyebrow {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    /* Small caps wants positive tracking for legibility */
+    letter-spacing: 0.14em;
     text-transform: uppercase;
+    color: var(--accent-secondary);
+    margin-bottom: var(--spacing-3);
+}
+
+.sectionTitle {
+    font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+    font-weight: var(--font-semibold);
+    font-family: var(--font-display);
+    /* Size-specific discipline: large display text tightens tracking AND leading together */
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+}
+
+.sectionTitle em {
+    font-style: italic;
+    color: var(--accent-secondary);
 }
 
 .reviewsGrid {
@@ -233,26 +291,49 @@
 }
 
 .reviewCard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
     background: var(--bg-secondary);
     padding: var(--spacing-6);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-base);
     will-change: transform;
+    height: 100%;
+    margin: 0;
+}
+
+.reviewCard:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* framer owns hover lift; on press the card settles instead */
+.reviewCard:active {
+    box-shadow: var(--shadow-xs);
+    transition-duration: 120ms;
 }
 
 .rating {
-    color: var(--warning-border);
-    margin-bottom: var(--spacing-2);
+    display: inline-flex;
+    gap: 3px;
+    color: var(--accent-gold);
 }
 
 .comment {
-    font-size: 16px;
-    font-style: italic;
-    margin-bottom: var(--spacing-2);
+    font-size: 0.98rem;
+    font-style: normal;
+    /* Quote reads at body size — relaxed leading, no display tracking */
+    line-height: 1.62;
+    letter-spacing: 0;
+    color: var(--text-secondary);
 }
 
 .user {
     font-weight: 700;
-    font-size: 14px;
+    font-size: var(--text-sm);
+    color: var(--text-primary);
 }
 
 .relatedGrid {
@@ -273,8 +354,38 @@
 }
 
 @media (max-width: 768px) {
+    /* Sticky gallery + single column = the image pins at top:100px and never
+       releases (page is taller than any scroll). Static on mobile. */
+    .gallery {
+        position: static;
+    }
+
+    /* Loading skeleton reserves the same vertical band the loaded page uses,
+       so the swap doesn't move the fold. */
+    .productPage {
+        min-height: 100vh;
+    }
+
     .name {
         font-size: 32px;
+        letter-spacing: -0.015em;
+    }
+
+    /* Thumbnail rail scrolls horizontally instead of wrapping — keeps the
+       gallery block height stable between loading (3 placeholders) and
+       loaded (N real thumbs) states. */
+    .thumbnails {
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+    }
+
+    .thumbnails::-webkit-scrollbar {
+        display: none;
+    }
+
+    .thumb {
+        flex: 0 0 auto;
     }
 
     .relatedGrid {
@@ -283,5 +394,30 @@
 
     .reviewsGrid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Reduced motion: kill every press/scale, keep opacity + color fades */
+@media (prefers-reduced-motion: reduce) {
+    .sizeGuide:active {
+        transform: none;
+    }
+
+    .thumb:active,
+    .reviewCard:active {
+        transition-duration: 0.01ms;
+    }
+
+    .sizeGuide,
+    .reviewCard {
+        transition-duration: 0.01ms;
+    }
+}
+
+/* Reduced transparency: flatten material edges to plain shadows */
+@media (prefers-reduced-transparency: reduce) {
+    .discount,
+    [data-theme='dark'] .discount {
+        box-shadow: var(--shadow-md);
     }
 }

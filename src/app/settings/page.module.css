@@ -15,30 +15,70 @@
     margin-bottom: var(--spacing-16);
 }
 
+/* ── Gate — quiet-luxury surface card (same idiom as orders/wishlist) ── */
 .emptyState {
+    max-width: 460px;
+    margin: var(--spacing-12) auto;
+    padding: var(--spacing-16) var(--spacing-10);
     text-align: center;
-    padding: var(--spacing-16);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.emptyState h1 {
-    font-size: 28px;
-    margin-bottom: var(--spacing-4);
-}
-
-.emptyState p {
-    color: var(--text-secondary);
+.emptyIcon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--accent-primary);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0 0 8px rgba(var(--accent-primary-rgb, 63 107 92), 0.07);
     margin-bottom: var(--spacing-6);
 }
 
+.emptyTitle {
+    font-size: 28px;
+    margin-bottom: var(--spacing-3);
+}
+
+.emptyText {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-8);
+    max-width: 34ch;
+    line-height: 1.6;
+}
+
 .button {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
     background: var(--accent-primary);
     color: var(--text-on-accent);
     padding: 12px 24px;
+    min-height: 44px;
     border-radius: var(--radius-md);
     font-weight: 600;
+    transition: filter var(--transition-fast);
 }
 
+@media (hover: hover) {
+    .button:hover {
+        filter: brightness(1.06);
+    }
+}
+
+.button:active {
+    transform: scale(0.97);
+}
+
+/* ── Sections ───────────────────────────────────────────────────── */
 .sections {
     display: flex;
     flex-direction: column;
@@ -52,29 +92,47 @@
 }
 
 .sectionTitle {
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: 13px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     color: var(--text-tertiary);
+}
+
+.sectionTitle svg {
+    color: var(--accent-primary);
 }
 
 .card {
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     padding: var(--spacing-6);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+@media (hover: hover) {
+    .card:hover {
+        border-color: rgba(var(--accent-primary-rgb, 63 107 92), 0.35);
+        box-shadow: var(--shadow-sm);
+    }
 }
 
 .avatar {
     width: 60px;
     height: 60px;
     background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--accent-primary);
     margin-bottom: var(--spacing-4);
 }
 
@@ -107,20 +165,27 @@
     margin: 0;
 }
 
+/* ── Toggle — motion.span supplies the thumb spring; CSS is static ── */
 .toggle {
     width: 50px;
     height: 28px;
+    flex-shrink: 0;
     border-radius: 14px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     cursor: pointer;
     position: relative;
-    transition: all 0.3s ease;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .toggle.active {
     background: var(--accent-primary);
     border-color: var(--accent-primary);
+}
+
+.toggle:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
 }
 
 .toggleThumb {
@@ -131,12 +196,7 @@
     height: 20px;
     border-radius: 50%;
     background: white;
-    transition: transform 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.toggle.active .toggleThumb {
-    transform: translateX(22px);
 }
 
 .divider {
@@ -148,6 +208,11 @@
 .dangerBtn {
     width: 100%;
     padding: 12px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
     background: transparent;
     border: 1px solid var(--error-text);
     border-radius: var(--radius-md);
@@ -155,33 +220,50 @@
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: var(--transition-fast);
+    transition: background-color var(--transition-fast);
 }
 
-.dangerBtn:hover {
-    background: var(--color-danger-bg);
+@media (hover: hover) {
+    .dangerBtn:hover {
+        background: var(--color-danger-bg);
+    }
 }
 
+.dangerBtn:focus-visible {
+    outline: 2px solid var(--error-text);
+    outline-offset: 2px;
+}
+
+/* ── Toast — framer-motion handles in/out, CSS is static ────────── */
 .toast {
     position: fixed;
     bottom: 20px;
     right: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
     background: var(--success-text);
     color: var(--text-on-accent);
-    padding: 12px 24px;
+    padding: 12px 20px;
     border-radius: var(--radius-md);
     font-weight: 600;
-    animation: slideIn 0.3s ease;
+    font-size: 14px;
+    box-shadow: var(--shadow-md);
+    z-index: 60;
 }
 
-@keyframes slideIn {
-    from {
-        transform: translateX(100px);
-        opacity: 0;
+@media (max-width: 640px) {
+    .container {
+        padding: var(--spacing-10) var(--spacing-4);
     }
 
-    to {
-        transform: translateX(0);
-        opacity: 1;
+    .emptyState {
+        padding: var(--spacing-12) var(--spacing-6);
+    }
+
+    .toast {
+        right: 12px;
+        left: 12px;
+        justify-content: center;
     }
 }

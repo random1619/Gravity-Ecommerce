@@ -50,7 +50,7 @@
   padding-left: var(--spacing-8);
 }
 
-/* The spine */
+/* The spine — draws itself down as the timeline scrolls in. */
 .timeline::before {
   content: '';
   position: absolute;
@@ -59,6 +59,13 @@
   bottom: 0;
   width: 2px;
   background: linear-gradient(to bottom, var(--accent-secondary), var(--accent-gold), transparent);
+  transform-origin: top;
+  animation: spineDraw 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes spineDraw {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
 }
 
 .tweet {
@@ -73,10 +80,12 @@
   transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth);
 }
 
-.tweet:hover {
-  transform: translateX(4px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--border-strong);
+@media (hover: hover) and (pointer: fine) {
+  .tweet:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-strong);
+  }
 }
 
 /* Node dot on the spine */
@@ -151,22 +160,55 @@
   margin-bottom: var(--spacing-3);
   border: 1px solid var(--border-color);
 }
-.tweetMedia img { object-fit: cover; }
+.tweetMedia img { object-fit: cover; transition: transform var(--transition-smooth); }
+@media (hover: hover) and (pointer: fine) {
+  .tweet:hover .tweetMedia img { transform: scale(1.03); }
+}
 
 .tweetFoot {
   display: flex;
+  align-items: center;
   gap: var(--spacing-6);
   color: var(--text-tertiary);
   font-size: 0.82rem;
   font-family: var(--font-accent);
 }
-.tweetFoot span {
+
+.act {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: color var(--transition-fast);
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  margin: -4px -6px;
+  border-radius: var(--radius-full);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
 }
-.tweet:hover .tweetFoot span { color: var(--text-secondary); }
+.act:active { transform: scale(0.92); }
+
+/* Per-type hover lights, echoing each action's native affordance. */
+@media (hover: hover) and (pointer: fine) {
+  .actReply:hover { color: var(--accent-primary); background: color-mix(in srgb, var(--accent-primary) 10%, transparent); }
+  .actRepost:hover { color: var(--success, #2f9e6e); background: color-mix(in srgb, var(--success, #2f9e6e) 10%, transparent); }
+  .actLike:hover { color: var(--error, #e0245e); background: color-mix(in srgb, var(--error, #e0245e) 10%, transparent); }
+}
+
+/* Active states: repost turns green, like fills red with a pop. */
+.actRepost.on { color: var(--success, #2f9e6e); font-weight: 700; }
+.actLike.on { color: var(--error, #e0245e); font-weight: 700; }
+.actLike.on svg { animation: likePop 380ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+@keyframes likePop {
+  0% { transform: scale(0.6); }
+  55% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
 .time { margin-left: auto; }
 
 @media (max-width: 560px) {
@@ -175,5 +217,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tweet { transition: none; }
+  .timeline::before { animation: none; }
+  .tweet, .tweetMedia img, .act { transition: none; }
+  .actLike.on svg { animation: none; }
 }

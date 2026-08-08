@@ -286,6 +286,15 @@ body {
 body {
   position: relative;
   min-height: 100%;
+  /* Re-declare font aliases here: next/font injects --font-inter/--font-playfair/
+     --font-space-grotesk/--font-jetbrains-mono as classes on <body>, so they are
+     NOT visible at :root (<html> is above <body>). Defining the aliases on body
+     lets var(--font-display) / var(--font-accent) resolve to the real faces
+     everywhere below (e.g. HeroSlider .title, SCSS modules). */
+  --font-body: var(--font-inter), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-playfair), Georgia, 'Times New Roman', serif;
+  --font-accent: var(--font-space-grotesk), var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), 'SF Mono', ui-monospace, monospace;
 }
 
 /* Theme-aware ambient glow (replaces stray blue/red leftovers) */

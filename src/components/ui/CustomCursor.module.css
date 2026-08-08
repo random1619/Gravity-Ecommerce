@@ -1,18 +1,23 @@
 /* ============================================================
-   CUSTOM CURSOR — "Organic Earth" editorial
-   Warm ink dot + trailing accent ring. Theme-aware via the
-   global design tokens, so it flips between terracotta (light)
-   and gold (dark) automatically.
+   CUSTOM CURSOR — "Porcelain & Sage" editorial
+   Ink dot + trailing sage ring. The dot uses mix-blend-mode: difference
+   so it inverts over dark photography instead of disappearing into it.
+   Theme-aware via the global design tokens.
    ============================================================ */
 
 .cursorDot {
     position: fixed;
-    top: -4px; /* half of width — centers the dot on the pointer */
-    left: -4px;
-    width: 8px;
-    height: 8px;
+    top: -5px; /* half of width — centers the dot on the pointer */
+    left: -5px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
+    /* Solid ink dot — readable on the porcelain canvas without any blending.
+       Difference blending against the page's near-white background + the
+       fixed body::before ambient wash rendered the previous white dot
+       effectively invisible on the light theme. */
     background-color: var(--text-primary);
+    box-shadow: 0 0 0 1.5px var(--bg-primary); /* hairline keyline so it never sinks into dark ink */
     pointer-events: none;
     z-index: 9999999;
     will-change: transform;
@@ -23,8 +28,10 @@
     top: 0;
     left: 0;
     border-radius: 50%;
-    border: 1.5px solid var(--accent-secondary);
-    background-color: rgba(var(--accent-secondary-rgb), 0.08);
+    border: 1.5px solid var(--accent-primary);
+    /* Raised from 0.08 — over near-white porcelain that alpha was
+       imperceptible, which is the other half of "cursor not visible." */
+    background-color: rgba(var(--accent-primary-rgb), 0.14);
     pointer-events: none;
     z-index: 9999998;
     display: flex;
@@ -34,7 +41,7 @@
     /* Center on the pointer regardless of animated size. framer-motion
        writes `transform` from x/y; `translate` composes with it. */
     translate: -50% -50%;
-    box-shadow: 0 0 0 0 rgba(var(--accent-secondary-rgb), 0);
+    box-shadow: 0 0 0 0 rgba(var(--accent-primary-rgb), 0);
     transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1),
                 border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -58,8 +65,10 @@
 
 /* Hide the native cursor ONLY while the custom cursor is actually mounted.
    The component toggles `custom-cursor-active` on <body> — so under reduced
-   motion, coarse pointers, or first SSR paint (all cases where the component
-   renders null), the native cursor is left alone. */
+   motion, coarse pointers, iOS, or first SSR paint (all cases where the
+   component renders null), the native cursor is left alone.
+   `!important` because component stylesheets (Navbar, buttons, etc.) set
+   their own `cursor` values and would otherwise override this. */
 :global(body.custom-cursor-active),
 :global(body.custom-cursor-active a),
 :global(body.custom-cursor-active button),
@@ -67,6 +76,11 @@
 :global(body.custom-cursor-active select),
 :global(body.custom-cursor-active textarea),
 :global(body.custom-cursor-active label),
-:global(body.custom-cursor-active [role='button']) {
-    cursor: none;
+:global(body.custom-cursor-active summary),
+:global(body.custom-cursor-active [role='button']),
+:global(body.custom-cursor-active [role='link']),
+:global(body.custom-cursor-active [role='tab']),
+:global(body.custom-cursor-active [data-cursor-text]),
+:global(body.custom-cursor-active [data-cursor='drag']) {
+    cursor: none !important;
 }

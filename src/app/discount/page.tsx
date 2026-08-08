@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import styles from './page.module.css'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import Toast from '@/components/ui/Toast'
@@ -9,6 +10,8 @@ import SplitTextReveal from '@/components/motion/SplitTextReveal'
 import ScrollReveal from '@/components/motion/ScrollReveal'
 import StaggerGrid from '@/components/motion/StaggerGrid'
 import CountUp from '@/components/motion/CountUp'
+import { useAuth } from '@/lib/AuthContext'
+import { STUDENT_VERIFIED_KEY } from '@/lib/discount'
 import {
   GraduationCap,
   Percent,
@@ -25,7 +28,9 @@ import {
   BadgeCheck
 } from 'lucide-react'
 
-const PROMO_CODE = 'GRV-STU-24X'
+/* The real code accepted at checkout (see src/lib/discount.ts). */
+const PROMO_CODE = 'STUDENT20'
+
 const PERKS = [
   {
     icon: Percent,
@@ -87,6 +92,7 @@ const FAQS = [
 ]
 
 export default function StudentDiscount() {
+  const { user } = useAuth()
   const [method, setMethod] = useState<'email' | 'id'>('email')
   const [email, setEmail] = useState('')
   const [fileName, setFileName] = useState<string | null>(null)
@@ -94,6 +100,15 @@ export default function StudentDiscount() {
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  /* Restore a previously verified pass — the discount then applies at checkout. */
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(STUDENT_VERIFIED_KEY) === '1') setStatus('verified')
+    } catch {
+      /* storage unavailable — session-only */
+    }
+  }, [])
 
   useEffect(() => {
     return () => {
@@ -113,8 +128,13 @@ export default function StudentDiscount() {
     setStatus('verifying')
     timerRef.current = setTimeout(() => {
       setStatus('verified')
+      try {
+        localStorage.setItem(STUDENT_VERIFIED_KEY, '1')
+      } catch {
+        /* storage unavailable — pass still shows verified this session */
+      }
       setToastMessage('Student status verified. 20% OFF unlocked on every drop.')
-    }, 2000)
+    }, 1600)
   }
 
   const copyCode = (code: string) => {
@@ -123,6 +143,11 @@ export default function StudentDiscount() {
       setToastMessage(`Code "${code}" copied to clipboard.`)
     }
   }
+
+  const passName =
+    status === 'verified'
+      ? user?.name?.split(' ')[0] || email.split('@')[0] || 'Student'
+      : 'Awaiting'
 
   return (
     <div className={styles.studentPage}>
@@ -193,10 +218,15 @@ export default function StudentDiscount() {
 
         {/* ============ PASS + VERIFICATION ============ */}
         <section className={styles.verifySection} id="verify">
-          {/* The Student Pass */}
+          {/* The Student Pass — materializes in with a spring */}
           <div className={styles.passWrap}>
-            <article
+            <motion.article
               className={`${styles.pass} ${status === 'verified' ? styles.passVerified : ''}`}
+              initial={{ opacity: 0, y: 26, rotate: -7 }}
+              whileInView={{ opacity: 1, y: 0, rotate: -3 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 26, mass: 0.8 }}
+              whileHover={{ rotate: 0, y: -6 }}
             >
               <div className={styles.passTop}>
                 <span className={styles.passBrand}>GRAVITY / CAMPUS</span>
@@ -205,9 +235,7 @@ export default function StudentDiscount() {
 
               <div className={styles.passName}>
                 <span className={styles.passLabel}>Member</span>
-                <span className={styles.passValue}>
-                  {status === 'verified' ? (email.split('@')[0] || 'Student') : 'Awaiting'}
-                </span>
+                <span className={styles.passValue}>{passName}</span>
               </div>
 
               <div className={styles.passMeta}>
@@ -239,7 +267,7 @@ export default function StudentDiscount() {
                 ))}
               </div>
               <span className={styles.passCode}>{PROMO_CODE}</span>
-            </article>
+            </motion.article>
 
             <p className={styles.passHint}>
               This is your digital student pass. Screenshot it or copy the code below
@@ -398,9 +426,8 @@ export default function StudentDiscount() {
             </div>
           </ScrollReveal>
           <StaggerGrid className={styles.perksGrid}>
-            {PERKS.map((perk, i) => (
-              <article className={styles.perkCard} key={perk.title} style={{ ['--i' as string]: i }}>
-                <span className={styles.perkIndex}>{String(i + 1).padStart(2, '0')}</span>
+            {PERKS.map((perk) => (
+              <article className={styles.perkCard} key={perk.title}>
                 <div className={styles.perkIcon}>
                   <perk.icon size={22} />
                 </div>

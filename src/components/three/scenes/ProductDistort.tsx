@@ -7,7 +7,7 @@ import { useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { distortVertexShader } from '@/components/three/shaders/distort.vert';
 import { distortFragmentShader } from '@/components/three/shaders/distort.frag';
-import { productDistortEnabled, DPR_CAP } from '@/lib/three/constants';
+import { DPR_CAP } from '@/lib/three/constants';
 import { useDeviceTier } from '@/hooks/useDeviceTier';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useWebGLSupport } from '@/hooks/useWebGLSupport';
@@ -31,7 +31,7 @@ export default function ProductDistort({ src, alt, className }: ProductDistortPr
   const supported = useWebGLSupport();
   const tier = useDeviceTier();
 
-  if (reduced || !supported || !productDistortEnabled(tier)) {
+  if (reduced || !supported || tier === 'low' || tier === 'mobile') {
     return (
       <Image
         src={src}

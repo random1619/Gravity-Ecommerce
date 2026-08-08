@@ -29,11 +29,6 @@ export function effectsEnabled(tier: DeviceTier): boolean {
   return tier === 'high';
 }
 
-/** Whether the product distortion plane should render (vs plain img fallback). */
-export function productDistortEnabled(tier: DeviceTier): boolean {
-  return tier === 'high' || tier === 'mid';
-}
-
 /** Whether the lookbook R3F plane layer should render (vs pure GSAP). */
 export function lookbookR3FEnabled(tier: DeviceTier): boolean {
   return tier === 'high' || tier === 'mid';

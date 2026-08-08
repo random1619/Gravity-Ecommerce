@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import styles from './page.module.css'
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import SplitTextReveal from '@/components/motion/SplitTextReveal'
@@ -31,39 +32,39 @@ export default function ShippingReturnsPage() {
               <div className={styles.optionCard}>
                 <div className={styles.optionHeader}>
                   <h3>Standard Shipping</h3>
-                  <span className={styles.price}>$5.99</span>
+                  <span className={styles.price}>₹99</span>
                 </div>
                 <p>5-7 business days</p>
                 <ul>
-                  <li>Available to all addresses in the US</li>
+                  <li>Available across India</li>
                   <li>Tracking included</li>
-                  <li>Free on orders over $75</li>
+                  <li>Free on orders over ₹1,499</li>
                 </ul>
               </div>
 
               <div className={styles.optionCard}>
                 <div className={styles.optionHeader}>
                   <h3>Express Shipping</h3>
-                  <span className={styles.price}>$12.99</span>
+                  <span className={styles.price}>₹249</span>
                 </div>
                 <p>2-3 business days</p>
                 <ul>
                   <li>Expedited delivery</li>
                   <li>Priority tracking</li>
-                  <li>Available for most locations</li>
+                  <li>Available for most pin codes</li>
                 </ul>
               </div>
 
               <div className={styles.optionCard}>
                 <div className={styles.optionHeader}>
-                  <h3>Overnight Shipping</h3>
-                  <span className={styles.price}>$24.99</span>
+                  <h3>Same-Day Delivery</h3>
+                  <span className={styles.price}>₹499</span>
                 </div>
-                <p>1 business day</p>
+                <p>Same day</p>
                 <ul>
-                  <li>Next-day delivery</li>
-                  <li>Order by 2 PM EST</li>
-                  <li>Limited to select locations</li>
+                  <li>Delivered by 9 PM</li>
+                  <li>Order by 2 PM IST</li>
+                  <li>Metro cities only</li>
                 </ul>
               </div>
 
@@ -92,8 +93,8 @@ export default function ShippingReturnsPage() {
               receive a shipping confirmation email with tracking information once your order ships.
             </p>
             <div className={styles.infoBox}>
-              <strong>Note:</strong> Orders placed after 2 PM EST will be processed the next business day.
-              Business days are Monday through Friday, excluding holidays.
+              <strong>Note:</strong> Orders placed after 2 PM IST will be processed the next business day.
+              Business days are Monday through Saturday, excluding public holidays.
             </div>
           </section>
         </ScrollReveal>
@@ -222,8 +223,8 @@ export default function ShippingReturnsPage() {
             <h2><SplitTextReveal text="Have Questions?" /></h2>
             <p>Our customer support team is here to help with any shipping or return questions.</p>
             <div className={styles.ctaButtons}>
-              <a href="/contact" className={styles.primaryBtn}>Contact Support</a>
-              <a href="/faq" className={styles.secondaryBtn}>View FAQs</a>
+              <Link href="/contact" className={styles.primaryBtn}>Contact Support</Link>
+              <Link href="/faq" className={styles.secondaryBtn}>View FAQs</Link>
             </div>
           </section>
         </ScrollReveal>

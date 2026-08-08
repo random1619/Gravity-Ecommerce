@@ -65,7 +65,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <SmoothScroll>
                       <PageTransition>
                         <ErrorBoundary>
-                          {children}
+                          {/* Main landmark — every page renders inside this so screen
+                              readers get a "main" region and axe's landmark-one-main passes. */}
+                          <main id="main-content">
+                            {children}
+                          </main>
                         </ErrorBoundary>
                       </PageTransition>
                     </SmoothScroll>

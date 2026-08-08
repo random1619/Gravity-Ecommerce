@@ -7,7 +7,6 @@ import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import ScrollStory from '@/components/motion/ScrollStory';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 
@@ -80,7 +79,6 @@ export default function LookbookPage() {
   const [selectedLook, setSelectedLook] = useState<Look | null>(null);
   const [progress, setProgress] = useState(0);
   const storyRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
   // Scroll-driven parallax: images drift against the track's travel direction.
   // Runs on GSAP's scrub tick — direct style writes, no React re-render.
@@ -203,9 +201,10 @@ export default function LookbookPage() {
                       aria-label={`${item.name}, ₹${item.price} - view product`}
                       onClick={(e) => e.stopPropagation()}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
                           e.stopPropagation();
-                          router.push(item.link);
+                          setSelectedLook(look);
                         }
                       }}
                     >
@@ -216,8 +215,8 @@ export default function LookbookPage() {
                           <span className={styles.tooltipName}>{item.name}</span>
                           <span className={styles.tooltipPrice}>₹{item.price}</span>
                         </div>
-                        <Link href={item.link} className={styles.tooltipLink}>
-                          <ArrowUpRight size={14} />
+                        <Link href={item.link} className={styles.tooltipLink} aria-label={`View ${item.name}`}>
+                          <ArrowUpRight size={14} aria-hidden />
                         </Link>
                       </div>
                     </div>
@@ -284,11 +283,11 @@ export default function LookbookPage() {
               key={look.id}
               type="button"
               onClick={() => scrollToChapter(index)}
-              aria-label={`Go to look ${index + 1}: ${look.title}`}
               aria-current={index === activeIndex ? 'true' : undefined}
               className={`${styles.railChapter} ${index === activeIndex ? styles.railChapterActive : ''} ${index < activeIndex ? styles.railChapterDone : ''}`}
             >
-              {String(index + 1).padStart(2, '0')}
+              <span className="sr-only">Go to look {index + 1}: {look.title}</span>
+              <span aria-hidden="true" style={{ display: 'contents' }}>{String(index + 1).padStart(2, '0')}</span>
             </button>
           ))}
         </div>

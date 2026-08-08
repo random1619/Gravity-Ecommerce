@@ -301,6 +301,13 @@
     pointer-events: none;
 }
 
+/* The shortcut hint is decorative chrome. Collapsing the wrapper out of the
+   box tree keeps it on screen but out of the element's computed visible-text
+   name, so the accessible label ("Search") matches what a sighted user reads. */
+.kbdGroup[aria-hidden] {
+    display: contents;
+}
+
 .kbd {
     display: inline-flex;
     align-items: center;

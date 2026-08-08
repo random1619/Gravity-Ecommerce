@@ -10,7 +10,6 @@ import { useTheme } from '@/lib/ThemeContext';
 import { useCart } from '@/lib/CartContext';
 import { useAuth } from '@/lib/AuthContext';
 import LoginModal from '../ui/LoginModal';
-import CartDrawer from '../ui/CartDrawer';
 import {
     motion,
     AnimatePresence,
@@ -34,6 +33,10 @@ import {
     CornerDownLeft,
 } from 'lucide-react';
 import type { Product } from '@/lib/data';
+
+/* The bag is a dedicated page (/cart), not an overlay — the navbar bag links
+   to it. MotionLink keeps the press/hover spring physics on a Next Link. */
+const MotionLink = motion.create(Link);
 
 /* Primary nav stays at four links: shop, drops, lookbook, and the student
    offer (the money promise). Rewards is secondary — it lives in the mobile
@@ -71,7 +74,7 @@ const bagVariants = {
 
 const Navbar = () => {
     const { theme, toggleTheme } = useTheme();
-    const { cartCount, openCart } = useCart();
+    const { cartCount } = useCart();
     const { user, logout, isAuthenticated } = useAuth();
     const [search, setSearch] = useState('');
     const [trends, setTrends] = useState<string[]>([]);
@@ -264,7 +267,6 @@ const Navbar = () => {
                                 layoutId={reduceMotion ? undefined : 'nav-search-surface'}
                                 transition={spring.gentle}
                                 onClick={() => setIsSearchOpen(true)}
-                                aria-label="Open search (Ctrl+K)"
                                 aria-haspopup="dialog"
                                 whileTap={reduceMotion ? undefined : { scale: 0.96 }}
                                 onKeyDown={(e) => {
@@ -276,10 +278,17 @@ const Navbar = () => {
                                 onBlur={() => setPressed(false)}
                                 animate={pressed ? { scale: 0.96 } : { scale: 1 }}
                             >
-                                <Search size={15} className={styles.searchIcon} />
-                                <span className={styles.searchPlaceholder}>Search…</span>
-                                <span className={styles.kbdGroup}>
-                                    <kbd className={styles.kbd}>⌘K</kbd>
+                                {/* Accessible name comes from the sr-only node below so it can
+                                    carry the FULL visible label ("Search… ⌘K") — axe requires the
+                                    name to contain the visible text, and aria-hidden on the kbd
+                                    doesn't remove it from that computation. */}
+                                <span className="sr-only">Search… ⌘K</span>
+                                <span aria-hidden="true" style={{ display: 'contents' }}>
+                                    <Search size={15} className={styles.searchIcon} />
+                                    <span className={styles.searchPlaceholder}>Search…</span>
+                                    <span className={styles.kbdGroup}>
+                                        <kbd className={styles.kbd}>⌘K</kbd>
+                                    </span>
                                 </span>
                             </motion.button>
                         )}
@@ -309,11 +318,12 @@ const Navbar = () => {
                             </AnimatePresence>
                         </motion.button>
 
-                        {/* Cart — bag bounces on hover, badge pops on count change */}
-                        <motion.button
+                        {/* Cart — a dedicated page (/cart), not an overlay. Bag
+                            bounces on hover, badge pops on count change. */}
+                        <MotionLink
+                            href="/cart"
                             className={styles.iconBtn}
                             aria-label={`Cart, ${cartCount} items`}
-                            onClick={openCart}
                             initial="rest"
                             whileHover="hover"
                             whileTap="tap"
@@ -336,7 +346,7 @@ const Navbar = () => {
                                     )}
                                 </AnimatePresence>
                             </motion.span>
-                        </motion.button>
+                        </MotionLink>
 
                         {isAuthenticated ? (
                             <div className={styles.userMenu}>
@@ -382,6 +392,9 @@ const Navbar = () => {
                                                 </div>
                                             </div>
                                             <div className={styles.dropdownDivider} />
+                                            <Link href="/profile" className={styles.dropdownItem} onClick={() => setShowUserDropdown(false)}>
+                                                <User size={15} /> Profile
+                                            </Link>
                                             <Link href="/orders" className={styles.dropdownItem} onClick={() => setShowUserDropdown(false)}>
                                                 <Package size={15} /> My Orders
                                             </Link>
@@ -474,7 +487,6 @@ const Navbar = () => {
             </motion.div>
 
             <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
-            <CartDrawer />
 
             {/* Command palette — the SAME surface the trigger morphs into */}
             <AnimatePresence>

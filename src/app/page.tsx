@@ -11,7 +11,6 @@ import ProductSkeleton from '@/components/ui/ProductSkeleton';
 import Button from '@/components/ui/Button';
 import QuickView from '@/components/ui/QuickView';
 import LoginModal from '@/components/ui/LoginModal';
-import Marquee from '@/components/ui/Marquee';
 import ReelModal from '@/components/ui/ReelModal';
 import ScrollReveal from '@/components/motion/ScrollReveal';
 import SplitTextReveal from '@/components/motion/SplitTextReveal';
@@ -35,8 +34,13 @@ import { collections } from '@/lib/data';
 import type { Product } from '@/lib/data';
 
 /**
- * Kowalski spring presets — every interactive surface on the page moves
- * through physics, never fixed durations, so motion stays interruptible.
+ * Spring presets — every interactive surface on the page moves through
+ * physics, never fixed durations, so motion stays interruptible mid-flight
+ * (Designing Fluid Interfaces, WWDC 2018). Tuned to Apple's designer-facing
+ * vocabulary: `snappy` ≈ critically damped / response 0.3 (no overshoot —
+ * the default for anything that didn't carry momentum in), `bouncy` ≈
+ * damping ~0.8 / response 0.35 (slight overshoot, reserved for committed
+ * taps and flicks where the gesture itself carried energy).
  */
 const spring = {
     snappy: { type: 'spring', stiffness: 500, damping: 35, mass: 0.6 },
@@ -98,11 +102,37 @@ export default function Home() {
         });
     };
 
-    // Collections rail ref for arrow scrolling
+    // Collections rail ref for arrow scrolling + edge-fade state.
     const railRef = React.useRef<HTMLDivElement>(null);
+    // Which rail ends currently have hidden content behind them — drives the
+    // gradient edge fades, so the rail reads as "continues this way" instead
+    // of ending in a hard clip.
+    const [railEdges, setRailEdges] = useState({ start: false, end: true });
     const scrollRail = (dir: number) => {
         railRef.current?.scrollBy({ left: dir * 320, behavior: 'smooth' });
     };
+
+    useEffect(() => {
+        const rail = railRef.current;
+        if (!rail) return;
+        const update = () => {
+            const max = rail.scrollWidth - rail.clientWidth;
+            setRailEdges({
+                start: rail.scrollLeft > 8,
+                end: rail.scrollLeft < max - 8,
+            });
+        };
+        update();
+        rail.addEventListener('scroll', update, { passive: true });
+        // ResizeObserver (not just window resize): the rail's scrollWidth
+        // changes when images finish loading, not only on viewport changes.
+        const ro = new ResizeObserver(update);
+        ro.observe(rail);
+        return () => {
+            rail.removeEventListener('scroll', update);
+            ro.disconnect();
+        };
+    }, []);
 
     useEffect(() => {
         const fetchHomeData = async () => {
@@ -133,6 +163,9 @@ export default function Home() {
 
     return (
         <main className={styles.home}>
+            {/* Primary document heading — visually hidden, anchors the page
+                outline for assistive tech & SEO. Slide titles stay <h2>. */}
+            <h1 className="sr-only">GRAVITY — Streetwear for Students</h1>
             <QuickView
                 isOpen={!!quickViewProduct}
                 onClose={() => setQuickViewProduct(null)}
@@ -153,14 +186,6 @@ export default function Home() {
             />
 
             <HeroSlider />
-
-            <Marquee
-                texts={[
-                    "NEW COLD WEATHER DROPS",
-                    "FREE SHIPPING OVER ₹1500",
-                    "STUDENTS: 20% OFF · CODE STUDENT20"
-                ]}
-            />
 
             <section className={styles.section}>
                 <div className="container">
@@ -324,11 +349,11 @@ export default function Home() {
                                         </span>
                                         <span className={styles.reelDuration} aria-hidden="true">{reel.duration}</span>
 
-                                        {/* bottom info + progress */}
+                                        {/* bottom info — product + price. (A static "progress" bar here
+                                            pretended to be playback state; removed — honesty is craft.) */}
                                         <span className={styles.reelInfo} aria-hidden="true">
                                             <span className={styles.reelProduct}>{reel.product}</span>
                                             <span className={styles.reelPrice}>{reel.price}</span>
-                                            <span className={styles.reelProgress}><span style={{ width: `${((i + 1) / reelsData.length) * 100}%` }} /></span>
                                         </span>
 
                                         {/* hover overlay */}
@@ -366,7 +391,10 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-                <div className={styles.rail} ref={railRef}>
+                <div
+                    className={`${styles.rail} ${railEdges.start ? styles.railFadeStart : ''} ${railEdges.end ? styles.railFadeEnd : ''}`}
+                    ref={railRef}
+                >
                     {collections.map(c => (
                         <Tilt key={c.id} max={5} className={styles.railTilt}>
                             <motion.div whileHover={{ y: -4 }} whileTap={{ scale: 0.975 }} transition={spring.snappy} className={styles.railPress}>

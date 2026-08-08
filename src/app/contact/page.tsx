@@ -1,10 +1,55 @@
 'use client'
 
 import { useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Check, CircleHelp, Loader2, Mail, MapPin, Phone, Send } from 'lucide-react'
 import styles from './page.module.css'
+
+/** Kowalski spring presets — snappy press, gentle entrances. */
+const spring = {
+  press: { type: 'spring', stiffness: 500, damping: 30, mass: 0.5 },
+  gentle: { type: 'spring', stiffness: 380, damping: 26, mass: 0.7 },
+} as const
 import Breadcrumbs from '@/components/ui/Breadcrumbs'
 import SplitTextReveal from '@/components/motion/SplitTextReveal'
 import ScrollReveal from '@/components/motion/ScrollReveal'
+
+const INFO_CARDS = [
+  {
+    icon: Mail,
+    title: 'Email Us',
+    line: 'support@gravity.com',
+    sub: 'We typically reply within 24 hours',
+  },
+  {
+    icon: Phone,
+    title: 'Call Us',
+    line: '1-800-GRAVITY',
+    sub: 'Mon-Fri, 9AM-6PM EST',
+  },
+  {
+    icon: MapPin,
+    title: 'Visit Us',
+    line: '123 Fashion Avenue',
+    sub: 'New York, NY 10001',
+  },
+  {
+    icon: CircleHelp,
+    title: 'FAQ',
+    line: 'Quick answers to common questions',
+    sub: null,
+    link: { href: '/faq', label: 'Visit FAQ' },
+  },
+] as const
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 16 },
+  show: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { ...spring.gentle, delay: 0.15 + i * 0.08 },
+  }),
+}
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -47,7 +92,12 @@ export default function ContactPage() {
       </div>
 
       <div className={styles.content}>
-        <div className={styles.formSection}>
+        <motion.div
+          className={styles.formSection}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...spring.gentle, delay: 0.1 }}
+        >
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
               <label htmlFor="name">Name *</label>
@@ -111,79 +161,87 @@ export default function ContactPage() {
               />
             </div>
 
-            {status === 'success' && (
-              <div className={styles.successMessage}>
-                {"Thank you for contacting us! We'll get back to you within 24 hours."}
-              </div>
-            )}
+            <AnimatePresence mode="wait">
+              {status === 'success' && (
+                <motion.div
+                  key="success"
+                  className={styles.successMessage}
+                  role="status"
+                  initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={spring.gentle}
+                >
+                  <Check size={16} aria-hidden="true" />
+                  {"Thank you for contacting us! We'll get back to you within 24 hours."}
+                </motion.div>
+              )}
 
-            {status === 'error' && (
-              <div className={styles.errorMessage}>
-                Something went wrong. Please try again.
-              </div>
-            )}
+              {status === 'error' && (
+                <motion.div
+                  key="error"
+                  className={styles.errorMessage}
+                  role="alert"
+                  initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={spring.gentle}
+                >
+                  Something went wrong. Please try again.
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            <button
+            <motion.button
               type="submit"
               className={styles.submitBtn}
               disabled={status === 'loading'}
+              whileTap={{ scale: 0.98 }}
+              transition={spring.press}
             >
-              {status === 'loading' ? 'Sending...' : 'Send Message'}
-            </button>
+              {status === 'loading' ? (
+                <>
+                  <Loader2 size={16} className={styles.spinner} aria-hidden="true" />
+                  Sending…
+                </>
+              ) : (
+                <>
+                  <Send size={16} aria-hidden="true" />
+                  Send Message
+                </>
+              )}
+            </motion.button>
           </form>
-        </div>
+        </motion.div>
 
-        <ScrollReveal direction="up" delay={100}>
-          <div className={styles.infoSection}>
-            <div className={styles.infoCard}>
-              <div className={styles.iconWrapper}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+        <div className={styles.infoSection}>
+          {INFO_CARDS.map((card, i) => (
+            <motion.div
+              key={card.title}
+              className={styles.infoCard}
+              custom={i}
+              variants={cardVariants}
+              initial="hidden"
+              animate="show"
+            >
+              <div className={styles.iconWrapper} aria-hidden="true">
+                <card.icon size={22} strokeWidth={1.9} />
               </div>
-              <h3>Email Us</h3>
-              <p>support@gravity.com</p>
-              <p className={styles.subtitle}>We typically reply within 24 hours</p>
-            </div>
-
-            <div className={styles.infoCard}>
-              <div className={styles.iconWrapper}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
-                </svg>
-              </div>
-              <h3>Call Us</h3>
-              <p>1-800-GRAVITY</p>
-              <p className={styles.subtitle}>Mon-Fri, 9AM-6PM EST</p>
-            </div>
-
-            <div className={styles.infoCard}>
-              <div className={styles.iconWrapper}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-              </div>
-              <h3>Visit Us</h3>
-              <p>123 Fashion Avenue</p>
-              <p className={styles.subtitle}>New York, NY 10001</p>
-            </div>
-
-            <div className={styles.infoCard}>
-              <div className={styles.iconWrapper}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 6v6l4 2" />
-                </svg>
-              </div>
-              <h3>FAQ</h3>
-              <p>Quick answers to common questions</p>
+              <h3>{card.title}</h3>
+              <p>{card.line}</p>
               <p className={styles.subtitle}>
-                <a href="/faq" className={styles.link}>Visit FAQ →</a>
+                {'link' in card && card.link ? (
+                  <a href={card.link.href} className={styles.link}>
+                    {card.link.label}
+                    <span aria-hidden="true"> →</span>
+                  </a>
+                ) : (
+                  card.sub
+                )}
               </p>
-            </div>
-          </div>
-        </ScrollReveal>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   )

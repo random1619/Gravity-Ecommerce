@@ -371,7 +371,7 @@ export default function Shop() {
                     </div>
 
                     <div className={styles.searchGroup}>
-                        <h3 className={styles.groupLabel}>Search</h3>
+                        <h2 className={styles.groupLabel}>Search</h2>
                         <div className={styles.searchWrap}>
                             <input
                                 ref={searchRef}
@@ -392,7 +392,7 @@ export default function Shop() {
                     </div>
 
                     <div className={styles.filterGroup}>
-                        <h3 className={styles.groupLabel}>Category</h3>
+                        <h2 className={styles.groupLabel}>Category</h2>
                         <div className={styles.categoryList}>
                             {categories.map((cat: string, i: number) => (
                                 <button
@@ -414,7 +414,7 @@ export default function Shop() {
                     </div>
 
                     <div className={styles.filterGroup}>
-                        <h3 className={styles.groupLabel}>Availability</h3>
+                        <h2 className={styles.groupLabel}>Availability</h2>
                         <button
                             className={`${styles.newOnlyToggle} ${newOnly ? styles.newOnlyActive : ''}`}
                             onClick={() => setNewOnly(o => !o)}
@@ -426,7 +426,7 @@ export default function Shop() {
                     </div>
 
                     <div className={styles.filterGroup}>
-                        <h3 className={styles.groupLabel}>Max Price</h3>
+                        <h2 className={styles.groupLabel}>Max Price</h2>
                         <div className={styles.priceFilter}>
                             {priceHistogram.some(b => b.ratio > 0) && (
                                 <div className={styles.histogram} aria-hidden="true">
@@ -458,7 +458,7 @@ export default function Shop() {
                     </div>
 
                     <div className={styles.filterGroup}>
-                        <h3 className={styles.groupLabel}>Size</h3>
+                        <h2 className={styles.groupLabel}>Size</h2>
                         <div className={styles.sizeGrid}>
                             {sizesList.map(s => {
                                 const unavailable = !loading && availableSizes.size > 0 && !availableSizes.has(s);

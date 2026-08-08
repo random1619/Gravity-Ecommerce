@@ -1,4 +1,14 @@
+/* Apple-design pass (shop page) — same principles as the landing pass,
+   translated into this page's denser, editorial "index" voice:
+   - pointer-down feedback on every control ($press curve, :active states)
+   - range slider thumb responds DURING the grab, not just on hover
+   - hard hairlines → gradient seams that dissolve at the edges
+   - size-specific type tracking on mid-size display headings
+   - glass chips get a prefers-reduced-transparency solid fallback
+   Values below reuse the page's --transition-* tokens; the press curve is
+   defined once as a custom property so every :active shares one timing. */
 .shopPage {
+    --press: 120ms cubic-bezier(0.2, 0, 0.2, 1);
     padding: var(--spacing-12) var(--spacing-4) var(--spacing-16);
 }
 
@@ -59,8 +69,10 @@
     justify-content: space-between;
     align-items: center;
     gap: var(--spacing-4);
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+    /* Gradient seams dissolve at the edges instead of hard 1px hairlines. */
+    background:
+        linear-gradient(90deg, transparent, var(--border-color) 16%, var(--border-color) 84%, transparent) top / 100% 1px no-repeat,
+        linear-gradient(90deg, transparent, var(--border-color) 16%, var(--border-color) 84%, transparent) bottom / 100% 1px no-repeat;
     padding: var(--spacing-3) 0;
 }
 
@@ -190,13 +202,21 @@
 .filterNum {
     font-family: var(--font-mono);
     font-size: 10px;
-    color: var(--text-tertiary);
+    /* secondary, not tertiary: at 10px the tertiary tone fell below the
+       4.5:1 contrast floor on both light and dark surfaces. */
+    color: var(--text-secondary);
     transition: var(--transition-fast);
 }
 
 .filterBtn:hover {
     color: var(--accent-secondary);
     background: rgba(var(--accent-secondary-rgb), 0.08);
+}
+
+/* Pointer-down: the row answers instantly, before the click commits. */
+.filterBtn:active {
+    background: rgba(var(--accent-secondary-rgb), 0.16);
+    transition-duration: 120ms;
 }
 
 .filterBtn:hover .filterNum {
@@ -211,7 +231,10 @@
 }
 
 .active .filterNum {
-    color: var(--accent-secondary);
+    /* full-strength foreground, not the accent: the accent sat on a
+       translucent self-tint background and dropped below 4.5:1. The active
+       row already reads as selected via the inset edge bar + bold name. */
+    color: var(--text-primary);
     font-weight: 700;
 }
 
@@ -251,6 +274,17 @@
 
 .rangeInput::-webkit-slider-thumb:hover {
     transform: scale(1.2);
+}
+
+/* Feedback DURING the drag: thumb swells the moment it's grabbed, so the
+   control reads as alive under the pointer — not just on hover. */
+.rangeInput:active::-webkit-slider-thumb {
+    transform: scale(1.35);
+    transition-duration: 100ms;
+}
+
+.rangeInput:active::-moz-range-thumb {
+    transform: scale(1.35);
 }
 
 .rangeInput::-moz-range-thumb {
@@ -305,6 +339,18 @@
     transform: translateY(-1px);
 }
 
+/* Pointer-down: the size cell yields to the press. */
+.sizeBtn:active:not(:disabled) {
+    transform: scale(0.93);
+    transition-duration: 120ms;
+}
+
+/* Pointer-down: the hover lift collapses into a press. */
+.sizeBtn:active:not(:disabled) {
+    transform: scale(0.95);
+    transition-duration: 120ms;
+}
+
 .sizeActive {
     border-color: var(--accent-primary) !important;
     background: var(--text-primary) !important;
@@ -330,6 +376,11 @@
 .clearFiltersBtn:hover {
     border-color: var(--accent-secondary);
     color: var(--accent-secondary);
+}
+
+.clearFiltersBtn:active {
+    transform: scale(0.95);
+    transition-duration: 120ms;
 }
 
 /* ============ PRODUCT GRID ============ */
@@ -445,6 +496,11 @@
     box-shadow: var(--shadow-lg);
 }
 
+.emptyReset:active {
+    transform: scale(0.96);
+    transition-duration: 120ms;
+}
+
 /* ============ SORT SELECT ============ */
 
 .sortSelect {
@@ -497,6 +553,11 @@
     color: var(--text-primary);
 }
 
+.densityBtn:active {
+    transform: scale(0.9);
+    transition-duration: 120ms;
+}
+
 .densityActive {
     background: var(--accent-primary);
     color: var(--text-on-accent);
@@ -536,6 +597,12 @@
 .chip:hover {
     background: rgba(var(--accent-secondary-rgb), 0.22);
     transform: translateY(-1px);
+}
+
+/* Pointer-down: chip presses in, signaling the dismiss before it happens. */
+.chip:active {
+    transform: scale(0.95);
+    transition-duration: 120ms;
 }
 
 .chip svg {
@@ -684,12 +751,19 @@
     transform: translateY(-2px);
 }
 
+/* Pointer-down: the floating pill acknowledges the press instantly. */
+.topBtn:active {
+    transform: scale(0.94);
+    transition-duration: 120ms;
+}
+
 /* ============ RECENTLY VIEWED ============ */
 
 .recentSection {
     margin-top: var(--spacing-16);
     padding-top: var(--spacing-12);
-    border-top: 1px solid var(--border-color);
+    /* Gradient seam instead of a hard hairline — edges dissolve. */
+    background: linear-gradient(90deg, transparent, var(--border-color) 18%, var(--border-color) 82%, transparent) top / 100% 1px no-repeat;
 }
 
 .recentHead {
@@ -737,6 +811,12 @@
 
 .recentCard:hover {
     transform: translateY(-3px);
+}
+
+/* Pointer-down: the card settles instead of lifting — it yields to the finger. */
+.recentCard:active {
+    transform: scale(0.97);
+    transition-duration: 120ms;
 }
 
 .recentImageWrap {
@@ -830,6 +910,11 @@
     transform: translateY(-3px);
 }
 
+.suggestCard:active {
+    transform: scale(0.96);
+    transition-duration: 120ms;
+}
+
 .suggestImageWrap {
     position: relative;
     display: block;
@@ -901,6 +986,11 @@
     background: var(--accent-primary);
 }
 
+.filtersToggle:active {
+    transform: scale(0.97);
+    transition-duration: 120ms;
+}
+
 /* ============ SIZE UNAVAILABLE ============ */
 
 .sizeUnavailable {
@@ -917,8 +1007,10 @@
 
 .ticker {
     overflow: hidden;
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+    /* Gradient seams instead of hard hairlines — edges dissolve. */
+    background:
+        linear-gradient(90deg, transparent, var(--border-color) 10%, var(--border-color) 90%, transparent) top / 100% 1px no-repeat,
+        linear-gradient(90deg, transparent, var(--border-color) 10%, var(--border-color) 90%, transparent) bottom / 100% 1px no-repeat;
     padding: var(--spacing-2) 0;
     margin-bottom: var(--spacing-6);
 }
@@ -998,6 +1090,11 @@
 .newOnlyToggle:hover {
     border-color: var(--accent-primary);
     color: var(--text-primary);
+}
+
+.newOnlyToggle:active {
+    transform: scale(0.97);
+    transition-duration: 120ms;
 }
 
 .newOnlyDot {
@@ -1198,5 +1295,37 @@
 
     .filterHint {
         transition: none;
+    }
+
+    /* Press feedback also goes static — no scale on :active. */
+    .filterBtn:active,
+    .sizeBtn:active,
+    .chip:active,
+    .densityBtn:active,
+    .clearFiltersBtn:active,
+    .newOnlyToggle:active,
+    .topBtn:active,
+    .recentCard:active,
+    .suggestCard:active,
+    .filtersToggle:active,
+    .rangeInput:active::-webkit-slider-thumb {
+        transform: none;
+    }
+}
+
+/* ============ REDUCED TRANSPARENCY ============
+   Glass chips and the sidebar surface become opaque so text-on-material
+   contrast never depends on what scrolls behind them. */
+@media (prefers-reduced-transparency: reduce) {
+    .filterCount,
+    .searchKbd {
+        background: var(--bg-secondary);
+    }
+
+    .skeletonImage,
+    .skeletonLine {
+        /* The shimmer's mid-gradient glass stop becomes a solid step. */
+        background: var(--bg-secondary);
+        animation: none;
     }
 }

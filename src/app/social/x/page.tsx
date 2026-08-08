@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { MessageCircle, Repeat2, Heart, BadgeCheck, Pin, ArrowUpRight } from 'lucide-react';
 import styles from './XTimeline.module.css';
@@ -26,6 +26,67 @@ const tweets: Tweet[] = [
   { id: 5, body: 'Student discount is 20% now. Verify once, save every order. You are welcome.', media: '/look2.png', replies: '210', reposts: '1.1k', likes: '3.4k', time: '3d' },
   { id: 6, body: 'Accessories restock: beanies, chains, totes. Complete the fit.', replies: '45', reposts: '120', likes: '760', time: '4d' },
 ];
+
+function TweetCard({ tweet }: { tweet: Tweet }) {
+  const [liked, setLiked] = useState(false);
+  const [reposted, setReposted] = useState(false);
+  const [likeKey, setLikeKey] = useState(0);
+
+  const toggleLike = () => {
+    setLiked((v) => !v);
+    if (!liked) setLikeKey((k) => k + 1);
+  };
+
+  return (
+    <article className={`${styles.tweet} ${tweet.pinned ? styles.pinned : ''}`}>
+      <div className={styles.tweetHead}>
+        <span className={styles.avatar}>G.</span>
+        <div className={styles.who}>
+          <span className={styles.name}>
+            GRAVITY <BadgeCheck size={15} color="var(--accent-indigo)" />
+          </span>
+          <span className={styles.handle}>@gravitystyle</span>
+        </div>
+        {tweet.pinned && (
+          <span className={styles.pinBadge}><Pin size={12} /> Pinned</span>
+        )}
+      </div>
+
+      <p className={styles.tweetBody}>{tweet.body}</p>
+
+      {tweet.media && (
+        <div className={styles.tweetMedia}>
+          <Image src={tweet.media} alt="" fill sizes="(max-width: 640px) 100vw, 600px" />
+        </div>
+      )}
+
+      <div className={styles.tweetFoot}>
+        <button type="button" className={`${styles.act} ${styles.actReply}`} aria-label="Reply">
+          <MessageCircle size={15} /> {tweet.replies}
+        </button>
+        <button
+          type="button"
+          className={`${styles.act} ${styles.actRepost} ${reposted ? styles.on : ''}`}
+          onClick={() => setReposted((v) => !v)}
+          aria-pressed={reposted}
+          aria-label="Repost"
+        >
+          <Repeat2 size={15} /> {tweet.reposts}
+        </button>
+        <button
+          type="button"
+          className={`${styles.act} ${styles.actLike} ${liked ? styles.on : ''}`}
+          onClick={toggleLike}
+          aria-pressed={liked}
+          aria-label={liked ? 'Unlike' : 'Like'}
+        >
+          <Heart key={likeKey} size={15} fill={liked ? 'currentColor' : 'none'} /> {tweet.likes}
+        </button>
+        <span className={styles.time}>{tweet.time}</span>
+      </div>
+    </article>
+  );
+}
 
 export default function XPage() {
   return (
@@ -58,35 +119,7 @@ export default function XPage() {
         <div className={styles.timeline}>
           {tweets.map((tweet, i) => (
             <ScrollReveal key={tweet.id} direction="up" delay={i * 60} duration={600}>
-              <article className={`${styles.tweet} ${tweet.pinned ? styles.pinned : ''}`}>
-                <div className={styles.tweetHead}>
-                  <span className={styles.avatar}>G.</span>
-                  <div className={styles.who}>
-                    <span className={styles.name}>
-                      GRAVITY <BadgeCheck size={15} color="var(--accent-indigo)" />
-                    </span>
-                    <span className={styles.handle}>@gravitystyle</span>
-                  </div>
-                  {tweet.pinned && (
-                    <span className={styles.pinBadge}><Pin size={12} /> Pinned</span>
-                  )}
-                </div>
-
-                <p className={styles.tweetBody}>{tweet.body}</p>
-
-                {tweet.media && (
-                  <div className={styles.tweetMedia}>
-                    <Image src={tweet.media} alt="" fill sizes="(max-width: 640px) 100vw, 600px" />
-                  </div>
-                )}
-
-                <div className={styles.tweetFoot}>
-                  <span><MessageCircle size={15} /> {tweet.replies}</span>
-                  <span><Repeat2 size={15} /> {tweet.reposts}</span>
-                  <span><Heart size={15} /> {tweet.likes}</span>
-                  <span className={styles.time}>{tweet.time}</span>
-                </div>
-              </article>
+              <TweetCard tweet={tweet} />
             </ScrollReveal>
           ))}
         </div>
